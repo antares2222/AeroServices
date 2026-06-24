@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Crew Bus — LGG</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600&family=DM+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0a0a0a;color:#e8e8e8;font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:60px}
+.header{background:#111318;border-bottom:1px solid #2a2d36;padding:18px 20px 14px;position:sticky;top:0;z-index:100}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#e8b84b}
+.logo span{color:#e8e8e8;font-size:15px}
+.sub{font-size:10px;color:#6b7280;letter-spacing:.5px;font-family:'DM Mono',monospace;margin-top:2px}
+.steps{display:flex;gap:6px;margin-top:12px}
+.dot{flex:1;height:3px;border-radius:2px;background:#2a2d36;transition:background .3s}
+.dot.on{background:#e8b84b}.dot.done{background:#4be8a0}
+.sec{padding:20px;display:none}.sec.show{display:block}
+.lbl{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;color:#6b7280;margin-bottom:14px}
+.card{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;padding:16px;margin-bottom:12px}
+label{display:block;font-size:10px;color:#6b7280;letter-spacing:1px;margin-bottom:6px;font-family:'DM Mono',monospace}
+input[type=date]{width:100%;background:#0a0a0a;border:1px solid #2a2d36;border-radius:8px;color:#e8e8e8;font-family:'DM Mono',monospace;font-size:14px;padding:11px 12px;outline:none;-webkit-appearance:none}
+input[type=text]{width:100%;background:#0a0a0a;border:1px solid #2a2d36;border-radius:8px;color:#e8e8e8;font-family:'DM Mono',monospace;font-size:14px;padding:10px 12px;outline:none;-webkit-appearance:none}
+input:focus{border-color:#e8b84b}
+textarea{width:100%;background:#0a0a0a;border:1px solid #2a2d36;border-radius:8px;color:#e8e8e8;font-family:'DM Mono',monospace;font-size:12px;padding:12px;outline:none;resize:none;min-height:220px;line-height:1.7}
+textarea:focus{border-color:#e8b84b}
+.sgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.sbtn{border:1px solid #2a2d36;border-radius:8px;background:#0a0a0a;color:#6b7280;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;padding:13px 4px;cursor:pointer;width:100%;text-align:center;transition:all .2s}
+.sbtn span{display:block;font-family:'DM Mono',monospace;font-size:9px;font-weight:400;margin-top:3px;letter-spacing:0}
+.sbtn.sel{border-color:#e8b84b;color:#e8b84b;background:rgba(232,184,75,.08)}
+.btn{width:100%;padding:15px;border:none;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:4px}
+.btn:active{transform:scale(.97)}
+.bp{background:#e8b84b;color:#0a0a0a}.bs{background:transparent;border:1px solid #2a2d36;color:#6b7280}.bg{background:#4be8a0;color:#0a0a0a}
+.brow{display:flex;gap:10px;margin-top:4px}
+.brow .bs{flex:.42}.brow .bp,.brow .bg{flex:1}
+.tip{background:rgba(232,184,75,.06);border:1px solid rgba(232,184,75,.2);border-radius:8px;padding:12px 14px;font-size:12px;color:#c9a33d;line-height:1.7;margin-bottom:12px}
+.tip strong{color:#e8b84b}
+.info{font-family:'DM Mono',monospace;font-size:11px;color:#6b7280;margin-top:8px;line-height:1.8}
+.ok{color:#4be8a0}.err{color:#e84b4b}
+.fhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cnt{font-family:'DM Mono',monospace;font-size:11px;background:#2a2d36;border-radius:20px;padding:3px 10px;color:#6b7280}
+.cnt b{color:#e8b84b}
+.grp{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;padding:8px 0 5px;display:flex;align-items:center;gap:8px}
+.grp::after{content:'';flex:1;height:1px;background:#2a2d36}
+.grp.a{color:#4be8a0}.grp.d{color:#e84b4b}.grp.ex{color:#6b7280}.grp.add{color:#e8b84b}
+
+/* Flight item */
+.fi{border:1px solid #2a2d36;border-radius:8px;padding:9px 12px;margin-bottom:5px}
+.fi.a{border-left:3px solid #4be8a0;background:rgba(75,232,160,.04)}
+.fi.d{border-left:3px solid #e84b4b;background:rgba(232,75,75,.04)}
+.fi.ex{border-left:3px solid #2a2d36;background:#111318;opacity:.8}
+.fi-top{display:flex;align-items:center;gap:10px}
+.fi-t{font-family:'Bebas Neue',sans-serif;font-size:21px;color:#e8b84b;min-width:50px}
+.fi-etd{font-size:9px;color:#6b7280;font-family:'DM Mono',monospace}
+.fi-b{flex:1}
+.fi-f{font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
+.fi-r{font-size:10px;color:#6b7280;margin-top:1px}
+.fi-bx{font-family:'Bebas Neue',sans-serif;font-size:10px;padding:2px 6px;border-radius:4px;letter-spacing:1px}
+.fi-bx.a{background:rgba(75,232,160,.15);color:#4be8a0}
+.fi-bx.d{background:rgba(232,75,75,.15);color:#e84b4b}
+.fi-bx.ex{background:#2a2d36;color:#6b7280}
+
+/* WFS toggle */
+.wfs-toggle{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #2a2d36}
+.wfs-btn{flex:1;padding:7px 4px;border-radius:6px;border:1px solid #2a2d36;background:#0a0a0a;color:#6b7280;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;text-align:center;transition:all .2s}
+.wfs-btn.sel-rent{border-color:#e8b84b;color:#e8b84b;background:rgba(232,184,75,.1)}
+.wfs-btn.sel-hand{border-color:#4be8a0;color:#4be8a0;background:rgba(75,232,160,.1)}
+
+/* Edit row */
+.edit-row{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #2a2d36}
+.edit-row input{flex:1;font-size:12px;padding:7px 10px}
+.edit-lbl{font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:3px}
+
+/* Add button on excluded */
+.add-btn{background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.3);border-radius:6px;color:#e8b84b;font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;cursor:pointer;white-space:nowrap}
+
+/* Remove button */
+.rm-btn{background:rgba(232,75,75,.1);border:1px solid rgba(232,75,75,.3);border-radius:6px;color:#e84b4b;font-family:'DM Mono',monospace;font-size:11px;padding:5px 10px;cursor:pointer}
+
+/* Manual add form */
+.add-form{background:#111318;border:1px solid rgba(232,184,75,.2);border-radius:10px;padding:14px;margin-bottom:12px}
+.add-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.tbtn{border:1px solid #2a2d36;border-radius:7px;background:#0a0a0a;color:#6b7280;font-family:'Bebas Neue',sans-serif;font-size:15px;padding:10px;cursor:pointer;text-align:center;transition:all .2s}
+.tbtn.sel-a{border-color:#4be8a0;color:#4be8a0;background:rgba(75,232,160,.08)}
+.tbtn.sel-d{border-color:#e84b4b;color:#e84b4b;background:rgba(232,75,75,.08)}
+
+/* PRINT */
+#sheet{display:none}
+@media print{
+  #sheet{display:block}
+  body>*:not(#sheet){display:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:white;color:black;padding:0;font-family:Arial,sans-serif;font-size:10pt}
+  @page{size:A4 portrait;margin:10mm}
+  .ph{display:flex;align-items:stretch;border:1.5pt solid black;margin-bottom:0}
+  .ph-l{flex:1;padding:6pt 10pt;font-size:11pt}
+  .ph-m{display:none}
+  .ph-r{flex:1;padding:6pt 10pt}
+  table.pt{width:100%;border-collapse:collapse}
+  table.pt th{font-size:8pt;font-weight:bold;text-align:center;border:1pt solid black;padding:4pt 3pt;font-variant:small-caps}
+  table.pt td{border:1pt solid black;padding:4pt 5pt;vertical-align:middle;height:10mm}
+  .col-reg{width:13%}.col-flt{width:13%}
+  .col-arr{width:7%;text-align:center;font-size:8pt;font-weight:bold}
+  .col-pup{width:8%;text-align:center;font-weight:bold;font-size:9pt}
+  .col-time{width:10%;font-size:16pt;letter-spacing:1pt;text-align:center}.col-note{width:28%}.col-stand{width:7%;text-align:center}
+  .font-lg{font-size:12pt}
+  .badge-arr{display:inline-block;border:1.5pt solid #2d7a2d;border-radius:3pt;padding:1pt 4pt;font-size:7pt;font-weight:bold;background:#d4edda;color:#1a5c1a}
+  .badge-pup{display:inline-block;border:1.5pt solid #c0392b;border-radius:3pt;padding:1pt 5pt;font-size:8pt;font-style:italic;background:#fde8e8;color:#7b1010;white-space:nowrap}
+  .psep td{background:#f0f0f0;font-size:7pt;font-weight:bold;letter-spacing:2pt;text-align:center;padding:2pt;border:1pt solid black}
+  .per{height:10mm}.per td{border:1pt solid black}
+  table.pb{width:100%;border-collapse:collapse;margin-top:8pt}
+  table.pb th{font-size:8pt;font-weight:bold;text-align:center;border:1pt solid black;padding:4pt 3pt;font-variant:small-caps}
+  table.pb td{border:1pt solid black;padding:4pt;vertical-align:middle;text-align:center;font-size:9pt}
+  /* Bordure épaisse à droite de Headset et Handling au lieu des cellules pdv */
+  .pb-sep-r{border-right:4pt solid black !important}
+  .psh{font-weight:bold;font-size:9pt;text-align:center;padding:5pt;border:1pt solid black}
+  .crossed{background:repeating-linear-gradient(45deg,#ddd,#ddd 1pt,white 1pt,white 4pt);}
+  table.pb tr{height:30pt}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">LGG <span>CREW BUS</span></div>
+  <div class="sub">LIÈGE AIRPORT — GÉNÉRATEUR DE FEUILLE</div>
+  <div class="steps">
+    <div class="dot on" id="d0"></div>
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+  </div>
+</div>
+
+<!-- STEP 0 -->
+<div class="sec show" id="s0">
+  <div class="lbl">01 — INFOS DU SHIFT</div>
+  <div class="card">
+    <div style="margin-bottom:12px">
+      <label>DATE</label>
+      <input type="date" id="sDate">
+    </div>
+    <div>
+      <label>SHIFT</label>
+      <div class="sgrid">
+        <button class="sbtn" id="bE" onclick="selShift('EARLY',this)">EARLY<span>06:00–14:00</span></button>
+        <button class="sbtn" id="bL" onclick="selShift('LATE',this)">LATE<span>14:00–22:00</span></button>
+        <button class="sbtn sel" id="bN" onclick="selShift('NIGHT',this)">NIGHT<span>22:00–06:00</span></button>
+      </div>
+    </div>
+  </div>
+  <button class="btn bp" onclick="go(1)">SUIVANT →</button>
+</div>
+
+<!-- STEP 1 -->
+<div class="sec" id="s1">
+  <div class="lbl">02 — COLLER LES VOLS</div>
+  <div class="tip">
+    <strong>📋 Comment faire :</strong><br>
+    1. Ouvre <strong>fids.liegeairport.com/spw</strong><br>
+    2. Attends que tous les vols chargent<br>
+    3. Sélectionne tout → <strong>Copier</strong><br>
+    4. Colle ici ↓
+  </div>
+  <div class="card">
+    <label>TEXTE COPIÉ DEPUIS LE FIDS</label>
+    <textarea id="tFids" placeholder="Colle ici tout le texte du FIDS..."></textarea>
+    <div class="info" id="iInfo"></div>
+  </div>
+  <div class="brow">
+    <button class="btn bs" onclick="go(0)">← RETOUR</button>
+    <button class="btn bp" onclick="doAnalyse()">ANALYSER →</button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="sec" id="s2">
+  <div class="lbl">03 — VÉRIFICATION</div>
+
+  <!-- Vols détectés -->
+  <div class="card">
+    <div class="fhdr">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px">VOLS SÉLECTIONNÉS</div>
+      <div class="cnt">ARR <b id="cA">0</b> · DEP <b id="cD">0</b></div>
+    </div>
+    <div id="prev"></div>
+  </div>
+
+  <!-- Vols exclus (ajoutables) -->
+  <div class="card" id="cardExcluded" style="display:none">
+    <div class="fhdr">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#6b7280">AUTRES VOLS DISPONIBLES</div>
+      <div class="cnt"><b id="cEx">0</b> vols</div>
+    </div>
+    <div id="prevEx"></div>
+  </div>
+
+  <!-- Headset — menu dépliable -->
+  <div class="card">
+    <div class="fhdr" onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;margin-bottom:0">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#4be8a0">🎧 HEADSET</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="cnt"><b id="cHs">0</b> sélectionné(s)</div>
+        <span id="hsChev" style="color:#6b7280;font-size:16px;transition:transform .2s">▼</span>
+      </div>
+    </div>
+    <div id="hsPanel" style="display:none;margin-top:12px">
+      <div style="font-size:11px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:8px">Vols DEP dans la fenêtre — ETD directe</div>
+      <div id="hsList"></div>
+    </div>
+  </div>
+
+  <!-- Ajout manuel — menu dépliable -->
+  <div class="card">
+    <div class="fhdr" onclick="toggleCollapse('manPanel','manChev')" style="cursor:pointer;margin-bottom:0">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#e8b84b">+ AJOUTER UN VOL</div>
+      <span id="manChev" style="color:#6b7280;font-size:16px;transition:transform .2s">▼</span>
+    </div>
+    <div id="manPanel" style="display:none;margin-top:12px">
+      <div class="type-grid">
+        <button class="tbtn sel-a" id="manTypeA" onclick="setManType('arr')">✈ ARRIVÉE</button>
+        <button class="tbtn" id="manTypeD" onclick="setManType('dep')">✈ DÉPART</button>
+      </div>
+      <div class="add-form-grid">
+        <div><div class="edit-lbl">VOL *</div><input type="text" id="manFlight" placeholder="ex: ICL601"></div>
+        <div><div class="edit-lbl">HEURE (ETA/ETD) *</div><input type="text" id="manTime" placeholder="ex: 14:35"></div>
+        <div><div class="edit-lbl">REGISTRATION</div><input type="text" id="manReg" placeholder="ex: 9HCAD"></div>
+        <div><div class="edit-lbl">STAND</div><input type="text" id="manStand" placeholder="ex: 134"></div>
+      </div>
+      <div style="margin-bottom:8px">
+        <div class="edit-lbl">HANDLER</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+          <button class="wfs-btn" id="hWFS" onclick="setManHandler('WFS')">WFS</button>
+          <button class="wfs-btn" id="hCHAL" onclick="setManHandler('CHALLENGE')">CHALLENGE</button>
+          <button class="wfs-btn" id="hSWP" onclick="setManHandler('SWISSPORT')">SWISSPORT</button>
+        </div>
+      </div>
+      <button class="btn bp" onclick="addManual()" style="font-size:14px;padding:12px">+ AJOUTER CE VOL</button>
+    </div>
+  </div>
+
+  <button class="btn bg" onclick="genPDF()" style="margin-bottom:8px">🖨 GÉNÉRER LA FEUILLE PDF</button>
+  <div class="brow">
+    <button class="btn bs" onclick="go(1)">← RETOUR</button>
+    <button class="btn bs" onclick="reset()">RECOMMENCER</button>
+  </div>
+</div>
+
+<!-- FEUILLE PRINT -->
+<div id="sheet">
+  <div class="ph">
+    <div class="ph-l" id="sh-date"></div>
+    <div class="ph-m" id="sh-shift"></div>
+    <div class="ph-r"></div>
+  </div>
+  <table class="pt">
+    <thead><tr>
+      <th class="col-reg">Registration</th>
+      <th class="col-flt">Flight Number</th>
+      <th class="col-arr">ARR</th>
+      <th class="col-pup">Pick up</th>
+      <th class="col-time">Time</th>
+      <th class="col-note">Note</th>
+      <th class="col-stand">Stand</th>
+    </tr></thead>
+    <tbody id="sh-rows"></tbody>
+  </table>
+  <br>
+  <table class="pb">
+    <tr>
+      <td colspan="3" class="psh pb-sep-r">Headset</td>
+      <td colspan="4" class="psh pb-sep-r">Handling</td>
+      <td class="psh">Renting</td>
+    </tr>
+    <tr>
+      <th style="width:15%">Registration</th>
+      <th style="width:12%">FLT #</th>
+      <th style="width:12%;border-right:4pt solid black">Depart</th>
+      <th style="width:15%">Registration</th>
+      <th style="width:12%">FLT #</th>
+      <th style="width:10%">ARR</th>
+      <th style="width:10%;border-right:4pt solid black">DEP</th>
+      <th style="width:14%"></th>
+    </tr>
+    <tbody id="sh-bottom-rows"></tbody>
+  </table>
+</div>
+
+<script>
+const S={shift:'NIGHT',arr:[],dep:[],excluded:[]};
+const HL=['WFS','CHALLENGE','SWISSPORT','BAS','FEDEX','AVIAPARTNER'];
+const AC=/^(B7[0-9]{2}[LW]?|A3[0-9]{2}|B738|B763|B744|B748|A306|A332|A333|B734|B752|A321|B77[LW]|AT7[0-9]|CRJ|E[0-9]{3}|C25[ABC]|DA4[0-9]|PC1[0-9]|GLF4?|FA7X|LJ45|C510|C680)$/i;
+let manType='arr', manHandler='';
+
+document.getElementById('sDate').value=new Date().toISOString().slice(0,10);
+
+function go(n){document.querySelectorAll('.sec').forEach((s,i)=>s.classList.toggle('show',i===n));document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('on',i===n);d.classList.toggle('done',i<n);});window.scrollTo(0,0);}
+function selShift(s,el){S.shift=s;document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+function reset(){S.arr=[];S.dep=[];S.excluded=[];document.getElementById('tFids').value='';go(0);}
+
+function shouldInclude(flight,raw){
+  if(!raw)return false;
+  const r=raw.toUpperCase().trim();
+  if(r==='CHALLENGE'||r==='WFS')return true;
+  if(r==='SWISSPORT'&&flight.toUpperCase().startsWith('TAY'))return true;
+  return false;
+}
+// Vols qu'on peut proposer (pas FedEx/Aviapartner, mais pas encore inclus)
+function canPropose(raw){
+  if(!raw)return false;
+  const r=raw.toUpperCase().trim();
+  if(r==='FEDEX'||r==='AVIAPARTNER')return false;
+  return true;
+}
+
+function pickup(t){const[h,m]=t.split(':').map(Number);let x=h*60+m-75;if(x<0)x+=1440;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0');}
+function inWinArr(t){if(!t||!/^\d{1,2}:\d{2}$/.test(t))return false;const[h,m]=t.split(':').map(Number),mins=h*60+m;if(S.shift==='NIGHT')return mins>=22*60||mins<6*60;if(S.shift==='EARLY')return mins>=6*60&&mins<14*60;return mins>=14*60&&mins<22*60;}
+function inWinDep(t){return inWinArr(pickup(t));}
+function isOACI(s){return/^[EBLFKOGZDRUYCNHPWVTSBCP][A-Z]{3}$/.test(s)&&!/\d/.test(s);}
+function isReg(s){if(!s||s.length<4||s.length>8)return false;if(!/^[A-Z0-9]+$/.test(s)||/^\d+$/.test(s))return false;if(isOACI(s)||AC.test(s)||HL.includes(s))return false;if(/^\d+[A-Z]?$/.test(s)&&s.length<=4)return false;return/\d/.test(s)||/^(OE|TF|OO|9H|EI|N[0-9]|G|F|D|PH|SE|OH|LN|SP|HA|YR|LZ|CS|EC|TC|SU|ET|5Y|VT|B|JA|HL|A6|A7|EK|UK|UR|4X)/i.test(s);}
+function isStand(s){return/^\d{1,3}[A-Z]?$/.test(s)&&parseInt(s)<200;}
+
+function parseFids(text){
+  const arrivals=[],departures=[],excluded=[],seen=new Set();
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l.length>5);
+  for(const line of lines){
+    const upper=line.toUpperCase();
+    // Ignorer les lignes d'interface
+    if(/^(date\b|flight\b|a\/c\b|direction\b|handler\b|filter\b|utc\b|^lt$|night mode|day mode|version|all time|reset\b|clear\b|cancel\b|took off|soon\b|later\b|landed\b|runway\b|^stand$|^via$|^arrivals$|^departures$|pyxis|system op)/i.test(line))continue;
+    if(line.length<6)continue;
+    const tokens=line.split(/\s+/);
+    if(tokens.length<3)continue;
+
+    // Trouver toutes les heures
+    const times=tokens.filter(t=>/^\d{1,2}:\d{2}$/.test(t));
+    if(!times.length)continue;
+    const eta=times[times.length-1]; // dernière heure = ETA/ETD estimée
+
+    // Détecter ARR ou DEP — priorité au mot en début de ligne
+    let type=null;
+    if(/^departures?\b/i.test(line)) type='dep';
+    else if(/^arrivals?\b/i.test(line)) type='arr';
+    else if(/\bdepartures?\b/i.test(line)) type='dep';
+    else if(/\barrivals?\b/i.test(line)) type='arr';
+    else {
+      // Déduire depuis EBLG : si EBLG est dans la 1ère moitié = départ
+      const eblgIdx=tokens.findIndex(t=>t==='EBLG'||t==='ELLX');
+      if(eblgIdx!==-1) type=eblgIdx<tokens.length/2?'dep':'arr';
+      else type='arr'; // défaut
+    }
+
+    // Vérifier fenêtre horaire
+    if(type==='arr'&&!inWinArr(eta))continue;
+    if(type==='dep'&&!inWinDep(eta))continue;
+
+    // Handler
+    let hw='';
+    for(const h of HL){if(upper.includes(h)){hw=h;break;}}
+
+    // Numéro de vol : 2-3 lettres + 3-5 chiffres
+    let flight='';
+    for(const t of tokens){
+      if(/^[A-Z]{1,3}\d{3,5}[A-Z]?$/.test(t)&&!/^\d+$/.test(t)){flight=t;break;}
+    }
+    if(!flight)continue;
+
+    // Clé unique = vol + type + heure (permet même numéro en ARR et DEP, ou deux rotations)
+    const key=flight+'_'+type+'_'+eta;
+    if(seen.has(key))continue;
+    seen.add(key);
+
+    // Registration
+    let reg='';
+    for(const t of tokens){
+      if(t===flight||/^\d{1,2}:\d{2}$/.test(t)||/^\d{2}\//.test(t))continue;
+      if(HL.includes(t.toUpperCase())||t==='EBLG'||t==='ELLX')continue;
+      if(isStand(t))continue;
+      if(isReg(t)){reg=t;break;}
+    }
+
+    // Stand
+    let stand='';
+    for(const t of tokens){if(isStand(t)&&t!==reg){stand=t;break;}}
+
+    if(shouldInclude(flight,hw)){
+      const wfsMode=hw.toUpperCase()==='WFS'?'handling':null;
+      const obj={flight,reg,eta,time:type==='dep'?pickup(eta):eta,handler:hw,stand,type,wfsMode};
+      if(type==='dep')departures.push(obj);else arrivals.push(obj);
+    } else if(canPropose(hw)){
+      excluded.push({flight,reg,eta,time:type==='dep'?pickup(eta):eta,handler:hw,stand,type});
+    }
+  }
+  return{arrivals,departures,excluded};
+}
+
+function doAnalyse(){
+  const t=document.getElementById('tFids').value;
+  if(!t.trim()){alert('Colle le texte du FIDS d\'abord.');return;}
+  const{arrivals,departures,excluded}=parseFids(t);
+  S.arr=arrivals;S.dep=departures;S.excluded=excluded;
+  const total=arrivals.length+departures.length;
+  if(!total){document.getElementById('iInfo').innerHTML=`<span class="err">⚠ Aucun vol détecté (shift ${S.shift}).</span>`;return;}
+  document.getElementById('iInfo').innerHTML=`<span class="ok">✓ ${arrivals.length} arrivée(s) + ${departures.length} départ(s)</span>`;
+  renderPreview();go(2);
+}
+
+// ── Ajouter un vol exclu ─────────────────────────────────────────
+function addFromExcluded(flight){
+  const idx=S.excluded.findIndex(f=>f.flight===flight);
+  if(idx===-1)return;
+  const f=S.excluded.splice(idx,1)[0];
+  f.wfsMode=f.handler.toUpperCase()==='WFS'?'handling':null;
+  if(f.type==='dep')S.dep.push(f);else S.arr.push(f);
+  renderPreview();
+}
+
+// ── Supprimer un vol sélectionné ─────────────────────────────────
+function removeVol(flight){
+  const fi=S.arr.findIndex(f=>f.flight===flight);
+  const fd=S.dep.findIndex(f=>f.flight===flight);
+  if(fi!==-1){const f=S.arr.splice(fi,1)[0];S.excluded.push(f);}
+  if(fd!==-1){const f=S.dep.splice(fd,1)[0];S.excluded.push(f);}
+  renderPreview();
+}
+
+// ── Éditer registration / stand ──────────────────────────────────
+function editField(flight,field,val){
+  [...S.arr,...S.dep].forEach(f=>{if(f.flight===flight)f[field]=val.toUpperCase().trim();});
+}
+
+// ── WFS mode ─────────────────────────────────────────────────────
+function toggleCollapse(panelId,chevId){
+  const p=document.getElementById(panelId);
+  const c=document.getElementById(chevId);
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  c.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+}
+
+function setHs(flight,val){
+  [...S.arr,...S.dep,...S.excluded].forEach(f=>{
+    if(f.flight===flight) f.hsMode=val;
+  });
+  renderPreview();
+}
+function setWfs(flight,mode){[...S.arr,...S.dep].forEach(f=>{if(f.flight===flight)f.wfsMode=mode;});renderPreview();}
+
+// ── Ajout manuel ─────────────────────────────────────────────────
+function setManType(t){
+  manType=t;
+  document.getElementById('manTypeA').className='tbtn'+(t==='arr'?' sel-a':'');
+  document.getElementById('manTypeD').className='tbtn'+(t==='dep'?' sel-d':'');
+}
+function setManHandler(h){
+  manHandler=h;
+  ['WFS','CHAL','SWP'].forEach(id=>document.getElementById('h'+id).classList.remove('sel-hand'));
+  const map={WFS:'hWFS',CHALLENGE:'hCHAL',SWISSPORT:'hSWP'};
+  if(map[h])document.getElementById(map[h]).classList.add('sel-hand');
+}
+function addManual(){
+  const flight=document.getElementById('manFlight').value.toUpperCase().trim();
+  const timeRaw=document.getElementById('manTime').value.trim();
+  const reg=document.getElementById('manReg').value.toUpperCase().trim();
+  const stand=document.getElementById('manStand').value.trim();
+  if(!flight){alert('Numéro de vol obligatoire.');return;}
+  if(!timeRaw||!/^\d{1,2}:\d{2}$/.test(timeRaw)){alert('Heure invalide (format HH:MM).');return;}
+  if([...S.arr,...S.dep].some(f=>f.flight===flight)){alert('Ce vol est déjà dans la liste.');return;}
+  const eta=timeRaw;
+  const time=manType==='dep'?pickup(eta):eta;
+  const wfsMode=manHandler==='WFS'?'handling':null;
+  const obj={flight,reg,eta,time,handler:manHandler,stand,type:manType,wfsMode,manual:true};
+  if(manType==='dep')S.dep.push(obj);else S.arr.push(obj);
+  // Reset form
+  document.getElementById('manFlight').value='';
+  document.getElementById('manTime').value='';
+  document.getElementById('manReg').value='';
+  document.getElementById('manStand').value='';
+  manHandler='';
+  ['hWFS','hCHAL','hSWP'].forEach(id=>document.getElementById(id).classList.remove('sel-hand'));
+  renderPreview();
+}
+
+// ── Render preview ────────────────────────────────────────────────
+function renderPreview(){
+  document.getElementById('cA').textContent=S.arr.length;
+  document.getElementById('cD').textContent=S.dep.length;
+  let h='';
+
+  // Arrivées
+  if(S.arr.length){
+    h+=`<div class="grp a">✈ ARRIVÉES (${S.arr.length})</div>`;
+    S.arr.forEach(f=>{
+      const isWfs=f.handler.toUpperCase()==='WFS';
+      h+=`<div class="fi a">
+        <div class="fi-top">
+          <div class="fi-t">${f.time}</div>
+          <div class="fi-b">
+            <div class="fi-f">${f.flight}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
+            <div class="fi-r">
+              <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editField('${f.flight}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
+              <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editField('${f.flight}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
+              <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+            <div class="fi-bx a">ARR</div>
+            <button class="rm-btn" onclick="removeVol('${f.flight}')">✕</button>
+          </div>
+        </div>
+        ${isWfs?`<div class="wfs-toggle"><button class="wfs-btn ${f.wfsMode==='renting'?'sel-rent':''}" onclick="setWfs('${f.flight}','renting')">🚙 Renting</button><button class="wfs-btn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="setWfs('${f.flight}','handling')">✈️ Handling</button></div>`:''}
+      </div>`;
+    });
+  }
+
+  // Départs
+  if(S.dep.length){
+    h+=`<div class="grp d">✈ DÉPARTS — pick up = ETD-1h15 (${S.dep.length})</div>`;
+    S.dep.forEach(f=>{
+      const isWfs=f.handler.toUpperCase()==='WFS';
+      const isSwp=f.handler.toUpperCase()==='SWISSPORT';
+      const showHs=isWfs||isSwp;
+      h+=`<div class="fi d">
+        <div class="fi-top">
+          <div class="fi-t">${f.time}<div class="fi-etd">ETD ${f.eta}</div></div>
+          <div class="fi-b">
+            <div class="fi-f">${f.flight}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
+            <div class="fi-r">
+              <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editField('${f.flight}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
+              <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editField('${f.flight}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
+              <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+            <div class="fi-bx d">DEP</div>
+            <button class="rm-btn" onclick="removeVol('${f.flight}')">✕</button>
+          </div>
+        </div>
+        ${isWfs?`<div class="wfs-toggle"><button class="wfs-btn ${f.wfsMode==='renting'?'sel-rent':''}" onclick="setWfs('${f.flight}','renting')">🚙 Renting</button><button class="wfs-btn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="setWfs('${f.flight}','handling')">✈️ Handling</button></div>`:''}
+      </div>`;
+    });
+  }
+
+  if(!h)h=`<div style="color:#6b7280;text-align:center;padding:20px;font-size:13px">Aucun vol</div>`;
+  document.getElementById('prev').innerHTML=h;
+
+  // Vols exclus proposables
+  const excCard=document.getElementById('cardExcluded');
+  document.getElementById('cEx').textContent=S.excluded.length;
+  if(S.excluded.length>0){
+    excCard.style.display='block';
+    let ex='';
+    S.excluded.forEach(f=>{
+      const badge=f.type==='arr'?'<span class="fi-bx a" style="font-size:9px">ARR</span>':'<span class="fi-bx d" style="font-size:9px">DEP</span>';
+      ex+=`<div class="fi ex">
+        <div class="fi-top">
+          <div class="fi-t" style="font-size:17px">${f.time}</div>
+          <div class="fi-b">
+            <div class="fi-f" style="font-size:12px">${f.flight}</div>
+            <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · '+f.stand:''}</div>
+          </div>
+          ${badge}
+          <button class="add-btn" onclick="addFromExcluded('${f.flight}')">+ AJOUTER</button>
+        </div>
+      </div>`;
+    });
+    document.getElementById('prevEx').innerHTML=ex;
+  } else {
+    excCard.style.display='none';
+  }
+
+  // ── Liste Headset : tous les DEP dans la fenêtre horaire (sauf FedEx/Aviapartner) ──
+  // Inclut les vols du tableau principal + les exclus DEP
+  const allDepForHs=[
+    ...S.dep,
+    ...S.excluded.filter(f=>f.type==='dep')
+  ];
+  const hsCount=allDepForHs.filter(f=>f.hsMode===true).length;
+  document.getElementById('cHs').textContent=hsCount;
+
+  let hsList='';
+  if(allDepForHs.length===0){
+    hsList=`<div style="color:#6b7280;font-size:12px;text-align:center;padding:10px">Aucun vol DEP disponible</div>`;
+  } else {
+    allDepForHs.forEach(f=>{
+      const sel=f.hsMode===true;
+      hsList+=`<div class="fi" style="border-left:3px solid ${sel?'#4be8a0':'#2a2d36'};background:${sel?'rgba(75,232,160,.06)':'#111318'};margin-bottom:5px">
+        <div class="fi-top">
+          <div class="fi-t" style="font-size:18px;color:#e8b84b">${f.eta}<div class="fi-etd">ETD</div></div>
+          <div class="fi-b">
+            <div class="fi-f" style="font-size:12px">${f.flight}</div>
+            <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · Stand '+f.stand:''}</div>
+          </div>
+          <button class="wfs-btn ${sel?'sel-hand':''}" onclick="setHs('${f.flight}',${sel?'false':'true'})" style="white-space:nowrap">
+            🎧 ${sel?'Retiré ✓':'Ajouter'}
+          </button>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('hsList').innerHTML=hsList;
+}
+
+// ── Generate PDF ──────────────────────────────────────────────────
+function genPDF(){
+  const dateVal=document.getElementById('sDate').value;
+  const dl=dateVal?dateVal.split('-').reverse().join('/'):'—';
+  document.getElementById('sh-date').textContent='Crew bus service   '+dl+'   '+S.shift;
+  document.getElementById('sh-shift').innerHTML='';
+  let rows='';
+  S.arr.forEach(f=>{rows+=`<tr><td class="col-reg font-lg">${f.reg||''}</td><td class="col-flt font-lg">${f.flight}</td><td class="col-arr"><span class="badge-arr">ARR</span></td><td class="col-pup">Pick up</td><td class="col-time font-lg">${f.time}</td><td class="col-note"></td><td class="col-stand">${f.stand||''}</td></tr>`;});
+  // Ligne vide de séparation entre arrivées et départs
+  if(S.arr.length&&S.dep.length){rows+=`<tr class="per"><td></td><td></td><td class="col-arr">ARR</td><td class="col-pup">Pick up</td><td></td><td></td><td></td></tr>`;}
+  S.dep.forEach(f=>{rows+=`<tr><td class="col-reg font-lg">${f.reg||''}</td><td class="col-flt font-lg">${f.flight}</td><td class="col-arr">ARR</td><td class="col-pup"><span class="badge-pup">Pick up</span></td><td class="col-time font-lg">${f.time}</td><td class="col-note"></td><td class="col-stand">${f.stand||''}</td></tr>`;});
+  const sep=(S.arr.length&&S.dep.length)?1:0;
+  const dataRows=S.arr.length+S.dep.length+sep;
+  // 19 lignes minimum, s'étend si plus de vols
+  const totalFit=Math.max(19,dataRows);
+  const emptyCount=Math.max(0,totalFit-dataRows);
+  for(let i=0;i<emptyCount;i++){rows+=`<tr class="per"><td></td><td></td><td class="col-arr">ARR</td><td class="col-pup">Pick up</td><td></td><td></td><td></td></tr>`;}
+  document.getElementById('sh-rows').innerHTML=rows;
+  // Vols HS : tous DEP avec hsMode=true (tableau principal + exclus)
+  const allDepForHs=[...S.dep,...S.excluded.filter(f=>f.type==='dep')];
+  const hsFlights=allDepForHs.filter(f=>f.hsMode===true);
+  const rentingFlights=[...S.arr,...S.dep].filter(f=>f.handler.toUpperCase()==='WFS'&&f.wfsMode==='renting');
+  // Dédupliquer renting : une seule entrée par registration ET par numéro de vol
+  const rentingSeen=new Set();
+  const rentingDedup=rentingFlights.filter(f=>{
+    const keyReg=f.reg?'reg:'+f.reg:'';
+    const keyFlt='flt:'+f.flight;
+    if(keyReg&&rentingSeen.has(keyReg))return false;
+    if(rentingSeen.has(keyFlt))return false;
+    if(keyReg)rentingSeen.add(keyReg);
+    rentingSeen.add(keyFlt);
+    return true;
+  });
+  const handlingFlights=[...S.arr,...S.dep].filter(f=>f.handler.toUpperCase()==='WFS'&&f.wfsMode==='handling');
+  const handlingMap={};
+  handlingFlights.forEach(f=>{const key=f.reg||f.flight;if(!handlingMap[key])handlingMap[key]={reg:f.reg,arr:null,dep:null,flights:[]};handlingMap[key].flights.push(f);if(f.type==='arr')handlingMap[key].arr=f;else handlingMap[key].dep=f;});
+  const handlingGroups=Object.values(handlingMap);
+  let bottomRows='';
+  for(let i=0;i<4;i++){
+    const hs=hsFlights[i]||null;
+    const h=handlingGroups[i]||null;
+    const r=rentingDedup[i]||null;
+    const hReg=h?h.flights[0].reg||'':'';
+    const hFlt=h?(h.arr?h.arr.flight:(h.dep?h.dep.flight:'')):'';
+    const hArr=h&&h.arr?h.arr.eta:'';
+    const hDep=h&&h.dep?h.dep.eta:'';
+    const rentReg=r?r.reg||r.flight:'';
+    const hsReg=hs?hs.reg||'':'';
+    const hsFlt=hs?hs.flight:'';
+    const hsDep=hs?hs.eta:'';
+    bottomRows+=`<tr>
+      <td>${hsReg}</td><td>${hsFlt}</td><td style="border-right:4pt solid black">${hsDep}</td>
+      <td>${hReg}</td><td>${hFlt}</td>
+      <td>${hArr}</td>
+      <td style="border-right:4pt solid black">${hDep}</td>
+      <td>${rentReg}</td>
+    </tr>`;
+  }
+  document.getElementById('sh-bottom-rows').innerHTML=bottomRows;
+  window.print();
+}
+</script>
+</body>
+</html>
