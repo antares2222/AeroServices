@@ -191,6 +191,29 @@ textarea:focus{border-color:#e8b84b}
 .tl-btn-next{flex:1;padding:14px 6px;border:1px solid rgba(75,232,160,.4);border-radius:10px;background:rgba(75,232,160,.06);color:#4be8a0;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;line-height:1.4;text-align:center;transition:transform .15s}
 .tl-btn-actual:active,.tl-btn-next:active{transform:scale(.96)}
 .tl-sub{display:block;font-size:8px;font-family:'DM Mono',monospace;opacity:.7;letter-spacing:.5px;margin-top:2px}
+/* ── AERODATABOX TABLE ──────────────────────────────────────────── */
+.adb-tcard{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;overflow:hidden;margin-bottom:4px}
+.adb-thead{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #2a2d36}
+.adb-ttitle{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:#e8b84b}
+.adb-tcount{font-size:10px;font-family:'DM Mono',monospace;color:#6b7280}
+.adb-section-lbl{padding:7px 14px 4px;font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:1.5px;border-top:1px solid #2a2d36}
+.adb-tbl{width:100%;border-collapse:collapse}
+.adb-tbl th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 10px;border-bottom:1px solid #2a2d36;text-align:left;text-transform:uppercase}
+.adb-tbl td{font-family:'DM Mono',monospace;font-size:10px;padding:7px 10px;border-bottom:1px solid rgba(42,45,54,.5);vertical-align:middle}
+.adb-tbl tr:last-child td{border-bottom:none}
+.adb-tbl .dep-row td:first-child{border-left:2px solid #f87171}
+.adb-tbl .arr-row td:first-child{border-left:2px solid #4be8a0}
+.adb-bge{font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;white-space:nowrap}
+.adb-bge.exp{background:rgba(107,114,128,.2);color:#9ca3af}
+.adb-bge.fly{background:rgba(37,99,235,.2);color:#93c5fd}
+.adb-bge.ok{background:rgba(75,232,160,.15);color:#4be8a0}
+.adb-bge.ret{background:rgba(245,158,11,.2);color:#f59e0b}
+.adb-bge.ann{background:rgba(239,68,68,.2);color:#ef4444}
+.adb-bge.emb{background:rgba(232,184,75,.2);color:#e8b84b}
+.adb-empty{color:#6b7280;font-size:10px;font-family:'DM Mono',monospace;padding:10px 14px;text-align:center}
+.adb-flt{font-size:11px;font-weight:bold;color:#e8e8e8}
+.adb-orig{font-size:9px;color:#6b7280;display:block;margin-top:1px}
+.adb-time-rev{font-size:9px;color:#f59e0b;display:block;margin-top:1px}
 </style>
 </head>
 <body>
@@ -415,16 +438,17 @@ textarea:focus{border-color:#e8b84b}
     <div id="prev"></div>
   </div>
 
-  <!-- Vols exclus (ajoutables) -->
+  <!-- AeroDataBox : bouton + tableau de données -->
   <div id="adbCard" style="display:none;margin-bottom:4px">
     <button onclick="enrichFromAeroDataBox()" id="adbEnrichBtn"
       style="width:100%;background:#111318;border:1px solid #e8b84b;color:#e8b84b;padding:13px;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer;transition:all .2s">
-      🛩️ ENRICHIR VIA AERODATABOX
+      🛩️ VOIR VOLS AERODATABOX
     </button>
     <div id="adbStatus" style="font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:18px;margin-top:6px;color:#6b7280"></div>
   </div>
 
-  <div class="card" id="cardExcluded" style="display:none">
+  <!-- Tableau des données brutes AeroDataBox -->
+  <div id="adbTableSection" style="display:none;margin-bottom:4px"></div>
     <div class="fhdr">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#6b7280">AUTRES VOLS DISPONIBLES</div>
       <div class="cnt"><b id="cEx">0</b> vols</div>
@@ -432,7 +456,7 @@ textarea:focus{border-color:#e8b84b}
     <div id="prevEx"></div>
   </div>
 
-  <!-- Headset — menu dépliable -->
+  <div class="card" id="cardExcluded" style="display:none">
   <div class="card">
     <div class="fhdr" onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;margin-bottom:0">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#4be8a0">🎧 HEADSET</div>
@@ -1579,30 +1603,23 @@ function addDays(dateStr,days){
 }
 
 function getAdbWindows(dateStr,shift){
-  if(shift==='EARLY') return [{from:`${dateStr}T04:00`,to:`${dateStr}T16:00`}];
-  if(shift==='LATE'){
-    const next=addDays(dateStr,1);
-    return [{from:`${dateStr}T12:00`,to:`${next}T00:00`}];
-  }
+  if(shift==='EARLY') return [{from:`${dateStr}T04:00`,to:`${dateStr}T15:59`}];
+  if(shift==='LATE')  return [{from:`${dateStr}T12:00`,to:`${dateStr}T23:59`}];
   // NIGHT : 2 fenêtres pour traverser minuit
   const next=addDays(dateStr,1);
-  return [
-    {from:`${dateStr}T20:00`,to:`${next}T00:00`},
-    {from:`${next}T00:00`,to:`${next}T08:00`}
+  return[
+    {from:`${dateStr}T20:00`,to:`${dateStr}T23:59`},
+    {from:`${next}T00:00`,  to:`${next}T07:59`}
   ];
 }
 
 async function fetchAdbWindow(apiKey,from,to){
-  const url=`https://aerodatabox.p.rapidapi.com/flights/airports/icao/EBLG/${from}/${to}?withLeg=false&withCancelled=true&withCodeshared=false&withCargo=true&withPrivate=false&withLocation=false&direction=Both`;
-  const resp=await fetch(url,{
-    headers:{
-      'X-RapidAPI-Key':apiKey
-    }
-  });
+  const url=`https://aerodatabox.p.rapidapi.com/flights/airports/icao/EBLG/${from}/${to}?direction=Both&withCancelled=true&withCodeshared=false&withCargo=true&withPrivate=false&withLocation=false`;
+  const resp=await fetch(url,{headers:{'X-RapidAPI-Key':apiKey,'X-RapidAPI-Host':'aerodatabox.p.rapidapi.com'}});
   if(!resp.ok){
     const body=await resp.text().catch(()=>'');
     if(resp.status===403||resp.status===401) throw new Error('Clé API invalide ou quota dépassé ('+resp.status+')');
-    throw new Error('Erreur API '+resp.status+(body?' — '+body.slice(0,80):''));
+    throw new Error('Erreur API '+resp.status+(body?' — '+body.slice(0,120):''));
   }
   return resp.json();
 }
@@ -1685,41 +1702,105 @@ function setAdbStatus(msg,color){
 async function enrichFromAeroDataBox(){
   const apiKey=loadAdbKey();
   if(!apiKey){alert('Configure ta clé API AeroDataBox dans les paramètres ⚙️');return;}
-  if(!S.arr.length&&!S.dep.length){alert('Aucun vol chargé. Analyse le FIDS d\'abord.');return;}
 
   const btn=document.getElementById('adbEnrichBtn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ CONNEXION AERODATABOX...';}
-  setAdbStatus('Récupération des données...','#e8b84b');
+  if(btn){btn.disabled=true;btn.textContent='⏳ CHARGEMENT...';}
+  setAdbStatus('Connexion à AeroDataBox...','#e8b84b');
+  document.getElementById('adbTableSection').style.display='none';
 
   try{
     const dateStr=document.getElementById('sDate').value;
     const windows=getAdbWindows(dateStr,S.shift);
 
-    const allApiFlights=[];
+    const allDeps=[],allArrs=[];
     for(const w of windows){
       const data=await fetchAdbWindow(apiKey,w.from,w.to);
-      if(data.departures) allApiFlights.push(...data.departures.map(f=>({...f,isDep:true})));
-      if(data.arrivals)   allApiFlights.push(...data.arrivals.map(f=>({...f,isDep:false})));
+      if(data.departures) allDeps.push(...data.departures);
+      if(data.arrivals)   allArrs.push(...data.arrivals);
     }
 
-    const matched=applyAdbData(allApiFlights);
-    renderPreview();
+    const total=allDeps.length+allArrs.length;
+    if(!total){
+      setAdbStatus('⚠ Aucun vol retourné pour cette fenêtre horaire.','#f59e0b');
+      return;
+    }
 
-    const active=[...S.arr,...S.dep];
-    const nbDelayed=active.filter(f=>f.adbStatus==='Delayed').length;
-    const nbCancelled=active.filter(f=>f.adbStatus==='Canceled'||f.adbStatus==='Cancelled').length;
-    let msg=`✓ ${matched}/${active.length} vol(s) enrichi(s)`;
-    if(nbDelayed) msg+=` · <span style="color:#f59e0b">⚠ ${nbDelayed} retard(s)</span>`;
-    if(nbCancelled) msg+=` · <span style="color:#ef4444">✕ ${nbCancelled} annulé(s)</span>`;
-    if(matched===0) msg=`<span style="color:#f59e0b">⚠ Aucune correspondance trouvée. Vérifie la date/shift.</span>`;
-    setAdbStatus(msg,'#4be8a0');
+    renderAdbTable(allArrs,allDeps,S.shift,dateStr);
+    setAdbStatus(`✓ ${total} vols reçus · tableau ci-dessous`,'#4be8a0');
 
   }catch(e){
     setAdbStatus('❌ '+e.message,'#ef4444');
     console.error('AeroDataBox error:',e);
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='🛩️ ENRICHIR VIA AERODATABOX';}
+    if(btn){btn.disabled=false;btn.textContent='🛩️ VOIR VOLS AERODATABOX';}
   }
+}
+
+function adbStatusBadge(f){
+  const s=(f.status||'').toLowerCase().replace(/\s/g,'');
+  if(s==='expected')       return'<span class="adb-bge exp">PRÉVU</span>';
+  if(s==='departed')       return'<span class="adb-bge ok">PARTI ✓</span>';
+  if(s==='arrived')        return'<span class="adb-bge ok">ATTERRI ✓</span>';
+  if(s==='landed')         return'<span class="adb-bge ok">ATTERRI ✓</span>';
+  if(s==='delayed'){
+    const rev=extractTimeLocal(f.movement?.revisedTime?.local);
+    return`<span class="adb-bge ret">⚠ RET${rev?' '+rev:''}</span>`;
+  }
+  if(s==='canceled'||s==='cancelled') return'<span class="adb-bge ann">✕ ANNULÉ</span>';
+  if(s==='gateclosed')     return'<span class="adb-bge emb">EMBARQ.</span>';
+  if(s==='enroute'||s==='flying'||s==='airborne') return'<span class="adb-bge fly">✈ EN VOL</span>';
+  if(s==='unknown')        return'<span class="adb-bge exp">?</span>';
+  return f.status?`<span class="adb-bge exp">${f.status}</span>`:'';
+}
+
+function renderAdbTable(arrs,deps,shift,dateStr){
+  // Trier par heure planifiée
+  const sortFn=(a,b)=>{
+    const ta=extractTimeLocal(a.movement?.scheduledTime?.local)||'99:99';
+    const tb=extractTimeLocal(b.movement?.scheduledTime?.local)||'99:99';
+    return ta.localeCompare(tb);
+  };
+  arrs=[...arrs].sort(sortFn);
+  deps=[...deps].sort(sortFn);
+
+  function buildRows(flights,cls){
+    if(!flights.length) return`<tr><td colspan="4" class="adb-empty">Aucun vol dans cette fenêtre</td></tr>`;
+    return flights.map(f=>{
+      const sched=extractTimeLocal(f.movement?.scheduledTime?.local)||'--:--';
+      const rev=extractTimeLocal(f.movement?.revisedTime?.local);
+      const hasRev=rev&&rev!==sched;
+      const reg=f.aircraft?.reg||'—';
+      const num=f.number||'—';
+      const port=f.movement?.airport?.iata||f.movement?.airport?.icao||'';
+      const isCargo=f.isCargo?'<span style="font-size:8px;color:#6b7280"> CGO</span>':'';
+      return`<tr class="${cls}-row">
+        <td><span style="font-size:11px;color:#e8e8e8">${sched}</span>${hasRev?`<span class="adb-time-rev">→ ${rev}</span>`:''}</td>
+        <td><span class="adb-flt">${num}</span>${isCargo}<span class="adb-orig">${port}</span></td>
+        <td style="color:#9ca3af">${reg}</td>
+        <td>${adbStatusBadge(f)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  const html=`<div class="adb-tcard">
+    <div class="adb-thead">
+      <div class="adb-ttitle">🛩 AERODATABOX · ${shift}</div>
+      <div class="adb-tcount">${arrs.length+deps.length} vols · ${dateStr}</div>
+    </div>
+    <div class="adb-section-lbl" style="color:#4be8a0">▼ ARRIVÉES (${arrs.length})</div>
+    <table class="adb-tbl">
+      <thead><tr><th>Heure</th><th>Vol · Orig.</th><th>Immat.</th><th>Statut</th></tr></thead>
+      <tbody>${buildRows(arrs,'arr')}</tbody>
+    </table>
+    <div class="adb-section-lbl" style="color:#f87171">▲ DÉPARTS (${deps.length})</div>
+    <table class="adb-tbl">
+      <thead><tr><th>Heure</th><th>Vol · Dest.</th><th>Immat.</th><th>Statut</th></tr></thead>
+      <tbody>${buildRows(deps,'dep')}</tbody>
+    </table>
+  </div>`;
+
+  const sec=document.getElementById('adbTableSection');
+  if(sec){sec.innerHTML=html;sec.style.display='block';}
 }
 </script>
 </body>
