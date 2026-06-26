@@ -11,8 +11,8 @@
 body{background:#0a0a0a;color:#e8e8e8;font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:60px}
 
 /* ── RESPONSIVE DESKTOP ── */
-.header-inner{max-width:1200px;margin:0 auto}
-.sec{padding:20px;display:none}.sec.show{display:block;max-width:1200px;margin:0 auto}
+.header-inner{max-width:600px;margin:0 auto}
+.sec{padding:20px;display:none}.sec.show{display:block;max-width:600px;margin:0 auto}
 
 @media(min-width:700px){
   body{background:#060608}
@@ -20,9 +20,9 @@ body{background:#0a0a0a;color:#e8e8e8;font-family:'DM Sans',sans-serif;min-heigh
   .card{border-radius:14px}
   .logo{font-size:30px}
   .sub{font-size:11px}
-  .settings-panel{max-width:1200px;margin:40px auto}
-  .header-top{max-width:1200px;margin:0 auto}
-  .steps{max-width:1200px;margin:8px auto 0}
+  .settings-panel{max-width:600px;margin:40px auto}
+  .header-top{max-width:600px;margin:0 auto}
+  .steps{max-width:600px;margin:8px auto 0}
 }
 .header{background:#111318;border-bottom:1px solid #2a2d36;padding:18px 20px 14px;position:sticky;top:0;z-index:100}
 .header-top{display:flex;align-items:center;justify-content:space-between}
@@ -164,6 +164,33 @@ textarea:focus{border-color:#e8b84b}
   .crossed{background:repeating-linear-gradient(45deg,#ddd,#ddd 1pt,white 1pt,white 4pt);}
   table.pb tr{height:30pt}
 }
+/* ── TIMELINE ───────────────────────────────────────────────── */
+.tl-section{display:none;margin-bottom:12px}
+.tl-card{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;padding:14px 14px 10px;overflow:hidden}
+.tl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.tl-title{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#6b7280}
+.tl-legend{display:flex;gap:8px;flex-wrap:wrap}
+.tl-leg{display:flex;align-items:center;gap:3px;font-size:8px;font-family:'DM Mono',monospace;color:#6b7280}
+.tl-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.tl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px 6px}
+.tl-inner{min-width:560px;position:relative}
+.tl-axis-row{display:flex;height:22px;margin-left:68px;position:relative;border-bottom:1px solid #2a2d36;margin-bottom:1px}
+.tl-tick{position:absolute;font-size:8px;color:#4b5563;font-family:'DM Mono',monospace;transform:translateX(-50%);top:4px;user-select:none}
+.tl-aircraft-row{display:flex;align-items:center;min-height:30px;border-bottom:1px solid rgba(42,45,54,.5)}
+.tl-aircraft-row:last-child{border-bottom:none}
+.tl-reg-lbl{width:68px;flex-shrink:0;font-size:8.5px;font-family:'DM Mono',monospace;color:#9ca3af;text-align:right;padding-right:8px;line-height:1.2;word-break:break-all}
+.tl-track{flex:1;height:30px;position:relative}
+.tl-shift-band{position:absolute;top:0;bottom:0;background:rgba(232,184,75,.07);border-left:1.5px solid rgba(232,184,75,.22);border-right:1.5px solid rgba(232,184,75,.22);pointer-events:none;z-index:0}
+.tl-gridln{position:absolute;top:0;bottom:0;width:1px;background:rgba(42,45,54,.9);pointer-events:none;z-index:0}
+.tl-bar{position:absolute;top:6px;height:18px;border-radius:3px;z-index:1;display:flex;align-items:center;justify-content:center;min-width:3px;overflow:hidden}
+.tl-bar-lbl{font-size:7px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.9);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tl-bar-open{border-style:dashed!important;opacity:.4!important}
+/* Nav buttons */
+.tl-nav{display:flex;gap:8px;margin-top:8px}
+.tl-btn-actual{flex:1;padding:14px 6px;border:none;border-radius:10px;background:#e8b84b;color:#0a0a0a;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;line-height:1.4;text-align:center;transition:transform .15s}
+.tl-btn-next{flex:1;padding:14px 6px;border:1px solid rgba(75,232,160,.4);border-radius:10px;background:rgba(75,232,160,.06);color:#4be8a0;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;line-height:1.4;text-align:center;transition:transform .15s}
+.tl-btn-actual:active,.tl-btn-next:active{transform:scale(.96)}
+.tl-sub{display:block;font-size:8px;font-family:'DM Mono',monospace;opacity:.7;letter-spacing:.5px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -275,6 +302,30 @@ textarea:focus{border-color:#e8b84b}
       </div>
     </div>
 
+    <!-- AeroDataBox -->
+    <div class="settings-section">
+      <div class="settings-section-title">🛩 AERODATABOX API</div>
+      <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:10px;line-height:1.6">
+        Enrichit automatiquement les vols avec la Registration, le Stand réel et le statut en temps réel (retards / annulations).<br>
+        Clé disponible via <a href="https://rapidapi.com/aedbx-aedbx/api/aerodatabox" target="_blank" style="color:#e8b84b;text-decoration:none">RapidAPI.com</a> · Plan gratuit disponible.
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:10px;color:#e8e8e8;font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:6px">CLÉ RAPIDAPI</div>
+        <div style="display:flex;gap:8px">
+          <input type="password" id="adb-key-input" placeholder="Colle ta clé RapidAPI ici..."
+            style="flex:1;background:#0a0a0a;border:1px solid #2a2d36;border-radius:6px;color:#e8e8e8;font-family:'DM Mono',monospace;font-size:11px;padding:8px 10px;outline:none;min-width:0">
+          <button onclick="saveAdbKey()"
+            style="background:#e8b84b;border:none;border-radius:6px;color:#0a0a0a;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;padding:8px 14px;cursor:pointer;white-space:nowrap">
+            SAUVEGARDER
+          </button>
+        </div>
+        <div id="adb-key-status" style="font-size:10px;margin-top:6px;font-family:'DM Mono',monospace;color:#6b7280;min-height:14px"></div>
+      </div>
+      <div style="font-size:10px;color:#f59e0b;font-family:'DM Mono',monospace;line-height:1.5;padding:8px;background:rgba(245,158,11,0.08);border-radius:6px;border:1px solid rgba(245,158,11,0.2)">
+        ⚠ AeroDataBox n'est pas certifié pour usage opérationnel critique. À utiliser à titre informatif uniquement.
+      </div>
+    </div>
+
     <div style="padding:16px 20px">
       <button class="settings-save" onclick="saveSettings()">✓ SAUVEGARDER</button>
     </div>
@@ -320,6 +371,35 @@ textarea:focus{border-color:#e8b84b}
     <button class="btn bs" onclick="go(0)">← RETOUR</button>
     <button class="btn bp" onclick="doAnalyse()">ANALYSER →</button>
   </div>
+
+  <!-- Timeline (affiché après analyse) -->
+  <div id="tlSection" class="tl-section">
+    <div class="tl-card">
+      <div class="tl-header">
+        <div class="tl-title">⏱ TEMPS SOL PAR AVION</div>
+        <div class="tl-legend">
+          <div class="tl-leg"><div class="tl-leg-dot" style="background:#2563eb"></div>WFS</div>
+          <div class="tl-leg"><div class="tl-leg-dot" style="background:#7c3aed"></div>CHALLENGE</div>
+          <div class="tl-leg"><div class="tl-leg-dot" style="background:#059669"></div>SWISSPORT</div>
+          <div class="tl-leg"><div class="tl-leg-dot" style="background:#d97706"></div>AVIAPARTNER</div>
+          <div class="tl-leg"><div class="tl-leg-dot" style="background:#374151"></div>AUTRE</div>
+        </div>
+      </div>
+      <div class="tl-scroll">
+        <div id="tlInner" class="tl-inner"></div>
+      </div>
+    </div>
+    <div class="tl-nav">
+      <button class="tl-btn-actual" onclick="goActualShift()">
+        ✈ CREW BUS / OPS
+        <span class="tl-sub" id="actualShiftLbl">ACTUAL SHIFT</span>
+      </button>
+      <button class="tl-btn-next" onclick="goNextShift()">
+        NEXT SHIFT →
+        <span class="tl-sub" id="nextShiftLbl">LATE</span>
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- STEP 2 -->
@@ -336,6 +416,14 @@ textarea:focus{border-color:#e8b84b}
   </div>
 
   <!-- Vols exclus (ajoutables) -->
+  <div id="adbCard" style="display:none;margin-bottom:4px">
+    <button onclick="enrichFromAeroDataBox()" id="adbEnrichBtn"
+      style="width:100%;background:#111318;border:1px solid #e8b84b;color:#e8b84b;padding:13px;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer;transition:all .2s">
+      🛩️ ENRICHIR VIA AERODATABOX
+    </button>
+    <div id="adbStatus" style="font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:18px;margin-top:6px;color:#6b7280"></div>
+  </div>
+
   <div class="card" id="cardExcluded" style="display:none">
     <div class="fhdr">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#6b7280">AUTRES VOLS DISPONIBLES</div>
@@ -551,6 +639,13 @@ let PARAMS = loadParams();
 
 function openSettings(){
   renderSettings();
+  // Populate AeroDataBox key
+  const adbEl=document.getElementById('adb-key-input');
+  const adbKey=loadAdbKey();
+  if(adbEl){
+    adbEl.value=adbKey||'';
+    if(adbKey){const s=document.getElementById('adb-key-status');if(s){s.textContent='✓ Clé configurée';s.style.color='#4be8a0';}}
+  }
   document.getElementById('settingsOverlay').classList.add('open');
 }
 function closeSettings(){
@@ -713,7 +808,8 @@ function doAnalyse(){
   const total=arrivals.length+departures.length;
   if(!total){document.getElementById('iInfo').innerHTML=`<span class="err">⚠ Aucun vol détecté (shift ${S.shift}).</span>`;return;}
   document.getElementById('iInfo').innerHTML=`<span class="ok">✓ ${arrivals.length} arrivée(s) + ${departures.length} départ(s)</span>`;
-  renderPreview();go(2);
+  updateAdbCard();
+  renderTimeline();
 }
 
 // ── Ajouter un vol exclu ─────────────────────────────────────────
@@ -803,6 +899,7 @@ function renderPreview(){
     h+=`<div class="grp a">✈ ARRIVÉES (${S.arr.length})</div>`;
     S.arr.forEach(f=>{
       const isWfs=f.handler.toUpperCase()==='WFS';
+      const adbBadge=f.adbStatus==='Delayed'?`<div style="font-size:10px;color:#f59e0b;font-family:'DM Mono',monospace;margin-top:3px">⚠ RETARD${f.adbEta?' → '+f.adbEta:''}</div>`:f.adbStatus==='Canceled'||f.adbStatus==='Cancelled'?`<div style="font-size:10px;color:#ef4444;font-family:'DM Mono',monospace;margin-top:3px">✕ ANNULÉ</div>`:'';
       h+=`<div class="fi a">
         <div class="fi-top">
           <div class="fi-t">${f.time}</div>
@@ -813,6 +910,7 @@ function renderPreview(){
               <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editField('${f.flight}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
               <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
             </div>
+            ${adbBadge}
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
             <div class="fi-bx a">ARR</div>
@@ -831,6 +929,7 @@ function renderPreview(){
       const isWfs=f.handler.toUpperCase()==='WFS';
       const isSwp=f.handler.toUpperCase()==='SWISSPORT';
       const showHs=isWfs||isSwp;
+      const adbBadge=f.adbStatus==='Delayed'?`<div style="font-size:10px;color:#f59e0b;font-family:'DM Mono',monospace;margin-top:3px">⚠ RETARD${f.adbEta?' → ETD '+f.adbEta+' · Pick up '+pickup(f.adbEta):''}</div>`:f.adbStatus==='Canceled'||f.adbStatus==='Cancelled'?`<div style="font-size:10px;color:#ef4444;font-family:'DM Mono',monospace;margin-top:3px">✕ ANNULÉ</div>`:'';
       h+=`<div class="fi d">
         <div class="fi-top">
           <div class="fi-t">${f.time}<div class="fi-etd">ETD ${f.eta}</div></div>
@@ -841,6 +940,7 @@ function renderPreview(){
               <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editField('${f.flight}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
               <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
             </div>
+            ${adbBadge}
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
             <div class="fi-bx d">DEP</div>
@@ -919,10 +1019,32 @@ function genPDF(){
   document.getElementById('sh-date').textContent='Crew bus service   '+dl+'   '+S.shift;
   document.getElementById('sh-shift').innerHTML='';
   let rows='';
-  S.arr.forEach(f=>{rows+=`<tr><td class="col-reg font-lg">${f.reg||''}</td><td class="col-flt font-lg">${f.flight}</td><td class="col-arr"><span class="badge-arr">ARR</span></td><td class="col-pup">Pick up</td><td class="col-time font-lg">${f.time}</td><td class="col-note"></td><td class="col-stand">${f.stand||''}</td></tr>`;});
+  S.arr.forEach(f=>{
+    const retNote=f.adbStatus==='Delayed'?(f.adbEta?`RET→${f.adbEta}`:'RET'):(f.adbStatus==='Canceled'||f.adbStatus==='Cancelled'?'ANN':'');
+    rows+=`<tr${(f.adbStatus==='Canceled'||f.adbStatus==='Cancelled')?' style="opacity:0.5"':''}>
+      <td class="col-reg font-lg">${f.reg||''}</td>
+      <td class="col-flt font-lg">${f.flight}</td>
+      <td class="col-arr"><span class="badge-arr">ARR</span></td>
+      <td class="col-pup">Pick up</td>
+      <td class="col-time font-lg">${f.time}</td>
+      <td class="col-note" style="${retNote?'font-size:8pt;font-weight:bold;color:#b45309':''}">${retNote}</td>
+      <td class="col-stand">${f.stand||''}</td>
+    </tr>`;
+  });
   // Ligne vide de séparation entre arrivées et départs
   if(S.arr.length&&S.dep.length){rows+=`<tr class="per"><td></td><td></td><td class="col-arr">ARR</td><td class="col-pup">Pick up</td><td></td><td></td><td></td></tr>`;}
-  S.dep.forEach(f=>{rows+=`<tr><td class="col-reg font-lg">${f.reg||''}</td><td class="col-flt font-lg">${f.flight}</td><td class="col-arr">ARR</td><td class="col-pup"><span class="badge-pup">Pick up</span></td><td class="col-time font-lg">${f.time}</td><td class="col-note"></td><td class="col-stand">${f.stand||''}</td></tr>`;});
+  S.dep.forEach(f=>{
+    const retNote=f.adbStatus==='Delayed'?(f.adbEta?`RET→${f.adbEta}`:'RET'):(f.adbStatus==='Canceled'||f.adbStatus==='Cancelled'?'ANN':'');
+    rows+=`<tr${(f.adbStatus==='Canceled'||f.adbStatus==='Cancelled')?' style="opacity:0.5"':''}>
+      <td class="col-reg font-lg">${f.reg||''}</td>
+      <td class="col-flt font-lg">${f.flight}</td>
+      <td class="col-arr">ARR</td>
+      <td class="col-pup"><span class="badge-pup">Pick up</span></td>
+      <td class="col-time font-lg">${f.time}</td>
+      <td class="col-note" style="${retNote?'font-size:8pt;font-weight:bold;color:#b45309':''}">${retNote}</td>
+      <td class="col-stand">${f.stand||''}</td>
+    </tr>`;
+  });
   const sep=(S.arr.length&&S.dep.length)?1:0;
   const dataRows=S.arr.length+S.dep.length+sep;
   // 19 lignes minimum, s'étend si plus de vols
@@ -1238,6 +1360,366 @@ function genPDFOps(){
       document.getElementById('sheetOps').classList.remove('do-print');
     }, 500);
   }, 300);
+}
+
+// ── TIMELINE ────────────────────────────────────────────────────────
+
+function parseAllFlights(text){
+  const flights=[],seen=new Set();
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l.length>5);
+  for(const line of lines){
+    const upper=line.toUpperCase();
+    if(/^(date\b|flight\b|a\/c\b|direction\b|handler\b|filter\b|utc\b|^lt$|night mode|day mode|version|all time|reset\b|clear\b|cancel\b|took off|soon\b|later\b|landed\b|runway\b|^stand$|^via$|^arrivals$|^departures$|pyxis|system op)/i.test(line))continue;
+    if(line.length<6)continue;
+    const tokens=line.split(/\s+/);
+    if(tokens.length<3)continue;
+    const times=tokens.filter(t=>/^\d{1,2}:\d{2}$/.test(t));
+    if(!times.length)continue;
+    const eta=times[times.length-1];
+    let type=null;
+    if(/^departures?\b/i.test(line))type='dep';
+    else if(/^arrivals?\b/i.test(line))type='arr';
+    else if(/\bdepartures?\b/i.test(line))type='dep';
+    else if(/\barrivals?\b/i.test(line))type='arr';
+    else{const idx=tokens.findIndex(t=>t==='EBLG'||t==='ELLX');if(idx!==-1)type=idx<tokens.length/2?'dep':'arr';else type='arr';}
+    let hw='';for(const h of HL){if(upper.includes(h)){hw=h;break;}}
+    let flight='';
+    for(const t of tokens){if(/^[A-Z]{1,3}\d{3,5}[A-Z]?$/.test(t)&&!/^\d+$/.test(t)){flight=t;break;}}
+    if(!flight)continue;
+    const key=flight+'_'+type+'_'+eta;
+    if(seen.has(key))continue;seen.add(key);
+    let reg='';
+    for(const t of tokens){if(t===flight||/^\d{1,2}:\d{2}$/.test(t)||/^\d{2}\//.test(t))continue;if(HL.includes(t.toUpperCase())||t==='EBLG'||t==='ELLX')continue;if(isStand(t))continue;if(isReg(t)){reg=t;break;}}
+    let stand='';for(const t of tokens){if(isStand(t)&&t!==reg){stand=t;break;}}
+    flights.push({flight,reg,eta,type,handler:hw,stand});
+  }
+  return flights;
+}
+
+function tlColor(hw){
+  const h=(hw||'').toUpperCase();
+  if(h==='WFS')return'#2563eb';
+  if(h==='CHALLENGE')return'#7c3aed';
+  if(h==='SWISSPORT')return'#059669';
+  if(h==='AVIAPARTNER')return'#d97706';
+  return'#374151';
+}
+
+function tlWin(shift){
+  if(shift==='EARLY')return{ws:4*60,wd:720};
+  if(shift==='LATE')return{ws:12*60,wd:720};
+  return{ws:20*60,wd:720};
+}
+
+function tlPct(timeStr,ws,wd){
+  const[h,m]=timeStr.split(':').map(Number);
+  let mins=h*60+m;
+  if(ws+wd>1440&&mins<(ws+wd)-1440)mins+=1440;
+  return((mins-ws)/wd)*100;
+}
+
+function tlNorm(timeStr,ws,wd){
+  const[h,m]=timeStr.split(':').map(Number);
+  let mins=h*60+m;
+  if(ws+wd>1440&&mins<(ws+wd)-1440)mins+=1440;
+  return mins;
+}
+
+function tlLabel(mins){
+  const h=Math.floor((mins%1440)/60),m=mins%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+
+function tlBuildSegs(flights,ws,wd){
+  const byReg={};
+  const noReg=[];
+  for(const f of flights){
+    if(!f.reg){noReg.push(f);continue;}
+    if(!byReg[f.reg])byReg[f.reg]={arrs:[],deps:[],handler:''};
+    if(f.handler)byReg[f.reg].handler=f.handler;
+    if(f.type==='arr')byReg[f.reg].arrs.push(f);
+    else byReg[f.reg].deps.push(f);
+  }
+  const segs=[];
+  for(const[reg,{arrs,deps,handler}]of Object.entries(byReg)){
+    const sa=[...arrs].sort((a,b)=>tlNorm(a.eta,ws,wd)-tlNorm(b.eta,ws,wd));
+    const sd=[...deps].sort((a,b)=>tlNorm(a.eta,ws,wd)-tlNorm(b.eta,ws,wd));
+    const usedDep=new Set();
+    for(const arr of sa){
+      const aN=tlNorm(arr.eta,ws,wd);
+      const di=sd.findIndex((_,i)=>!usedDep.has(i)&&tlNorm(sd[i].eta,ws,wd)>aN);
+      if(di!==-1){usedDep.add(di);segs.push({reg,arrTime:arr.eta,depTime:sd[di].eta,arrFlight:arr.flight,depFlight:sd[di].flight,handler:handler||arr.handler});}
+      else segs.push({reg,arrTime:arr.eta,depTime:null,arrFlight:arr.flight,depFlight:null,handler:handler||arr.handler});
+    }
+    for(let i=0;i<sd.length;i++){if(!usedDep.has(i))segs.push({reg,arrTime:null,depTime:sd[i].eta,arrFlight:null,depFlight:sd[i].flight,handler});}
+  }
+  for(const f of noReg){segs.push({reg:null,label:f.flight,arrTime:f.type==='arr'?f.eta:null,depTime:f.type==='dep'?f.eta:null,arrFlight:f.type==='arr'?f.flight:null,depFlight:f.type==='dep'?f.flight:null,handler:f.handler});}
+  segs.sort((a,b)=>{const ta=a.arrTime||a.depTime||'99:99',tb=b.arrTime||b.depTime||'99:99';return tlNorm(ta,ws,wd)-tlNorm(tb,ws,wd);});
+  return segs;
+}
+
+function renderTimeline(){
+  const text=document.getElementById('tFids').value;
+  if(!text.trim())return;
+  const allF=parseAllFlights(text);
+  const{ws,wd}=tlWin(S.shift);
+  const segs=tlBuildSegs(allF,ws,wd);
+
+  // Shift band: always middle 8h of the 12h window = 16.67% to 83.33%
+  const sBL=(2/12)*100, sBW=(8/12)*100;
+
+  // Axis
+  let axisH='',gridH='';
+  for(let i=0;i<=12;i+=2){
+    const pct=(i/12)*100;
+    axisH+=`<div class="tl-tick" style="left:${pct}%">${tlLabel(ws+i*60)}</div>`;
+    gridH+=`<div class="tl-gridln" style="left:${pct}%"></div>`;
+  }
+
+  // Active flights (in current shift)
+  const active=new Set([...S.arr,...S.dep].map(f=>f.flight));
+
+  let rowsH='',rowCount=0;
+  for(const seg of segs){
+    const col=tlColor(seg.handler);
+    const lbl=seg.reg||seg.label||'?';
+    const isAct=(seg.arrFlight&&active.has(seg.arrFlight))||(seg.depFlight&&active.has(seg.depFlight));
+    const opa=isAct?1:0.4;
+    let barH='';
+
+    if(seg.arrTime&&seg.depTime){
+      let l=tlPct(seg.arrTime,ws,wd),r=tlPct(seg.depTime,ws,wd);
+      if(r<0||l>100)continue;
+      l=Math.max(0,l);r=Math.min(100,r);
+      const w=r-l;if(w<=0)continue;
+      const inner=w>9?`<span class="tl-bar-lbl">${seg.arrFlight||''}→${seg.depFlight||''}</span>`:'';
+      barH=`<div class="tl-bar" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%;background:${col};opacity:${opa};border:1px solid rgba(255,255,255,.12)" title="${seg.arrFlight||'?'} → ${seg.depFlight||'?'} (${seg.arrTime}–${seg.depTime})">${inner}</div>`;
+    }else if(seg.arrTime){
+      let l=tlPct(seg.arrTime,ws,wd);
+      if(l>100)continue;l=Math.max(0,l);
+      const w=Math.min(10,100-l);
+      barH=`<div class="tl-bar tl-bar-open" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%;border:1px dashed ${col}" title="${seg.arrFlight||'?'} ARR ${seg.arrTime}"></div>`;
+    }else if(seg.depTime){
+      let r=tlPct(seg.depTime,ws,wd);
+      if(r<0)continue;r=Math.min(100,r);
+      const l=Math.max(0,r-10);
+      barH=`<div class="tl-bar tl-bar-open" style="left:${l.toFixed(2)}%;width:${(r-l).toFixed(2)}%;border:1px dashed ${col}" title="${seg.depFlight||'?'} DEP ${seg.depTime}"></div>`;
+    }
+    if(!barH)continue;
+    rowCount++;
+    rowsH+=`<div class="tl-aircraft-row">
+      <div class="tl-reg-lbl">${lbl}</div>
+      <div class="tl-track">
+        <div class="tl-shift-band" style="left:${sBL.toFixed(2)}%;width:${sBW.toFixed(2)}%"></div>
+        ${gridH}${barH}
+      </div>
+    </div>`;
+  }
+
+  const inner=document.getElementById('tlInner');
+  if(!rowCount){
+    inner.innerHTML='<div style="color:#6b7280;font-size:11px;font-family:\'DM Mono\',monospace;padding:10px;text-align:center">Aucune immatriculation détectée — la timeline nécessite les registrations dans le FIDS.</div>';
+  }else{
+    inner.innerHTML=`<div class="tl-axis-row">${axisH}</div>${rowsH}`;
+  }
+
+  // Update labels
+  const map={'EARLY':'LATE','LATE':'NIGHT','NIGHT':'EARLY'};
+  const nxt=map[S.shift];
+  const el=document.getElementById('nextShiftLbl');if(el)el.textContent=nxt;
+  const al=document.getElementById('actualShiftLbl');if(al)al.textContent=S.shift;
+  document.getElementById('tlSection').style.display='block';
+}
+
+function goActualShift(){renderPreview();go(2);}
+
+function goNextShift(){
+  const map={'EARLY':'LATE','LATE':'NIGHT','NIGHT':'EARLY'};
+  const nxt=map[S.shift];
+  S.shift=nxt;
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById(nxt==='EARLY'?'bE':nxt==='LATE'?'bL':'bN').classList.add('sel');
+  const t=document.getElementById('tFids').value;
+  const{arrivals,departures,excluded}=parseFids(t);
+  S.arr=arrivals;S.dep=departures;S.excluded=excluded;
+  buildOps();renderPreview();go(3);
+}
+
+// ── AERODATABOX ─────────────────────────────────────────────────────
+
+const ADB_KEY_STORE='crewbus_adb_key';
+
+function loadAdbKey(){return localStorage.getItem(ADB_KEY_STORE)||'';}
+
+function saveAdbKey(){
+  const input=document.getElementById('adb-key-input');
+  const key=(input?.value||'').trim();
+  const status=document.getElementById('adb-key-status');
+  if(!key){
+    if(status){status.textContent='⚠ Clé vide — non sauvegardée';status.style.color='#f59e0b';}
+    return;
+  }
+  localStorage.setItem(ADB_KEY_STORE,key);
+  if(status){status.textContent='✓ Clé sauvegardée';status.style.color='#4be8a0';}
+  setTimeout(()=>{if(status){status.textContent='✓ Clé configurée';status.style.color='#4be8a0';}},2000);
+  updateAdbCard();
+}
+
+function updateAdbCard(){
+  const card=document.getElementById('adbCard');
+  if(card) card.style.display=loadAdbKey()?'block':'none';
+}
+// Afficher le bouton ADB au chargement si clé déjà présente
+document.addEventListener('DOMContentLoaded',updateAdbCard);
+
+function addDays(dateStr,days){
+  const d=new Date(dateStr+'T12:00:00');
+  d.setDate(d.getDate()+days);
+  return d.toISOString().slice(0,10);
+}
+
+function getAdbWindows(dateStr,shift){
+  if(shift==='EARLY') return [{from:`${dateStr}T04:00`,to:`${dateStr}T16:00`}];
+  if(shift==='LATE'){
+    const next=addDays(dateStr,1);
+    return [{from:`${dateStr}T12:00`,to:`${next}T00:00`}];
+  }
+  // NIGHT : 2 fenêtres pour traverser minuit
+  const next=addDays(dateStr,1);
+  return [
+    {from:`${dateStr}T20:00`,to:`${next}T00:00`},
+    {from:`${next}T00:00`,to:`${next}T08:00`}
+  ];
+}
+
+async function fetchAdbWindow(apiKey,from,to){
+  const url=`https://aerodatabox.p.rapidapi.com/airports/icao/EBLG/flights/${from}/${to}?withLeg=true&withCancelled=true&withCodeshared=false&withCargo=true&withPrivate=false&direction=Both`;
+  const resp=await fetch(url,{
+    headers:{
+      'X-RapidAPI-Key':apiKey
+    }
+  });
+  if(!resp.ok){
+    const body=await resp.text().catch(()=>'');
+    if(resp.status===403||resp.status===401) throw new Error('Clé API invalide ou quota dépassé ('+resp.status+')');
+    throw new Error('Erreur API '+resp.status+(body?' — '+body.slice(0,80):''));
+  }
+  return resp.json();
+}
+
+function extractTimeLocal(localStr){
+  // Extraire HH:MM depuis "2026-06-25 07:35", "2026-06-25T07:35:00" ou "2026-06-25T07:35:00+02:00"
+  if(!localStr)return null;
+  const m=localStr.match(/[T ]\s*(\d{2}:\d{2})/);
+  return m?m[1]:null;
+}
+
+function applyAdbData(apiFlights){
+  // Table de correspondance ICAO → IATA pour les compagnies cargo courantes à LGG
+  const ICAO_TO_IATA={'TAY':'3V','ABB':'5O','ETH':'ET','QTR':'QR','SVA':'SV','LHA':'LH','GTI':'GT','ICL':'FO','CHG':'G5','AAE':'KO'};
+
+  // Index par numéro de vol — on indexe aussi avec la conversion ICAO→IATA
+  const byNum={};
+  for(const f of apiFlights){
+    if(!f.number)continue;
+    const num=f.number.toUpperCase();
+    byNum[num]=f;
+    // Indexer aussi la version IATA→ICAO (reverse lookup)
+    const pfx=num.replace(/\d.*$/,'');
+    const icao=Object.keys(ICAO_TO_IATA).find(k=>ICAO_TO_IATA[k]===pfx);
+    if(icao)byNum[icao+num.slice(pfx.length)]=f;
+  }
+  // Index par heure planifiée + direction (fallback)
+  const byTime={};
+  for(const f of apiFlights){
+    const t=extractTimeLocal(f.movement?.scheduledTime?.local);
+    if(!t)continue;
+    const dir=f.isDep?'dep':'arr';
+    const key=t+'_'+dir;
+    if(!byTime[key])byTime[key]=[];
+    byTime[key].push(f);
+  }
+
+  let matched=0;
+  const allFlights=[...S.arr,...S.dep,...S.excluded];
+  for(const f of allFlights){
+    let apiF=byNum[f.flight.toUpperCase()];
+    // Fallback : match par heure schedulée + direction
+    if(!apiF){
+      const refKey=f.eta+'_'+f.type;
+      const candidates=byTime[refKey]||[];
+      if(candidates.length===1) apiF=candidates[0];
+    }
+    if(!apiF) continue;
+    matched++;
+
+    // Registration (seulement si manquante)
+    if(!f.reg&&apiF.aircraft?.reg) f.reg=apiF.aircraft.reg;
+
+    // Stand / Gate
+    const gate=apiF.movement?.gate||apiF.movement?.terminal||'';
+    if(gate) f.stand=String(gate);
+
+    // Statut
+    f.adbStatus=apiF.status||'';
+
+    // Heure révisée (retard)
+    const revised=extractTimeLocal(apiF.movement?.revisedTime?.local);
+    if(revised&&revised!==f.eta){
+      f.adbEta=revised;
+      // Pour les départs : mettre à jour ETD et recalculer le pick-up
+      if(f.type==='dep'){
+        f.eta=revised;
+        f.time=pickup(revised);
+      }
+    }
+  }
+  return matched;
+}
+
+function setAdbStatus(msg,color){
+  const el=document.getElementById('adbStatus');
+  if(el){el.innerHTML=msg;el.style.color=color||'#6b7280';}
+}
+
+async function enrichFromAeroDataBox(){
+  const apiKey=loadAdbKey();
+  if(!apiKey){alert('Configure ta clé API AeroDataBox dans les paramètres ⚙️');return;}
+  if(!S.arr.length&&!S.dep.length){alert('Aucun vol chargé. Analyse le FIDS d\'abord.');return;}
+
+  const btn=document.getElementById('adbEnrichBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ CONNEXION AERODATABOX...';}
+  setAdbStatus('Récupération des données...','#e8b84b');
+
+  try{
+    const dateStr=document.getElementById('sDate').value;
+    const windows=getAdbWindows(dateStr,S.shift);
+
+    const allApiFlights=[];
+    for(const w of windows){
+      const data=await fetchAdbWindow(apiKey,w.from,w.to);
+      if(data.departures) allApiFlights.push(...data.departures.map(f=>({...f,isDep:true})));
+      if(data.arrivals)   allApiFlights.push(...data.arrivals.map(f=>({...f,isDep:false})));
+    }
+
+    const matched=applyAdbData(allApiFlights);
+    renderPreview();
+
+    const active=[...S.arr,...S.dep];
+    const nbDelayed=active.filter(f=>f.adbStatus==='Delayed').length;
+    const nbCancelled=active.filter(f=>f.adbStatus==='Canceled'||f.adbStatus==='Cancelled').length;
+    let msg=`✓ ${matched}/${active.length} vol(s) enrichi(s)`;
+    if(nbDelayed) msg+=` · <span style="color:#f59e0b">⚠ ${nbDelayed} retard(s)</span>`;
+    if(nbCancelled) msg+=` · <span style="color:#ef4444">✕ ${nbCancelled} annulé(s)</span>`;
+    if(matched===0) msg=`<span style="color:#f59e0b">⚠ Aucune correspondance trouvée. Vérifie la date/shift.</span>`;
+    setAdbStatus(msg,'#4be8a0');
+
+  }catch(e){
+    setAdbStatus('❌ '+e.message,'#ef4444');
+    console.error('AeroDataBox error:',e);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='🛩️ ENRICHIR VIA AERODATABOX';}
+  }
 }
 </script>
 </body>
