@@ -1593,7 +1593,7 @@ function getAdbWindows(dateStr,shift){
 }
 
 async function fetchAdbWindow(apiKey,from,to){
-  const url=`https://aerodatabox.p.rapidapi.com/airports/icao/EBLG/flights/${from}/${to}?withLeg=true&withCancelled=true&withCodeshared=false&withCargo=true&withPrivate=false&direction=Both`;
+  const url=`https://aerodatabox.p.rapidapi.com/flights/airports/icao/EBLG/${from}/${to}?withLeg=false&withCancelled=true&withCodeshared=false&withCargo=true&withPrivate=false&withLocation=false&direction=Both`;
   const resp=await fetch(url,{
     headers:{
       'X-RapidAPI-Key':apiKey
