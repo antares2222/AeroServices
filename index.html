@@ -12,7 +12,7 @@ body{background:#0a0a0a;color:#e8e8e8;font-family:'DM Sans',sans-serif;min-heigh
 
 /* ── RESPONSIVE DESKTOP ── */
 .header-inner{max-width:600px;margin:0 auto}
-.sec{padding:20px;display:none}.sec.show{display:block;max-width:600px;margin:0 auto}
+.sec{padding:20px;display:block;max-width:600px;margin:0 auto}
 
 @media(min-width:700px){
   body{background:#060608}
@@ -53,10 +53,7 @@ body{background:#0a0a0a;color:#e8e8e8;font-family:'DM Sans',sans-serif;min-heigh
 .prefix-add input:focus{border-color:#e8b84b}
 .prefix-add button{background:#e8b84b;border:none;border-radius:6px;color:#0a0a0a;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;padding:6px 12px;cursor:pointer}
 .settings-save{width:100%;padding:14px;background:#4be8a0;border:none;border-radius:10px;color:#0a0a0a;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer;margin-top:4px}
-.steps{display:flex;gap:6px;margin-top:12px}
-.dot{flex:1;height:3px;border-radius:2px;background:#2a2d36;transition:background .3s}
-.dot.on{background:#e8b84b}.dot.done{background:#4be8a0}
-.sec{padding:20px;display:none}.sec.show{display:block}
+.steps{display:none}
 .lbl{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;color:#6b7280;margin-bottom:14px}
 .card{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;padding:16px;margin-bottom:12px}
 label{display:block;font-size:10px;color:#6b7280;letter-spacing:1px;margin-bottom:6px;font-family:'DM Mono',monospace}
@@ -355,9 +352,9 @@ textarea:focus{border-color:#e8b84b}
   </div>
 </div>
 
-<!-- STEP 0 -->
-<div class="sec show" id="s0">
-  <div class="lbl">01 — INFOS DU SHIFT</div>
+<!-- ═══ SECTION 1 : SHIFT + FIDS ═══ -->
+<div class="sec" id="s0">
+  <div class="lbl">01 — SHIFT &amp; VOLS FIDS</div>
   <div class="card">
     <div style="margin-bottom:12px">
       <label>DATE</label>
@@ -372,12 +369,6 @@ textarea:focus{border-color:#e8b84b}
       </div>
     </div>
   </div>
-  <button class="btn bp" onclick="go(1)">SUIVANT →</button>
-</div>
-
-<!-- STEP 1 -->
-<div class="sec" id="s1">
-  <div class="lbl">02 — COLLER LES VOLS</div>
   <div class="tip">
     <strong>⚠️ Attention :</strong><br>
     1. OUVRIR <strong>fids.liegeairport.com/spw</strong><br>
@@ -390,46 +381,41 @@ textarea:focus{border-color:#e8b84b}
     <textarea id="tFids" placeholder="Colle ici tout le texte du FIDS..."></textarea>
     <div class="info" id="iInfo"></div>
   </div>
-  <div class="brow">
-    <button class="btn bs" onclick="go(0)">← RETOUR</button>
-    <button class="btn bp" onclick="doAnalyse()">ANALYSER →</button>
-  </div>
-
-  <!-- Timeline (affiché après analyse) -->
-  <div id="tlSection" class="tl-section">
-    <div class="tl-card">
-      <div class="tl-header">
-        <div class="tl-title">⏱ TEMPS SOL PAR AVION</div>
-        <div class="tl-legend">
-          <div class="tl-leg"><div class="tl-leg-dot" style="background:#2563eb"></div>WFS</div>
-          <div class="tl-leg"><div class="tl-leg-dot" style="background:#7c3aed"></div>CHALLENGE</div>
-          <div class="tl-leg"><div class="tl-leg-dot" style="background:#059669"></div>SWISSPORT</div>
-          <div class="tl-leg"><div class="tl-leg-dot" style="background:#d97706"></div>AVIAPARTNER</div>
-          <div class="tl-leg"><div class="tl-leg-dot" style="background:#374151"></div>AUTRE</div>
-        </div>
-      </div>
-      <div class="tl-scroll">
-        <div id="tlInner" class="tl-inner"></div>
-      </div>
-    </div>
-    <div class="tl-nav">
-      <button class="tl-btn-actual" onclick="goActualShift()">
-        ✈ CREW BUS / OPS
-        <span class="tl-sub" id="actualShiftLbl">ACTUAL SHIFT</span>
-      </button>
-      <button class="tl-btn-next" onclick="goNextShift()">
-        NEXT SHIFT →
-        <span class="tl-sub" id="nextShiftLbl">LATE</span>
-      </button>
-    </div>
-  </div>
+  <button class="btn bp" onclick="doAnalyse()" style="margin-top:4px">ANALYSER ↓</button>
 </div>
 
-<!-- STEP 2 -->
+<!-- ═══ SECTION 2 : TIMELINE + AERODATABOX ═══ -->
+<div id="tlSection" class="tl-section" style="padding:0 20px;max-width:600px;margin:0 auto">
+  <div class="lbl" style="padding-top:4px">02 — TEMPS SOL PAR AVION</div>
+  <div class="tl-card">
+    <div class="tl-header">
+      <div class="tl-title">⏱ TEMPS SOL PAR AVION</div>
+      <div class="tl-legend">
+        <div class="tl-leg"><div class="tl-leg-dot" style="background:#2563eb"></div>WFS</div>
+        <div class="tl-leg"><div class="tl-leg-dot" style="background:#7c3aed"></div>CHALLENGE</div>
+        <div class="tl-leg"><div class="tl-leg-dot" style="background:#059669"></div>SWISSPORT</div>
+        <div class="tl-leg"><div class="tl-leg-dot" style="background:#d97706"></div>AVIAPARTNER</div>
+        <div class="tl-leg"><div class="tl-leg-dot" style="background:#374151"></div>AUTRE</div>
+      </div>
+    </div>
+    <div class="tl-scroll">
+      <div id="tlInner" class="tl-inner"></div>
+    </div>
+  </div>
+  <!-- AeroDataBox -->
+  <div id="adbCard" style="display:none;margin-top:8px;margin-bottom:4px">
+    <button onclick="enrichFromAeroDataBox()" id="adbEnrichBtn"
+      style="width:100%;background:#111318;border:1px solid #e8b84b;color:#e8b84b;padding:13px;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer;transition:all .2s">
+      🛩️ VOIR VOLS AERODATABOX
+    </button>
+    <div id="adbStatus" style="font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:18px;margin-top:6px;color:#6b7280"></div>
+  </div>
+  <div id="adbTableSection" style="display:none;margin-bottom:4px"></div>
+</div>
+
+<!-- ═══ SECTION 3 : VÉRIFICATION CREW-BUS ═══ -->
 <div class="sec" id="s2">
   <div class="lbl">03 — VÉRIFICATION CREW-BUS</div>
-
-  <!-- Vols détectés -->
   <div class="card">
     <div class="fhdr">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px">VOLS SÉLECTIONNÉS</div>
@@ -437,26 +423,13 @@ textarea:focus{border-color:#e8b84b}
     </div>
     <div id="prev"></div>
   </div>
-
-  <!-- AeroDataBox : bouton + tableau de données -->
-  <div id="adbCard" style="display:none;margin-bottom:4px">
-    <button onclick="enrichFromAeroDataBox()" id="adbEnrichBtn"
-      style="width:100%;background:#111318;border:1px solid #e8b84b;color:#e8b84b;padding:13px;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;cursor:pointer;transition:all .2s">
-      🛩️ VOIR VOLS AERODATABOX
-    </button>
-    <div id="adbStatus" style="font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:18px;margin-top:6px;color:#6b7280"></div>
-  </div>
-
-  <!-- Tableau des données brutes AeroDataBox -->
-  <div id="adbTableSection" style="display:none;margin-bottom:4px"></div>
+  <div class="card" id="cardExcluded" style="display:none">
     <div class="fhdr">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#6b7280">AUTRES VOLS DISPONIBLES</div>
       <div class="cnt"><b id="cEx">0</b> vols</div>
     </div>
     <div id="prevEx"></div>
   </div>
-
-  <div class="card" id="cardExcluded" style="display:none">
   <div class="card">
     <div class="fhdr" onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;margin-bottom:0">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#4be8a0">🎧 HEADSET</div>
@@ -470,8 +443,6 @@ textarea:focus{border-color:#e8b84b}
       <div id="hsList"></div>
     </div>
   </div>
-
-  <!-- Ajout manuel — menu dépliable -->
   <div class="card">
     <div class="fhdr" onclick="toggleCollapse('manPanel','manChev')" style="cursor:pointer;margin-bottom:0">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#e8b84b">+ AJOUTER UN VOL</div>
@@ -499,62 +470,43 @@ textarea:focus{border-color:#e8b84b}
       <button class="btn bp" onclick="addManual()" style="font-size:14px;padding:12px">+ AJOUTER CE VOL</button>
     </div>
   </div>
-
   <button class="btn bg" onclick="genPDF()" style="margin-bottom:8px">🖨 GÉNÉRER LA FEUILLE PDF</button>
-  <button class="btn bp" onclick="buildOps();go(3)" style="margin-bottom:8px">SUIVANT — VÉRIFICATION OPÉRATION →</button>
-  <div class="brow">
-    <button class="btn bs" onclick="go(1)">← RETOUR</button>
-    <button class="btn bs" onclick="reset()">RECOMMENCER</button>
-  </div>
+  <button class="btn bs" onclick="reset()">RECOMMENCER</button>
 </div>
 
-<!-- STEP 3 — Vérification Opération -->
+<!-- ═══ SECTION 4 : VÉRIFICATION OPÉRATION ═══ -->
 <div class="sec" id="s3">
   <div class="lbl">04 — VÉRIFICATION OPÉRATION</div>
-
-  <!-- CATERING -->
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#e8b84b">✈ CATERING</div>
       <div class="cnt">DEP <b id="cCat">0</b></div>
     </div>
     <div id="catList"></div>
-    <!-- Menu dépliable ajout catering -->
     <div style="margin-top:10px">
       <div onclick="toggleCollapse('catPanel','catChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
         <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">+ AJOUTER / SUPPRIMER UN VOL</span>
         <span id="catChev" style="color:#6b7280;transition:transform .2s">▼</span>
       </div>
-      <div id="catPanel" style="display:none">
-        <div id="catAllList"></div>
-      </div>
+      <div id="catPanel" style="display:none"><div id="catAllList"></div></div>
     </div>
   </div>
-
-  <!-- OPERATION -->
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#4be8a0">🔧 OPÉRATION</div>
       <div class="cnt">ARR <b id="cOps">0</b></div>
     </div>
     <div id="opsList"></div>
-    <!-- Menu dépliable ajout opération -->
     <div style="margin-top:10px">
       <div onclick="toggleCollapse('opsPanel','opsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
         <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">+ AJOUTER / SUPPRIMER UN VOL</span>
         <span id="opsChev" style="color:#6b7280;transition:transform .2s">▼</span>
       </div>
-      <div id="opsPanel" style="display:none">
-        <div id="opsAllList"></div>
-      </div>
+      <div id="opsPanel" style="display:none"><div id="opsAllList"></div></div>
     </div>
   </div>
-
   <button class="btn bg" onclick="genPDFOps()" style="margin-bottom:8px">🖨 GÉNÉRER PAGE OPÉRATION</button>
-  <div class="brow">
-    <button class="btn bs" onclick="go(2)">← RETOUR</button>
-    <button class="btn bs" onclick="reset()">RECOMMENCER</button>
-  </div>
+  <button class="btn bs" onclick="reset()">RECOMMENCER</button>
 </div>
 
 <!-- FEUILLE PRINT OPS (page 2) -->
@@ -721,12 +673,22 @@ function removePrefix(key, val){
 document.getElementById('sDate').value=new Date().toISOString().slice(0,10);
 
 function go(n){
-  document.querySelectorAll('.sec').forEach((s,i)=>s.classList.toggle('show',i===n));
-  document.querySelectorAll('.dot').forEach((d,i)=>{d.classList.toggle('on',i===n);d.classList.toggle('done',i<n);});
-  window.scrollTo(0,0);
+  // Single page layout — scroll to relevant section
+  const ids={0:'s0',1:'s0',2:'s2',3:'s3'};
+  const el=document.getElementById(ids[n]||'s0');
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function selShift(s,el){S.shift=s;document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
-function reset(){S.arr=[];S.dep=[];S.excluded=[];document.getElementById('tFids').value='';go(0);}
+function reset(){
+  S.arr=[];S.dep=[];S.excluded=[];
+  document.getElementById('tFids').value='';
+  document.getElementById('iInfo').innerHTML='';
+  document.getElementById('tlSection').style.display='none';
+  document.getElementById('adbCard').style.display='none';
+  document.getElementById('adbTableSection').style.display='none';
+  renderPreview();
+  document.getElementById('s0').scrollIntoView({behavior:'smooth',block:'start'});
+}
 
 function shouldInclude(flight,raw){
   if(!raw)return false;
@@ -833,7 +795,14 @@ function doAnalyse(){
   if(!total){document.getElementById('iInfo').innerHTML=`<span class="err">⚠ Aucun vol détecté (shift ${S.shift}).</span>`;return;}
   document.getElementById('iInfo').innerHTML=`<span class="ok">✓ ${arrivals.length} arrivée(s) + ${departures.length} départ(s)</span>`;
   updateAdbCard();
-  renderTimeline();
+  renderTimeline();   // affiche la section timeline
+  renderPreview();    // peuple la section crew-bus
+  buildOps();         // peuple la section opération
+  // Scroll vers la timeline après un court délai
+  setTimeout(()=>{
+    const tl=document.getElementById('tlSection');
+    if(tl)tl.scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
 }
 
 // ── Ajouter un vol exclu ─────────────────────────────────────────
@@ -1555,7 +1524,7 @@ function renderTimeline(){
   document.getElementById('tlSection').style.display='block';
 }
 
-function goActualShift(){renderPreview();go(2);}
+function goActualShift(){renderPreview();document.getElementById('s2').scrollIntoView({behavior:'smooth',block:'start'});}
 
 function goNextShift(){
   const map={'EARLY':'LATE','LATE':'NIGHT','NIGHT':'EARLY'};
