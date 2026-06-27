@@ -130,7 +130,7 @@ textarea:focus{border-color:#e8b84b}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:white;color:black;padding:0;font-family:Arial,sans-serif;font-size:10pt}
   /* Par défaut : cacher tout sauf #sheet */
-  .header,.sec,#sheetOps{display:none!important}
+  .header,.sec,#sheetOps,#tlSection,#adbCard,#adbTableSection{display:none!important}
   #sheet{display:block!important}
   /* Quand on imprime les opérations : inverser */
   #sheet.no-print{display:none!important}
@@ -166,28 +166,23 @@ textarea:focus{border-color:#e8b84b}
 .tl-card{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;padding:14px 14px 10px;overflow:hidden}
 .tl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .tl-title{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#6b7280}
-.tl-legend{display:flex;gap:8px;flex-wrap:wrap}
-.tl-leg{display:flex;align-items:center;gap:3px;font-size:8px;font-family:'DM Mono',monospace;color:#6b7280}
-.tl-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .tl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px 6px}
-.tl-inner{min-width:560px;position:relative}
-.tl-axis-row{display:flex;height:22px;margin-left:68px;position:relative;border-bottom:1px solid #2a2d36;margin-bottom:1px}
+.tl-inner{min-width:580px;position:relative}
+.tl-axis-row{display:flex;height:22px;margin-left:90px;position:relative;border-bottom:1px solid #2a2d36;margin-bottom:1px}
 .tl-tick{position:absolute;font-size:8px;color:#4b5563;font-family:'DM Mono',monospace;transform:translateX(-50%);top:4px;user-select:none}
-.tl-aircraft-row{display:flex;align-items:center;min-height:30px;border-bottom:1px solid rgba(42,45,54,.5)}
+.tl-aircraft-row{display:flex;align-items:center;min-height:34px;border-bottom:1px solid rgba(42,45,54,.5)}
 .tl-aircraft-row:last-child{border-bottom:none}
-.tl-reg-lbl{width:68px;flex-shrink:0;font-size:8.5px;font-family:'DM Mono',monospace;color:#9ca3af;text-align:right;padding-right:8px;line-height:1.2;word-break:break-all}
-.tl-track{flex:1;height:30px;position:relative}
+.tl-reg-lbl{width:90px;flex-shrink:0;font-size:10px;font-family:'DM Mono',monospace;color:#ffffff;font-weight:600;text-align:right;padding-right:8px;line-height:1.3}
+.tl-flt-lbl{font-size:8px;color:#6b7280;display:block;font-weight:400;margin-top:1px}
+.tl-track{flex:1;height:34px;position:relative}
 .tl-shift-band{position:absolute;top:0;bottom:0;background:rgba(232,184,75,.07);border-left:1.5px solid rgba(232,184,75,.22);border-right:1.5px solid rgba(232,184,75,.22);pointer-events:none;z-index:0}
 .tl-gridln{position:absolute;top:0;bottom:0;width:1px;background:rgba(42,45,54,.9);pointer-events:none;z-index:0}
-.tl-bar{position:absolute;top:6px;height:18px;border-radius:3px;z-index:1;display:flex;align-items:center;justify-content:center;min-width:3px;overflow:hidden}
-.tl-bar-lbl{font-size:7px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.9);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
-.tl-bar-open{border-style:dashed!important;opacity:.4!important}
-/* Nav buttons */
-.tl-nav{display:flex;gap:8px;margin-top:8px}
-.tl-btn-actual{flex:1;padding:14px 6px;border:none;border-radius:10px;background:#e8b84b;color:#0a0a0a;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;line-height:1.4;text-align:center;transition:transform .15s}
-.tl-btn-next{flex:1;padding:14px 6px;border:1px solid rgba(75,232,160,.4);border-radius:10px;background:rgba(75,232,160,.06);color:#4be8a0;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;line-height:1.4;text-align:center;transition:transform .15s}
-.tl-btn-actual:active,.tl-btn-next:active{transform:scale(.96)}
-.tl-sub{display:block;font-size:8px;font-family:'DM Mono',monospace;opacity:.7;letter-spacing:.5px;margin-top:2px}
+.tl-bar{position:absolute;top:7px;height:20px;border-radius:3px;z-index:1;display:flex;align-items:center;justify-content:center;min-width:3px;overflow:hidden}
+.tl-bar-lbl{font-size:7px;font-family:'DM Mono',monospace;color:rgba(0,0,0,.85);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;font-weight:600}
+.tl-bar-full{background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.25)}
+.tl-bar-adb{background:rgba(232,184,75,.85);border:1px solid rgba(232,184,75,.5)}
+.tl-bar-arr-only{background:linear-gradient(to right,rgba(255,255,255,.8) 0%,rgba(255,255,255,.15) 70%,transparent 100%);border:none}
+.tl-bar-dep-only{background:linear-gradient(to left,rgba(255,255,255,.8) 0%,rgba(255,255,255,.15) 70%,transparent 100%);border:none}
 /* ── AERODATABOX TABLE ──────────────────────────────────────────── */
 .adb-tcard{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;overflow:hidden;margin-bottom:4px}
 .adb-thead{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #2a2d36}
@@ -369,13 +364,6 @@ textarea:focus{border-color:#e8b84b}
       </div>
     </div>
   </div>
-  <div class="tip">
-    <strong>⚠️ Attention :</strong><br>
-    1. OUVRIR <strong>fids.liegeairport.com/spw</strong><br>
-    2. SÉLECTIONNER <strong>Local Time</strong><br>
-    3. COPIER LES VOLS <strong>2 à 3 heures</strong> avant et après le shift<br>
-    4. COLLER ci-dessous ↓
-  </div>
   <div class="card">
     <label>TEXTE COPIÉ DEPUIS LE FIDS</label>
     <textarea id="tFids" placeholder="Colle ici tout le texte du FIDS..."></textarea>
@@ -390,13 +378,6 @@ textarea:focus{border-color:#e8b84b}
   <div class="tl-card">
     <div class="tl-header">
       <div class="tl-title">⏱ TEMPS SOL PAR AVION</div>
-      <div class="tl-legend">
-        <div class="tl-leg"><div class="tl-leg-dot" style="background:#2563eb"></div>WFS</div>
-        <div class="tl-leg"><div class="tl-leg-dot" style="background:#7c3aed"></div>CHALLENGE</div>
-        <div class="tl-leg"><div class="tl-leg-dot" style="background:#059669"></div>SWISSPORT</div>
-        <div class="tl-leg"><div class="tl-leg-dot" style="background:#d97706"></div>AVIAPARTNER</div>
-        <div class="tl-leg"><div class="tl-leg-dot" style="background:#374151"></div>AUTRE</div>
-      </div>
     </div>
     <div class="tl-scroll">
       <div id="tlInner" class="tl-inner"></div>
@@ -1389,38 +1370,41 @@ function parseAllFlights(text){
   return flights;
 }
 
-function tlColor(hw){
-  const h=(hw||'').toUpperCase();
-  if(h==='WFS')return'#2563eb';
-  if(h==='CHALLENGE')return'#7c3aed';
-  if(h==='SWISSPORT')return'#059669';
-  if(h==='AVIAPARTNER')return'#d97706';
-  return'#374151';
-}
-
+// Helpers temps
 function tlWin(shift){
   if(shift==='EARLY')return{ws:4*60,wd:720};
   if(shift==='LATE')return{ws:12*60,wd:720};
   return{ws:20*60,wd:720};
 }
-
 function tlPct(timeStr,ws,wd){
   const[h,m]=timeStr.split(':').map(Number);
   let mins=h*60+m;
   if(ws+wd>1440&&mins<(ws+wd)-1440)mins+=1440;
   return((mins-ws)/wd)*100;
 }
-
 function tlNorm(timeStr,ws,wd){
   const[h,m]=timeStr.split(':').map(Number);
   let mins=h*60+m;
   if(ws+wd>1440&&mins<(ws+wd)-1440)mins+=1440;
   return mins;
 }
-
 function tlLabel(mins){
   const h=Math.floor((mins%1440)/60),m=mins%60;
   return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+
+// Construire les vols pour la timeline (même filtres que crew-bus + exclus autorisés)
+function getTimelineFlights(){
+  const allowed=new Set(['WFS','CHALLENGE','SWISSPORT','AVIAPARTNER']);
+  const filtered=S.excluded.filter(f=>allowed.has((f.handler||'').toUpperCase()));
+  return [...S.arr,...S.dep,...filtered];
+}
+
+// ADB lookup: retourne les infos ADB pour un numéro de vol
+function tlAdbInfo(flightNum){
+  if(!flightNum)return null;
+  const f=[...S.arr,...S.dep].find(x=>x.flight===flightNum);
+  return(f&&f.adbStatus)?f:null;
 }
 
 function tlBuildSegs(flights,ws,wd){
@@ -1428,40 +1412,45 @@ function tlBuildSegs(flights,ws,wd){
   const noReg=[];
   for(const f of flights){
     if(!f.reg){noReg.push(f);continue;}
-    if(!byReg[f.reg])byReg[f.reg]={arrs:[],deps:[],handler:''};
-    if(f.handler)byReg[f.reg].handler=f.handler;
+    if(!byReg[f.reg])byReg[f.reg]={arrs:[],deps:[]};
     if(f.type==='arr')byReg[f.reg].arrs.push(f);
     else byReg[f.reg].deps.push(f);
   }
   const segs=[];
-  for(const[reg,{arrs,deps,handler}]of Object.entries(byReg)){
+  for(const[reg,{arrs,deps}]of Object.entries(byReg)){
     const sa=[...arrs].sort((a,b)=>tlNorm(a.eta,ws,wd)-tlNorm(b.eta,ws,wd));
     const sd=[...deps].sort((a,b)=>tlNorm(a.eta,ws,wd)-tlNorm(b.eta,ws,wd));
     const usedDep=new Set();
     for(const arr of sa){
       const aN=tlNorm(arr.eta,ws,wd);
       const di=sd.findIndex((_,i)=>!usedDep.has(i)&&tlNorm(sd[i].eta,ws,wd)>aN);
-      if(di!==-1){usedDep.add(di);segs.push({reg,arrTime:arr.eta,depTime:sd[di].eta,arrFlight:arr.flight,depFlight:sd[di].flight,handler:handler||arr.handler});}
-      else segs.push({reg,arrTime:arr.eta,depTime:null,arrFlight:arr.flight,depFlight:null,handler:handler||arr.handler});
+      if(di!==-1){
+        usedDep.add(di);
+        segs.push({reg,arrTime:arr.eta,depTime:sd[di].eta,arrFlight:arr.flight,depFlight:sd[di].flight});
+      }else{
+        segs.push({reg,arrTime:arr.eta,depTime:null,arrFlight:arr.flight,depFlight:null});
+      }
     }
-    for(let i=0;i<sd.length;i++){if(!usedDep.has(i))segs.push({reg,arrTime:null,depTime:sd[i].eta,arrFlight:null,depFlight:sd[i].flight,handler});}
+    for(let i=0;i<sd.length;i++){
+      if(!usedDep.has(i))segs.push({reg,arrTime:null,depTime:sd[i].eta,arrFlight:null,depFlight:sd[i].flight});
+    }
   }
-  for(const f of noReg){segs.push({reg:null,label:f.flight,arrTime:f.type==='arr'?f.eta:null,depTime:f.type==='dep'?f.eta:null,arrFlight:f.type==='arr'?f.flight:null,depFlight:f.type==='dep'?f.flight:null,handler:f.handler});}
-  segs.sort((a,b)=>{const ta=a.arrTime||a.depTime||'99:99',tb=b.arrTime||b.depTime||'99:99';return tlNorm(ta,ws,wd)-tlNorm(tb,ws,wd);});
+  segs.sort((a,b)=>{
+    const ta=a.arrTime||a.depTime||'99:99',tb=b.arrTime||b.depTime||'99:99';
+    return tlNorm(ta,ws,wd)-tlNorm(tb,ws,wd);
+  });
   return segs;
 }
 
 function renderTimeline(){
-  const text=document.getElementById('tFids').value;
-  if(!text.trim())return;
-  const allF=parseAllFlights(text);
+  if(!S.arr.length&&!S.dep.length)return;
+  const flights=getTimelineFlights();
   const{ws,wd}=tlWin(S.shift);
-  const segs=tlBuildSegs(allF,ws,wd);
+  const segs=tlBuildSegs(flights,ws,wd);
+  if(!segs.length)return;
 
-  // Shift band: always middle 8h of the 12h window = 16.67% to 83.33%
-  const sBL=(2/12)*100, sBW=(8/12)*100;
+  const sBL=(2/12)*100,sBW=(8/12)*100;
 
-  // Axis
   let axisH='',gridH='';
   for(let i=0;i<=12;i+=2){
     const pct=(i/12)*100;
@@ -1469,15 +1458,13 @@ function renderTimeline(){
     gridH+=`<div class="tl-gridln" style="left:${pct}%"></div>`;
   }
 
-  // Active flights (in current shift)
-  const active=new Set([...S.arr,...S.dep].map(f=>f.flight));
-
   let rowsH='',rowCount=0;
   for(const seg of segs){
-    const col=tlColor(seg.handler);
-    const lbl=seg.reg||seg.label||'?';
-    const isAct=(seg.arrFlight&&active.has(seg.arrFlight))||(seg.depFlight&&active.has(seg.depFlight));
-    const opa=isAct?1:0.4;
+    // Label: reg + vol(s)
+    const reg=seg.reg||'?';
+    const flts=[seg.arrFlight,seg.depFlight].filter(Boolean).join('→');
+    const labelHtml=`<div class="tl-reg-lbl">${reg}<span class="tl-flt-lbl">${flts}</span></div>`;
+
     let barH='';
 
     if(seg.arrTime&&seg.depTime){
@@ -1485,23 +1472,31 @@ function renderTimeline(){
       if(r<0||l>100)continue;
       l=Math.max(0,l);r=Math.min(100,r);
       const w=r-l;if(w<=0)continue;
-      const inner=w>9?`<span class="tl-bar-lbl">${seg.arrFlight||''}→${seg.depFlight||''}</span>`:'';
-      barH=`<div class="tl-bar" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%;background:${col};opacity:${opa};border:1px solid rgba(255,255,255,.12)" title="${seg.arrFlight||'?'} → ${seg.depFlight||'?'} (${seg.arrTime}–${seg.depTime})">${inner}</div>`;
+      // Vérifier si ADB a une vraie ETA pour l'arrivée
+      const adb=tlAdbInfo(seg.arrFlight)||tlAdbInfo(seg.depFlight);
+      const hasAdb=adb&&(adb.adbEta||adb.adbStatus==='Delayed');
+      const barClass=hasAdb?'tl-bar tl-bar-adb':'tl-bar tl-bar-full';
+      const innerLbl=hasAdb&&adb.adbEta
+        ?`<span class="tl-bar-lbl">ETA : ${adb.adbEta}</span>`
+        :(w>8?`<span class="tl-bar-lbl">${seg.arrTime}–${seg.depTime}</span>`:'');
+      barH=`<div class="${barClass}" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%" title="${reg} au sol ${seg.arrTime}→${seg.depTime}">${innerLbl}</div>`;
     }else if(seg.arrTime){
+      // Seulement arrivée : fondu vers la droite (départ inconnu)
       let l=tlPct(seg.arrTime,ws,wd);
       if(l>100)continue;l=Math.max(0,l);
-      const w=Math.min(10,100-l);
-      barH=`<div class="tl-bar tl-bar-open" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%;border:1px dashed ${col}" title="${seg.arrFlight||'?'} ARR ${seg.arrTime}"></div>`;
+      const w=Math.min(15,100-l);
+      barH=`<div class="tl-bar tl-bar-arr-only" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%" title="${reg} ARR ${seg.arrTime}"></div>`;
     }else if(seg.depTime){
+      // Seulement départ : fondu vers la gauche (arrivée inconnue)
       let r=tlPct(seg.depTime,ws,wd);
       if(r<0)continue;r=Math.min(100,r);
-      const l=Math.max(0,r-10);
-      barH=`<div class="tl-bar tl-bar-open" style="left:${l.toFixed(2)}%;width:${(r-l).toFixed(2)}%;border:1px dashed ${col}" title="${seg.depFlight||'?'} DEP ${seg.depTime}"></div>`;
+      const l=Math.max(0,r-15);
+      barH=`<div class="tl-bar tl-bar-dep-only" style="left:${l.toFixed(2)}%;width:${(r-l).toFixed(2)}%" title="${reg} DEP ${seg.depTime}"></div>`;
     }
     if(!barH)continue;
     rowCount++;
     rowsH+=`<div class="tl-aircraft-row">
-      <div class="tl-reg-lbl">${lbl}</div>
+      ${labelHtml}
       <div class="tl-track">
         <div class="tl-shift-band" style="left:${sBL.toFixed(2)}%;width:${sBW.toFixed(2)}%"></div>
         ${gridH}${barH}
@@ -1511,32 +1506,15 @@ function renderTimeline(){
 
   const inner=document.getElementById('tlInner');
   if(!rowCount){
-    inner.innerHTML='<div style="color:#6b7280;font-size:11px;font-family:\'DM Mono\',monospace;padding:10px;text-align:center">Aucune immatriculation détectée — la timeline nécessite les registrations dans le FIDS.</div>';
+    inner.innerHTML='<div style="color:#6b7280;font-size:11px;font-family:\'DM Mono\',monospace;padding:10px;text-align:center">Aucune immatriculation détectée dans le FIDS.</div>';
   }else{
     inner.innerHTML=`<div class="tl-axis-row">${axisH}</div>${rowsH}`;
   }
-
-  // Update labels
-  const map={'EARLY':'LATE','LATE':'NIGHT','NIGHT':'EARLY'};
-  const nxt=map[S.shift];
-  const el=document.getElementById('nextShiftLbl');if(el)el.textContent=nxt;
-  const al=document.getElementById('actualShiftLbl');if(al)al.textContent=S.shift;
   document.getElementById('tlSection').style.display='block';
 }
 
 function goActualShift(){renderPreview();document.getElementById('s2').scrollIntoView({behavior:'smooth',block:'start'});}
 
-function goNextShift(){
-  const map={'EARLY':'LATE','LATE':'NIGHT','NIGHT':'EARLY'};
-  const nxt=map[S.shift];
-  S.shift=nxt;
-  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById(nxt==='EARLY'?'bE':nxt==='LATE'?'bL':'bN').classList.add('sel');
-  const t=document.getElementById('tFids').value;
-  const{arrivals,departures,excluded}=parseFids(t);
-  S.arr=arrivals;S.dep=departures;S.excluded=excluded;
-  buildOps();renderPreview();go(3);
-}
 
 // ── AERODATABOX ─────────────────────────────────────────────────────
 
@@ -1695,6 +1673,9 @@ async function enrichFromAeroDataBox(){
     }
 
     renderAdbTable(allArrs,allDeps,S.shift,dateStr);
+    // Appliquer les données ADB aux vols existants (pour barres jaunes timeline)
+    applyAdbData([...allDeps.map(f=>({...f,isDep:true})),...allArrs.map(f=>({...f,isDep:false}))]);
+    renderTimeline(); // re-rend avec barres ETA jaunes
     setAdbStatus(`✓ ${total} vols reçus · tableau ci-dessous`,'#4be8a0');
 
   }catch(e){
