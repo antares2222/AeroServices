@@ -1370,6 +1370,16 @@ function parseAllFlights(text){
   return flights;
 }
 
+// Couleurs par handler (style original)
+function tlColor(hw){
+  const h=(hw||'').toUpperCase();
+  if(h==='WFS')return'#2563eb';
+  if(h==='CHALLENGE')return'#7c3aed';
+  if(h==='SWISSPORT')return'#059669';
+  if(h==='AVIAPARTNER')return'#d97706';
+  return'#374151';
+}
+
 // Helpers temps
 function tlWin(shift){
   if(shift==='EARLY')return{ws:4*60,wd:720};
@@ -1458,13 +1468,19 @@ function renderTimeline(){
     gridH+=`<div class="tl-gridln" style="left:${pct}%"></div>`;
   }
 
+  // Lookup rapide : numéro de vol → handler
+  const flightHandlerMap={};
+  for(const f of flights) if(f.flight&&f.handler) flightHandlerMap[f.flight]=f.handler;
+
   let rowsH='',rowCount=0;
   for(const seg of segs){
-    // Label: reg + vol(s)
+    // Label: reg en blanc + vols en gris
     const reg=seg.reg||'?';
     const flts=[seg.arrFlight,seg.depFlight].filter(Boolean).join('→');
     const labelHtml=`<div class="tl-reg-lbl">${reg}<span class="tl-flt-lbl">${flts}</span></div>`;
 
+    // Couleur handler
+    const col=tlColor(flightHandlerMap[seg.arrFlight]||flightHandlerMap[seg.depFlight]||'');
     let barH='';
 
     if(seg.arrTime&&seg.depTime){
@@ -1472,26 +1488,28 @@ function renderTimeline(){
       if(r<0||l>100)continue;
       l=Math.max(0,l);r=Math.min(100,r);
       const w=r-l;if(w<=0)continue;
-      // Vérifier si ADB a une vraie ETA pour l'arrivée
+      // ADB : barre jaune avec ETA
       const adb=tlAdbInfo(seg.arrFlight)||tlAdbInfo(seg.depFlight);
       const hasAdb=adb&&(adb.adbEta||adb.adbStatus==='Delayed');
-      const barClass=hasAdb?'tl-bar tl-bar-adb':'tl-bar tl-bar-full';
-      const innerLbl=hasAdb&&adb.adbEta
-        ?`<span class="tl-bar-lbl">ETA : ${adb.adbEta}</span>`
-        :(w>8?`<span class="tl-bar-lbl">${seg.arrTime}–${seg.depTime}</span>`:'');
-      barH=`<div class="${barClass}" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%" title="${reg} au sol ${seg.arrTime}→${seg.depTime}">${innerLbl}</div>`;
+      if(hasAdb){
+        const etaLbl=adb.adbEta?`<span class="tl-bar-lbl">ETA : ${adb.adbEta}</span>`:'';
+        barH=`<div class="tl-bar tl-bar-adb" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%" title="${reg} ETA ${adb.adbEta||'?'}">${etaLbl}</div>`;
+      }else{
+        const innerLbl=w>8?`<span class="tl-bar-lbl" style="color:rgba(255,255,255,.9)">${seg.arrTime}–${seg.depTime}</span>`:'';
+        barH=`<div class="tl-bar" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%;background:${col};border:1px solid rgba(255,255,255,.15)" title="${reg} au sol ${seg.arrTime}→${seg.depTime}">${innerLbl}</div>`;
+      }
     }else if(seg.arrTime){
-      // Seulement arrivée : fondu vers la droite (départ inconnu)
+      // Seulement arrivée → fondu vers la droite
       let l=tlPct(seg.arrTime,ws,wd);
       if(l>100)continue;l=Math.max(0,l);
       const w=Math.min(15,100-l);
-      barH=`<div class="tl-bar tl-bar-arr-only" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%" title="${reg} ARR ${seg.arrTime}"></div>`;
+      barH=`<div class="tl-bar" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%;background:linear-gradient(to right,${col} 0%,transparent 100%)" title="${reg} ARR ${seg.arrTime}"></div>`;
     }else if(seg.depTime){
-      // Seulement départ : fondu vers la gauche (arrivée inconnue)
+      // Seulement départ → fondu vers la gauche
       let r=tlPct(seg.depTime,ws,wd);
       if(r<0)continue;r=Math.min(100,r);
       const l=Math.max(0,r-15);
-      barH=`<div class="tl-bar tl-bar-dep-only" style="left:${l.toFixed(2)}%;width:${(r-l).toFixed(2)}%" title="${reg} DEP ${seg.depTime}"></div>`;
+      barH=`<div class="tl-bar" style="left:${l.toFixed(2)}%;width:${(r-l).toFixed(2)}%;background:linear-gradient(to left,${col} 0%,transparent 100%)" title="${reg} DEP ${seg.depTime}"></div>`;
     }
     if(!barH)continue;
     rowCount++;
@@ -1550,13 +1568,14 @@ function addDays(dateStr,days){
 }
 
 function getAdbWindows(dateStr,shift){
-  if(shift==='EARLY') return [{from:`${dateStr}T04:00`,to:`${dateStr}T15:59`}];
-  if(shift==='LATE')  return [{from:`${dateStr}T12:00`,to:`${dateStr}T23:59`}];
-  // NIGHT : 2 fenêtres pour traverser minuit
+  // AeroDataBox attend le format YYYY-MM-DDTHH:MM:SS
+  const fmt=t=>`${t}:00`;
+  if(shift==='EARLY') return [{from:fmt(`${dateStr}T04:00`),to:fmt(`${dateStr}T15:59`)}];
+  if(shift==='LATE')  return [{from:fmt(`${dateStr}T12:00`),to:fmt(`${dateStr}T23:59`)}];
   const next=addDays(dateStr,1);
   return[
-    {from:`${dateStr}T20:00`,to:`${dateStr}T23:59`},
-    {from:`${next}T00:00`,  to:`${next}T07:59`}
+    {from:fmt(`${dateStr}T20:00`),to:fmt(`${dateStr}T23:59`)},
+    {from:fmt(`${next}T00:00`),  to:fmt(`${next}T07:59`)}
   ];
 }
 
