@@ -130,7 +130,7 @@ textarea:focus{border-color:#e8b84b}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:white;color:black;padding:0;font-family:Arial,sans-serif;font-size:10pt}
   /* Par défaut : cacher tout sauf #sheet */
-  .header,.sec,#sheetOps,#tlSection,#adbCard,#adbTableSection{display:none!important}
+  .header,.sec,#sheetOps,#tlSection,#adbCard,#adbTableSection,#arrSection{display:none!important}
   #sheet{display:block!important}
   /* Quand on imprime les opérations : inverser */
   #sheet.no-print{display:none!important}
@@ -206,6 +206,21 @@ textarea:focus{border-color:#e8b84b}
 .adb-flt{font-size:11px;font-weight:bold;color:#e8e8e8}
 .adb-orig{font-size:9px;color:#6b7280;display:block;margin-top:1px}
 .adb-time-rev{font-size:9px;color:#f59e0b;display:block;margin-top:1px}
+/* ── TABLEAU ARRIVÉES LGG ───────────────────────────────────── */
+.arr-tbl-section{display:none;padding:0 20px;max-width:600px;margin:0 auto 4px}
+.arr-tbl-card{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;overflow:hidden}
+.arr-tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #2a2d36}
+.arr-tbl-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:#4be8a0}
+.arr-tbl-count{font-size:10px;font-family:'DM Mono',monospace;color:#6b7280}
+.arr-tbl{width:100%;border-collapse:collapse}
+.arr-tbl th{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:#6b7280;padding:6px 12px;border-bottom:1px solid #2a2d36;text-align:left;letter-spacing:.5px}
+.arr-tbl td{font-family:'DM Mono',monospace;font-size:11px;padding:9px 12px;border-bottom:1px solid rgba(42,45,54,.5);vertical-align:middle}
+.arr-tbl tr:last-child td{border-bottom:none}
+.arr-tbl .arr-flt{font-size:12px;font-weight:700;color:#e8e8e8}
+.arr-tbl .arr-reg{color:#ffffff;font-size:11px}
+.arr-tbl .arr-stand{color:#9ca3af}
+.arr-tbl .arr-time{font-size:13px;color:#4be8a0;font-weight:600}
+.arr-tbl .arr-hdl{font-size:9px;color:#6b7280;display:block;margin-top:2px}
 </style>
 </head>
 <body>
@@ -349,7 +364,7 @@ textarea:focus{border-color:#e8b84b}
 
 <!-- ═══ SECTION 1 : SHIFT + FIDS ═══ -->
 <div class="sec" id="s0">
-  <div class="lbl">01 — SHIFT &amp; VOLS FIDS</div>
+  <div class="lbl">01 — SHIFT &amp; SOURCE VOLS</div>
   <div class="card">
     <div style="margin-bottom:12px">
       <label>DATE</label>
@@ -364,12 +379,24 @@ textarea:focus{border-color:#e8b84b}
       </div>
     </div>
   </div>
+
+  <!-- ── FIDS AUTO-LOAD ── -->
+  <button class="btn bg" id="fidsLoadBtn" onclick="loadFromFids()" style="margin-bottom:6px">🔄 CHARGER DEPUIS FIDS LGG</button>
+  <div id="fidsStatus" style="font-family:'DM Mono',monospace;font-size:11px;text-align:center;min-height:16px;margin-bottom:10px;color:#6b7280"></div>
+
+  <!-- ── SÉPARATEUR ── -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <div style="flex:1;height:1px;background:#2a2d36"></div>
+    <span style="font-family:'DM Mono',monospace;font-size:9px;color:#3a3d46;letter-spacing:2px">OU COPIE MANUELLE</span>
+    <div style="flex:1;height:1px;background:#2a2d36"></div>
+  </div>
+
   <div class="card">
     <label>TEXTE COPIÉ DEPUIS LE FIDS</label>
     <textarea id="tFids" placeholder="Colle ici tout le texte du FIDS..."></textarea>
     <div class="info" id="iInfo"></div>
   </div>
-  <button class="btn bp" onclick="doAnalyse()" style="margin-top:4px">ANALYSER ↓</button>
+  <button class="btn bs" onclick="doAnalyse()" style="margin-top:4px">ANALYSER TEXTE ↓</button>
 </div>
 
 <!-- ═══ SECTION 2 : TIMELINE + AERODATABOX ═══ -->
@@ -392,6 +419,28 @@ textarea:focus{border-color:#e8b84b}
     <div id="adbStatus" style="font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:18px;margin-top:6px;color:#6b7280"></div>
   </div>
   <div id="adbTableSection" style="display:none;margin-bottom:4px"></div>
+</div>
+
+<!-- ═══ TABLEAU ARRIVÉES LGG ═══ -->
+<div class="arr-tbl-section" id="arrSection">
+  <div class="lbl" style="padding-top:4px">🛬 ARRIVÉES À LIÈGE</div>
+  <div class="arr-tbl-card">
+    <div class="arr-tbl-hdr">
+      <div class="arr-tbl-title">🛬 ARRIVÉES LGG — SHIFT</div>
+      <div class="arr-tbl-count" id="arrTblCount">0 vol(s)</div>
+    </div>
+    <table class="arr-tbl">
+      <thead>
+        <tr>
+          <th>ETA</th>
+          <th>Vol · Handler</th>
+          <th>Registration</th>
+          <th>Stand</th>
+        </tr>
+      </thead>
+      <tbody id="arrTblBody"></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- ═══ SECTION 3 : VÉRIFICATION CREW-BUS ═══ -->
@@ -664,9 +713,11 @@ function reset(){
   S.arr=[];S.dep=[];S.excluded=[];
   document.getElementById('tFids').value='';
   document.getElementById('iInfo').innerHTML='';
+  setFidsStatus('','#6b7280');
   document.getElementById('tlSection').style.display='none';
   document.getElementById('adbCard').style.display='none';
   document.getElementById('adbTableSection').style.display='none';
+  document.getElementById('arrSection').style.display='none';
   renderPreview();
   document.getElementById('s0').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -767,6 +818,114 @@ function parseFids(text){
   return{arrivals,departures,excluded};
 }
 
+// ── FIDS API DIRECT ──────────────────────────────────────────────────
+const FIDS_ARR_URL='https://fids.liegeairport.com/api/flights/spw/arrivals';
+const FIDS_DEP_URL='https://fids.liegeairport.com/api/flights/spw/departures';
+
+function fidsTimeToHHMM(isoStr){
+  if(!isoStr)return null;
+  const m=isoStr.match(/T(\d{2}:\d{2})/);
+  return m?m[1]:null;
+}
+
+function setFidsStatus(msg,color){
+  const el=document.getElementById('fidsStatus');
+  if(el){el.innerHTML=msg;el.style.color=color||'#6b7280';}
+}
+
+async function loadFromFids(){
+  const btn=document.getElementById('fidsLoadBtn');
+  try{
+    if(btn){btn.disabled=true;btn.textContent='⏳ CONNEXION AU FIDS...';}
+    setFidsStatus('Chargement en cours...','#e8b84b');
+
+    const [arrRes,depRes]=await Promise.all([
+      fetch(FIDS_ARR_URL),
+      fetch(FIDS_DEP_URL)
+    ]);
+    if(!arrRes.ok||!depRes.ok) throw new Error('Erreur serveur FIDS ('+arrRes.status+')');
+    const [arrData,depData]=await Promise.all([arrRes.json(),depRes.json()]);
+
+    const arrivals=[],departures=[],excluded=[],seen=new Set();
+
+    // ── Arrivées ──
+    for(const f of arrData){
+      // Heure : priorité aTx (réel) sinon eTx (estimé) sinon sTx (planifié)
+      const eta=fidsTimeToHHMM(f.aTx)||fidsTimeToHHMM(f.eTx)||fidsTimeToHHMM(f.sTx);
+      if(!eta)continue;
+      if(!inWinArr(eta))continue;
+      const flight=(f.flightNumber||f.flightPax||'').toUpperCase().trim();
+      if(!flight)continue;
+      const key=flight+'_arr_'+eta;
+      if(seen.has(key))continue;
+      seen.add(key);
+      const handler=(f.handler||'').toUpperCase().trim();
+      const reg=(f.aircraftRegistration||'').toUpperCase().trim();
+      const stand=(f.stand||'').trim();
+      const origin=(f.origin||'').toUpperCase();
+      const obj={flight,reg,eta,time:eta,handler,stand,type:'arr',origin,fromFids:true};
+      if(shouldInclude(flight,handler)){
+        obj.wfsMode=handler==='WFS'?'handling':null;
+        arrivals.push(obj);
+      } else if(canPropose(handler)){
+        excluded.push(obj);
+      }
+    }
+
+    // ── Départs ──
+    for(const f of depData){
+      const eta=fidsTimeToHHMM(f.eTx)||fidsTimeToHHMM(f.sTx);
+      if(!eta)continue;
+      if(!inWinDep(eta))continue;
+      const flight=(f.flightNumber||f.flightPax||'').toUpperCase().trim();
+      if(!flight)continue;
+      const key=flight+'_dep_'+eta;
+      if(seen.has(key))continue;
+      seen.add(key);
+      const handler=(f.handler||'').toUpperCase().trim();
+      const reg=(f.aircraftRegistration||'').toUpperCase().trim();
+      const stand=(f.stand||'').trim();
+      const dest=(f.destination||'').toUpperCase();
+      const obj={flight,reg,eta,time:pickup(eta),handler,stand,type:'dep',dest,fromFids:true};
+      if(shouldInclude(flight,handler)){
+        obj.wfsMode=handler==='WFS'?'handling':null;
+        departures.push(obj);
+      } else if(canPropose(handler)){
+        excluded.push(obj);
+      }
+    }
+
+    S.arr=arrivals; S.dep=departures; S.excluded=excluded;
+    const total=arrivals.length+departures.length;
+    if(!total){
+      setFidsStatus(`⚠ Aucun vol trouvé pour le shift ${S.shift}`,'#f59e0b');
+      return;
+    }
+
+    setFidsStatus(`✓ FIDS — ${arrivals.length} ARR · ${departures.length} DEP · shift ${S.shift}`,'#4be8a0');
+    updateAdbCard();
+    renderTimeline();
+    renderArrivalsTable();
+    renderPreview();
+    buildOps();
+    setTimeout(()=>{
+      const tl=document.getElementById('tlSection');
+      if(tl)tl.scrollIntoView({behavior:'smooth',block:'start'});
+    },100);
+
+  }catch(e){
+    console.error('FIDS load error:',e);
+    const isCors=e.message&&(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')||e.message.includes('CORS'));
+    if(isCors){
+      setFidsStatus('❌ CORS bloqué — utilise le copy-paste ci-dessous','#ef4444');
+    } else {
+      setFidsStatus('❌ '+( e.message||'Erreur connexion FIDS'),'#ef4444');
+    }
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='🔄 CHARGER DEPUIS FIDS LGG';}
+  }
+}
+
 function doAnalyse(){
   const t=document.getElementById('tFids').value;
   if(!t.trim()){alert('Colle le texte du FIDS d\'abord.');return;}
@@ -776,8 +935,9 @@ function doAnalyse(){
   if(!total){document.getElementById('iInfo').innerHTML=`<span class="err">⚠ Aucun vol détecté (shift ${S.shift}).</span>`;return;}
   document.getElementById('iInfo').innerHTML=`<span class="ok">✓ ${arrivals.length} arrivée(s) + ${departures.length} départ(s)</span>`;
   updateAdbCard();
-  renderTimeline();   // affiche la section timeline
-  renderPreview();    // peuple la section crew-bus
+  renderTimeline();
+  renderArrivalsTable();
+  renderPreview();
   buildOps();         // peuple la section opération
   // Scroll vers la timeline après un court délai
   setTimeout(()=>{
@@ -1533,6 +1693,43 @@ function renderTimeline(){
 
 function goActualShift(){renderPreview();document.getElementById('s2').scrollIntoView({behavior:'smooth',block:'start'});}
 
+
+// ── TABLEAU ARRIVÉES LGG ────────────────────────────────────────────
+
+function renderArrivalsTable(){
+  const sec=document.getElementById('arrSection');
+  const body=document.getElementById('arrTblBody');
+  const count=document.getElementById('arrTblCount');
+  if(!sec||!body)return;
+
+  // Toutes les arrivées triées par ETA
+  const arrs=[...S.arr].filter(f=>f.type==='arr').sort((a,b)=>a.eta.localeCompare(b.eta));
+
+  // Mettre à jour le titre avec le shift
+  const titleEl=sec.querySelector('.arr-tbl-title');
+  if(titleEl)titleEl.textContent=`🛬 ARRIVÉES LGG — ${S.shift}`;
+  if(count)count.textContent=`${arrs.length} vol(s)`;
+
+  if(!arrs.length){
+    body.innerHTML=`<tr><td colspan="4" style="text-align:center;color:#6b7280;padding:14px;font-family:'DM Mono',monospace;font-size:11px">Aucune arrivée dans ce shift</td></tr>`;
+    sec.style.display='block';
+    return;
+  }
+
+  body.innerHTML=arrs.map(f=>{
+    const reg=f.reg||'—';
+    const stand=f.stand||'—';
+    const hdl=f.handler||'';
+    return`<tr>
+      <td><span class="arr-time">${f.eta}</span></td>
+      <td><span class="arr-flt">${f.flight}</span><span class="arr-hdl">${hdl}</span></td>
+      <td class="arr-reg">${reg}</td>
+      <td class="arr-stand">${stand}</td>
+    </tr>`;
+  }).join('');
+
+  sec.style.display='block';
+}
 
 // ── AERODATABOX ─────────────────────────────────────────────────────
 
