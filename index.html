@@ -130,7 +130,7 @@ textarea:focus{border-color:#e8b84b}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:white;color:black;padding:0;font-family:Arial,sans-serif;font-size:10pt}
   /* Par défaut : cacher tout sauf #sheet */
-  .header,.sec,#sheetOps,#tlSection,#adbCard,#adbTableSection,#arrSection{display:none!important}
+  .header,.sec,#sheetOps,#tlSection,#adbCard,#adbTableSection{display:none!important}
   #sheet{display:block!important}
   /* Quand on imprime les opérations : inverser */
   #sheet.no-print{display:none!important}
@@ -334,6 +334,17 @@ textarea:focus{border-color:#e8b84b}
 
     <!-- AeroDataBox -->
     <div class="settings-section">
+      <div class="settings-section-title">🕐 FUSEAU HORAIRE FIDS</div>
+      <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:10px;line-height:1.6">
+        Le FIDS de Liège Airport donne ses heures en UTC. Choisis le décalage à appliquer selon la saison pour afficher l'heure locale belge.
+      </div>
+      <div class="sgrid" style="grid-template-columns:1fr 1fr">
+        <button class="sbtn" id="utc1Btn" onclick="setUtcOffset(1,this)">HIVER<span>UTC +1</span></button>
+        <button class="sbtn" id="utc2Btn" onclick="setUtcOffset(2,this)">ÉTÉ<span>UTC +2</span></button>
+      </div>
+    </div>
+
+    <div class="settings-section">
       <div class="settings-section-title">🛩 AERODATABOX API</div>
       <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:10px;line-height:1.6">
         Enrichit automatiquement les vols avec la Registration, le Stand réel et le statut en temps réel (retards / annulations).<br>
@@ -383,20 +394,6 @@ textarea:focus{border-color:#e8b84b}
   <!-- ── FIDS AUTO-LOAD ── -->
   <button class="btn bg" id="fidsLoadBtn" onclick="loadFromFids()" style="margin-bottom:6px">🔄 CHARGER DEPUIS FIDS LGG</button>
   <div id="fidsStatus" style="font-family:'DM Mono',monospace;font-size:11px;text-align:center;min-height:16px;margin-bottom:10px;color:#6b7280"></div>
-
-  <!-- ── SÉPARATEUR ── -->
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-    <div style="flex:1;height:1px;background:#2a2d36"></div>
-    <span style="font-family:'DM Mono',monospace;font-size:9px;color:#3a3d46;letter-spacing:2px">OU COPIE MANUELLE</span>
-    <div style="flex:1;height:1px;background:#2a2d36"></div>
-  </div>
-
-  <div class="card">
-    <label>TEXTE COPIÉ DEPUIS LE FIDS</label>
-    <textarea id="tFids" placeholder="Colle ici tout le texte du FIDS..."></textarea>
-    <div class="info" id="iInfo"></div>
-  </div>
-  <button class="btn bs" onclick="doAnalyse()" style="margin-top:4px">ANALYSER TEXTE ↓</button>
 </div>
 
 <!-- ═══ SECTION 2 : TIMELINE + AERODATABOX ═══ -->
@@ -419,28 +416,6 @@ textarea:focus{border-color:#e8b84b}
     <div id="adbStatus" style="font-size:11px;font-family:'DM Mono',monospace;text-align:center;min-height:18px;margin-top:6px;color:#6b7280"></div>
   </div>
   <div id="adbTableSection" style="display:none;margin-bottom:4px"></div>
-</div>
-
-<!-- ═══ TABLEAU ARRIVÉES LGG ═══ -->
-<div class="arr-tbl-section" id="arrSection">
-  <div class="lbl" style="padding-top:4px">🛬 ARRIVÉES À LIÈGE</div>
-  <div class="arr-tbl-card">
-    <div class="arr-tbl-hdr">
-      <div class="arr-tbl-title">🛬 ARRIVÉES LGG — SHIFT</div>
-      <div class="arr-tbl-count" id="arrTblCount">0 vol(s)</div>
-    </div>
-    <table class="arr-tbl">
-      <thead>
-        <tr>
-          <th>ETA</th>
-          <th>Vol · Handler</th>
-          <th>Registration</th>
-          <th>Stand</th>
-        </tr>
-      </thead>
-      <tbody id="arrTblBody"></tbody>
-    </table>
-  </div>
 </div>
 
 <!-- ═══ SECTION 3 : VÉRIFICATION CREW-BUS ═══ -->
@@ -621,6 +596,7 @@ let manType='arr', manHandler='';
 
 // ── PARAMÈTRES (localStorage) ─────────────────────────────────────
 const DEFAULT_PARAMS = {
+  utcOffset:      2, // UTC+1 (hiver) ou UTC+2 (été) — Belgique
   swissport_cb:   ['TAY'],
   avia_cb:        ['ABB'],
   catering:       ['ETH','QTR','LHA'],
@@ -633,7 +609,7 @@ const DEFAULT_PARAMS = {
 function loadParams(){
   try{
     const saved=localStorage.getItem('crewbus_params');
-    if(saved) return JSON.parse(saved);
+    if(saved) return Object.assign(JSON.parse(JSON.stringify(DEFAULT_PARAMS)),JSON.parse(saved));
   }catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT_PARAMS));
 }
@@ -652,7 +628,15 @@ function openSettings(){
     adbEl.value=adbKey||'';
     if(adbKey){const s=document.getElementById('adb-key-status');if(s){s.textContent='✓ Clé configurée';s.style.color='#4be8a0';}}
   }
+  // Refléter le décalage UTC actuellement sélectionné
+  document.getElementById('utc1Btn').classList.toggle('sel',PARAMS.utcOffset===1);
+  document.getElementById('utc2Btn').classList.toggle('sel',PARAMS.utcOffset!==1);
   document.getElementById('settingsOverlay').classList.add('open');
+}
+function setUtcOffset(n,el){
+  PARAMS.utcOffset=n;
+  document.querySelectorAll('#utc1Btn,#utc2Btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').classList.remove('open');
@@ -711,13 +695,10 @@ function go(n){
 function selShift(s,el){S.shift=s;document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
 function reset(){
   S.arr=[];S.dep=[];S.excluded=[];
-  document.getElementById('tFids').value='';
-  document.getElementById('iInfo').innerHTML='';
   setFidsStatus('','#6b7280');
   document.getElementById('tlSection').style.display='none';
   document.getElementById('adbCard').style.display='none';
   document.getElementById('adbTableSection').style.display='none';
-  document.getElementById('arrSection').style.display='none';
   renderPreview();
   document.getElementById('s0').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -739,93 +720,28 @@ function canPropose(raw){
 }
 
 function pickup(t){const[h,m]=t.split(':').map(Number);let x=h*60+m-75;if(x<0)x+=1440;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0');}
-function inWinArr(t){if(!t||!/^\d{1,2}:\d{2}$/.test(t))return false;const[h,m]=t.split(':').map(Number),mins=h*60+m;if(S.shift==='NIGHT')return mins>=22*60||mins<6*60;if(S.shift==='EARLY')return mins>=6*60&&mins<14*60;return mins>=14*60&&mins<22*60;}
-function inWinDep(t){return inWinArr(pickup(t));}
 function isOACI(s){return/^[EBLFKOGZDRUYCNHPWVTSBCP][A-Z]{3}$/.test(s)&&!/\d/.test(s);}
 function isReg(s){if(!s||s.length<4||s.length>8)return false;if(!/^[A-Z0-9]+$/.test(s)||/^\d+$/.test(s))return false;if(isOACI(s)||AC.test(s)||HL.includes(s))return false;if(/^\d+[A-Z]?$/.test(s)&&s.length<=4)return false;return/\d/.test(s)||/^(OE|TF|OO|9H|EI|N[0-9]|G|F|D|PH|SE|OH|LN|SP|HA|YR|LZ|CS|EC|TC|SU|ET|5Y|VT|B|JA|HL|A6|A7|EK|UK|UR|4X)/i.test(s);}
 function isStand(s){return/^\d{1,3}[A-Z]?$/.test(s)&&parseInt(s)<200;}
-
-function parseFids(text){
-  const arrivals=[],departures=[],excluded=[],seen=new Set();
-  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l.length>5);
-  for(const line of lines){
-    const upper=line.toUpperCase();
-    // Ignorer les lignes d'interface
-    if(/^(date\b|flight\b|a\/c\b|direction\b|handler\b|filter\b|utc\b|^lt$|night mode|day mode|version|all time|reset\b|clear\b|cancel\b|took off|soon\b|later\b|landed\b|runway\b|^stand$|^via$|^arrivals$|^departures$|pyxis|system op)/i.test(line))continue;
-    if(line.length<6)continue;
-    const tokens=line.split(/\s+/);
-    if(tokens.length<3)continue;
-
-    // Trouver toutes les heures
-    const times=tokens.filter(t=>/^\d{1,2}:\d{2}$/.test(t));
-    if(!times.length)continue;
-    const eta=times[times.length-1]; // dernière heure = ETA/ETD estimée
-
-    // Détecter ARR ou DEP — priorité au mot en début de ligne
-    let type=null;
-    if(/^departures?\b/i.test(line)) type='dep';
-    else if(/^arrivals?\b/i.test(line)) type='arr';
-    else if(/\bdepartures?\b/i.test(line)) type='dep';
-    else if(/\barrivals?\b/i.test(line)) type='arr';
-    else {
-      // Déduire depuis EBLG : si EBLG est dans la 1ère moitié = départ
-      const eblgIdx=tokens.findIndex(t=>t==='EBLG'||t==='ELLX');
-      if(eblgIdx!==-1) type=eblgIdx<tokens.length/2?'dep':'arr';
-      else type='arr'; // défaut
-    }
-
-    // Vérifier fenêtre horaire
-    if(type==='arr'&&!inWinArr(eta))continue;
-    if(type==='dep'&&!inWinDep(eta))continue;
-
-    // Handler
-    let hw='';
-    for(const h of HL){if(upper.includes(h)){hw=h;break;}}
-
-    // Numéro de vol : 2-3 lettres + 3-5 chiffres
-    let flight='';
-    for(const t of tokens){
-      if(/^[A-Z]{1,3}\d{3,5}[A-Z]?$/.test(t)&&!/^\d+$/.test(t)){flight=t;break;}
-    }
-    if(!flight)continue;
-
-    // Clé unique = vol + type + heure (permet même numéro en ARR et DEP, ou deux rotations)
-    const key=flight+'_'+type+'_'+eta;
-    if(seen.has(key))continue;
-    seen.add(key);
-
-    // Registration
-    let reg='';
-    for(const t of tokens){
-      if(t===flight||/^\d{1,2}:\d{2}$/.test(t)||/^\d{2}\//.test(t))continue;
-      if(HL.includes(t.toUpperCase())||t==='EBLG'||t==='ELLX')continue;
-      if(isStand(t))continue;
-      if(isReg(t)){reg=t;break;}
-    }
-
-    // Stand
-    let stand='';
-    for(const t of tokens){if(isStand(t)&&t!==reg){stand=t;break;}}
-
-    if(shouldInclude(flight,hw)){
-      const wfsMode=hw.toUpperCase()==='WFS'?'handling':null;
-      const obj={flight,reg,eta,time:type==='dep'?pickup(eta):eta,handler:hw,stand,type,wfsMode};
-      if(type==='dep')departures.push(obj);else arrivals.push(obj);
-    } else if(canPropose(hw)){
-      excluded.push({flight,reg,eta,time:type==='dep'?pickup(eta):eta,handler:hw,stand,type});
-    }
-  }
-  return{arrivals,departures,excluded};
-}
 
 // ── FIDS API (via fonction Netlify — pas de CORS) ─────────────────────
 const FIDS_ARR_URL='/.netlify/functions/fids?type=arrivals';
 const FIDS_DEP_URL='/.netlify/functions/fids?type=departures';
 
-function fidsTimeToHHMM(isoStr){
+function pad2(n){return String(n).padStart(2,'0');}
+function hhmmFromDate(dt){return dt?pad2(dt.getHours())+':'+pad2(dt.getMinutes()):null;}
+
+// Parse une string ISO UTC du FIDS ("2026-06-29T14:35:00") et applique le décalage UTC+1/+2
+// configuré dans les paramètres pour obtenir l'heure locale belge.
+function fidsIsoToLocalDate(isoStr){
   if(!isoStr)return null;
-  const m=isoStr.match(/T(\d{2}:\d{2})/);
-  return m?m[1]:null;
+  const m=isoStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if(!m)return null;
+  const offset=(PARAMS&&PARAMS.utcOffset)||2;
+  // On construit la date avec les valeurs UTC littérales, puis on ajoute le décalage en heures.
+  const dt=new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],0);
+  dt.setHours(dt.getHours()+offset);
+  return dt;
 }
 
 // Construit la fenêtre datetime [start,end) réelle du shift, ancrée sur la date sélectionnée dans l'app.
@@ -843,14 +759,6 @@ function shiftDateWindow(dateStr,shift){
     end=new Date(y,mo-1,d+1,6,0,0);
   }
   return{start,end};
-}
-
-// Parse une string ISO du FIDS ("2026-06-29T14:35:00") en Date locale, sans décalage de timezone.
-function fidsIsoToLocalDate(isoStr){
-  if(!isoStr)return null;
-  const m=isoStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
-  if(!m)return null;
-  return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],0);
 }
 
 function inDateWindow(dt,win){
@@ -889,8 +797,7 @@ async function loadFromFids(){
       const dt=fidsIsoToLocalDate(isoChosen);
       if(!dt)continue;
       if(!inDateWindow(dt,arrWin))continue;
-      const eta=fidsTimeToHHMM(isoChosen);
-      if(!eta)continue;
+      const eta=hhmmFromDate(dt);
       const flight=(f.flightNumber||f.flightPax||'').toUpperCase().trim();
       if(!flight)continue;
       const key=flight+'_arr_'+isoChosen;
@@ -917,8 +824,7 @@ async function loadFromFids(){
       // pickup = ETD - 1h15, calculé sur l'objet Date complet (gère le passage de minuit)
       const pickupDt=new Date(etdDt.getTime()-75*60000);
       if(!inDateWindow(pickupDt,depWin))continue;
-      const eta=fidsTimeToHHMM(isoChosen);
-      if(!eta)continue;
+      const eta=hhmmFromDate(etdDt);
       const flight=(f.flightNumber||f.flightPax||'').toUpperCase().trim();
       if(!flight)continue;
       const key=flight+'_dep_'+isoChosen;
@@ -948,7 +854,6 @@ async function loadFromFids(){
     setFidsStatus(`✓ FIDS — ${arrivals.length} ARR · ${departures.length} DEP · ${dateStr} · shift ${S.shift}`,'#4be8a0');
     updateAdbCard();
     renderTimeline();
-    renderArrivalsTable();
     renderPreview();
     buildOps();
     setTimeout(()=>{
@@ -960,33 +865,13 @@ async function loadFromFids(){
     console.error('FIDS load error:',e);
     const isCors=e.message&&(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')||e.message.includes('CORS'));
     if(isCors){
-      setFidsStatus('❌ CORS bloqué — utilise le copy-paste ci-dessous','#ef4444');
+      setFidsStatus('❌ Connexion réseau impossible — réessaie','#ef4444');
     } else {
       setFidsStatus('❌ '+( e.message||'Erreur connexion FIDS'),'#ef4444');
     }
   }finally{
     if(btn){btn.disabled=false;btn.textContent='🔄 CHARGER DEPUIS FIDS LGG';}
   }
-}
-
-function doAnalyse(){
-  const t=document.getElementById('tFids').value;
-  if(!t.trim()){alert('Colle le texte du FIDS d\'abord.');return;}
-  const{arrivals,departures,excluded}=parseFids(t);
-  S.arr=arrivals;S.dep=departures;S.excluded=excluded;
-  const total=arrivals.length+departures.length;
-  if(!total){document.getElementById('iInfo').innerHTML=`<span class="err">⚠ Aucun vol détecté (shift ${S.shift}).</span>`;return;}
-  document.getElementById('iInfo').innerHTML=`<span class="ok">✓ ${arrivals.length} arrivée(s) + ${departures.length} départ(s)</span>`;
-  updateAdbCard();
-  renderTimeline();
-  renderArrivalsTable();
-  renderPreview();
-  buildOps();         // peuple la section opération
-  // Scroll vers la timeline après un court délai
-  setTimeout(()=>{
-    const tl=document.getElementById('tlSection');
-    if(tl)tl.scrollIntoView({behavior:'smooth',block:'start'});
-  },100);
 }
 
 // ── Ajouter un vol exclu ─────────────────────────────────────────
@@ -1739,41 +1624,6 @@ function goActualShift(){renderPreview();document.getElementById('s2').scrollInt
 
 // ── TABLEAU ARRIVÉES LGG ────────────────────────────────────────────
 
-function renderArrivalsTable(){
-  const sec=document.getElementById('arrSection');
-  const body=document.getElementById('arrTblBody');
-  const count=document.getElementById('arrTblCount');
-  if(!sec||!body)return;
-
-  // Toutes les arrivées triées par ETA
-  const arrs=[...S.arr].filter(f=>f.type==='arr').sort((a,b)=>a.eta.localeCompare(b.eta));
-
-  // Mettre à jour le titre avec le shift
-  const titleEl=sec.querySelector('.arr-tbl-title');
-  if(titleEl)titleEl.textContent=`🛬 ARRIVÉES LGG — ${S.shift}`;
-  if(count)count.textContent=`${arrs.length} vol(s)`;
-
-  if(!arrs.length){
-    body.innerHTML=`<tr><td colspan="4" style="text-align:center;color:#6b7280;padding:14px;font-family:'DM Mono',monospace;font-size:11px">Aucune arrivée dans ce shift</td></tr>`;
-    sec.style.display='block';
-    return;
-  }
-
-  body.innerHTML=arrs.map(f=>{
-    const reg=f.reg||'—';
-    const stand=f.stand||'—';
-    const hdl=f.handler||'';
-    return`<tr>
-      <td><span class="arr-time">${f.eta}</span></td>
-      <td><span class="arr-flt">${f.flight}</span><span class="arr-hdl">${hdl}</span></td>
-      <td class="arr-reg">${reg}</td>
-      <td class="arr-stand">${stand}</td>
-    </tr>`;
-  }).join('');
-
-  sec.style.display='block';
-}
-
 // ── AERODATABOX ─────────────────────────────────────────────────────
 
 const ADB_KEY_STORE='crewbus_adb_key';
@@ -1819,12 +1669,18 @@ function getAdbWindows(dateStr,shift){
   ];
 }
 
-async function fetchAdbWindow(apiKey,from,to){
+async function fetchAdbWindow(apiKey,from,to,retries=2){
   const url=`https://aerodatabox.p.rapidapi.com/flights/airports/icao/EBLG/${from}/${to}?direction=Both&withCancelled=true&withCodeshared=false&withCargo=true&withPrivate=false&withLocation=false`;
   const resp=await fetch(url,{headers:{'X-RapidAPI-Key':apiKey,'X-RapidAPI-Host':'aerodatabox.p.rapidapi.com'}});
+  if(resp.status===429&&retries>0){
+    // Limite "par seconde" du plan BASIC dépassée — on patiente puis on retente.
+    await new Promise(r=>setTimeout(r,1500));
+    return fetchAdbWindow(apiKey,from,to,retries-1);
+  }
   if(!resp.ok){
     const body=await resp.text().catch(()=>'');
     if(resp.status===403||resp.status===401) throw new Error('Clé API invalide ou quota dépassé ('+resp.status+')');
+    if(resp.status===429) throw new Error('Limite de débit AeroDataBox atteinte (plan BASIC) — réessaie dans quelques secondes');
     throw new Error('Erreur API '+resp.status+(body?' — '+body.slice(0,120):''));
   }
   return resp.json();
@@ -1919,7 +1775,9 @@ async function enrichFromAeroDataBox(){
     const windows=getAdbWindows(dateStr,S.shift);
 
     const allDeps=[],allArrs=[];
-    for(const w of windows){
+    for(let i=0;i<windows.length;i++){
+      const w=windows[i];
+      if(i>0) await new Promise(r=>setTimeout(r,1100)); // respecte la limite "1 req/s" du plan BASIC
       const data=await fetchAdbWindow(apiKey,w.from,w.to);
       if(data.departures) allDeps.push(...data.departures);
       if(data.arrivals)   allArrs.push(...data.arrivals);
