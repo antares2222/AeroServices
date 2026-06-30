@@ -828,6 +828,36 @@ function fidsTimeToHHMM(isoStr){
   return m?m[1]:null;
 }
 
+// Construit la fenêtre datetime [start,end) réelle du shift, ancrée sur la date sélectionnée dans l'app.
+function shiftDateWindow(dateStr,shift){
+  const[y,mo,d]=dateStr.split('-').map(Number);
+  let start,end;
+  if(shift==='EARLY'){
+    start=new Date(y,mo-1,d,6,0,0);
+    end=new Date(y,mo-1,d,14,0,0);
+  }else if(shift==='LATE'){
+    start=new Date(y,mo-1,d,14,0,0);
+    end=new Date(y,mo-1,d,22,0,0);
+  }else{ // NIGHT : 22h ce jour-là -> 06h le lendemain
+    start=new Date(y,mo-1,d,22,0,0);
+    end=new Date(y,mo-1,d+1,6,0,0);
+  }
+  return{start,end};
+}
+
+// Parse une string ISO du FIDS ("2026-06-29T14:35:00") en Date locale, sans décalage de timezone.
+function fidsIsoToLocalDate(isoStr){
+  if(!isoStr)return null;
+  const m=isoStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if(!m)return null;
+  return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],0);
+}
+
+function inDateWindow(dt,win){
+  if(!dt)return false;
+  return dt>=win.start&&dt<win.end;
+}
+
 function setFidsStatus(msg,color){
   const el=document.getElementById('fidsStatus');
   if(el){el.innerHTML=msg;el.style.color=color||'#6b7280';}
@@ -846,17 +876,24 @@ async function loadFromFids(){
     if(!arrRes.ok||!depRes.ok) throw new Error('Erreur serveur FIDS ('+arrRes.status+')');
     const [arrData,depData]=await Promise.all([arrRes.json(),depRes.json()]);
 
+    const dateStr=document.getElementById('sDate').value;
+    const arrWin=shiftDateWindow(dateStr,S.shift);
+    const depWin=shiftDateWindow(dateStr,S.shift);
+
     const arrivals=[],departures=[],excluded=[],seen=new Set();
 
     // ── Arrivées ──
     for(const f of arrData){
       // Heure : priorité aTx (réel) sinon eTx (estimé) sinon sTx (planifié)
-      const eta=fidsTimeToHHMM(f.aTx)||fidsTimeToHHMM(f.eTx)||fidsTimeToHHMM(f.sTx);
+      const isoChosen=f.aTx||f.eTx||f.sTx;
+      const dt=fidsIsoToLocalDate(isoChosen);
+      if(!dt)continue;
+      if(!inDateWindow(dt,arrWin))continue;
+      const eta=fidsTimeToHHMM(isoChosen);
       if(!eta)continue;
-      if(!inWinArr(eta))continue;
       const flight=(f.flightNumber||f.flightPax||'').toUpperCase().trim();
       if(!flight)continue;
-      const key=flight+'_arr_'+eta;
+      const key=flight+'_arr_'+isoChosen;
       if(seen.has(key))continue;
       seen.add(key);
       const handler=(f.handler||'').toUpperCase().trim();
@@ -874,19 +911,25 @@ async function loadFromFids(){
 
     // ── Départs ──
     for(const f of depData){
-      const eta=fidsTimeToHHMM(f.eTx)||fidsTimeToHHMM(f.sTx);
+      const isoChosen=f.eTx||f.sTx;
+      const etdDt=fidsIsoToLocalDate(isoChosen);
+      if(!etdDt)continue;
+      // pickup = ETD - 1h15, calculé sur l'objet Date complet (gère le passage de minuit)
+      const pickupDt=new Date(etdDt.getTime()-75*60000);
+      if(!inDateWindow(pickupDt,depWin))continue;
+      const eta=fidsTimeToHHMM(isoChosen);
       if(!eta)continue;
-      if(!inWinDep(eta))continue;
       const flight=(f.flightNumber||f.flightPax||'').toUpperCase().trim();
       if(!flight)continue;
-      const key=flight+'_dep_'+eta;
+      const key=flight+'_dep_'+isoChosen;
       if(seen.has(key))continue;
       seen.add(key);
       const handler=(f.handler||'').toUpperCase().trim();
       const reg=(f.aircraftRegistration||'').toUpperCase().trim();
       const stand=(f.stand||'').trim();
       const dest=(f.destination||'').toUpperCase();
-      const obj={flight,reg,eta,time:pickup(eta),handler,stand,type:'dep',dest,fromFids:true};
+      const pickupHHMM=pickupDt.toTimeString().slice(0,5);
+      const obj={flight,reg,eta,time:pickupHHMM,handler,stand,type:'dep',dest,fromFids:true};
       if(shouldInclude(flight,handler)){
         obj.wfsMode=handler==='WFS'?'handling':null;
         departures.push(obj);
@@ -898,11 +941,11 @@ async function loadFromFids(){
     S.arr=arrivals; S.dep=departures; S.excluded=excluded;
     const total=arrivals.length+departures.length;
     if(!total){
-      setFidsStatus(`⚠ Aucun vol trouvé pour le shift ${S.shift}`,'#f59e0b');
+      setFidsStatus(`⚠ Aucun vol trouvé pour le ${dateStr} — shift ${S.shift}`,'#f59e0b');
       return;
     }
 
-    setFidsStatus(`✓ FIDS — ${arrivals.length} ARR · ${departures.length} DEP · shift ${S.shift}`,'#4be8a0');
+    setFidsStatus(`✓ FIDS — ${arrivals.length} ARR · ${departures.length} DEP · ${dateStr} · shift ${S.shift}`,'#4be8a0');
     updateAdbCard();
     renderTimeline();
     renderArrivalsTable();
