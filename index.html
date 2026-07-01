@@ -10,6 +10,28 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:#0a0a0a;color:#e8e8e8;font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:60px}
 
+/* ── BARRE DE NAVIGATION MOBILE (bas d'écran) ── */
+#mobileNav{
+  display:none;
+  position:fixed;left:0;right:0;bottom:0;z-index:500;
+  background:rgba(17,19,24,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid #2a2d36;
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+}
+#mobileNav .mnav-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;max-width:600px;margin:0 auto}
+#mobileNav .mnav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;color:#6b7280;font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:.3px;padding:6px 2px;cursor:pointer;
+  transition:color .15s;
+}
+#mobileNav .mnav-btn .mnav-ic{font-size:19px;line-height:1}
+#mobileNav .mnav-btn.active{color:#e8b84b}
+@media(max-width:699px){
+  #mobileNav{display:block}
+  body{padding-bottom:78px}
+}
+
 /* ── RESPONSIVE DESKTOP ── */
 .header-inner{max-width:600px;margin:0 auto}
 .sec{padding:20px;display:block;max-width:600px;margin:0 auto}
@@ -130,7 +152,7 @@ textarea:focus{border-color:#e8b84b}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:white;color:black;padding:0;font-family:Arial,sans-serif;font-size:10pt}
   /* Par défaut : cacher tout sauf #sheet */
-  .header,.sec,#sheetOps,#tlSection,#adbCard,#adbTableSection{display:none!important}
+  .header,.sec,#sheetOps,#tlSection,#adbCard,#adbTableSection,#mobileNav{display:none!important}
   #sheet{display:block!important}
   /* Quand on imprime les opérations : inverser */
   #sheet.no-print{display:none!important}
@@ -429,23 +451,30 @@ textarea:focus{border-color:#e8b84b}
     <div id="prev"></div>
   </div>
   <div class="card" id="cardExcluded" style="display:none">
-    <div class="fhdr">
+    <div class="fhdr" onclick="toggleCollapse('exPanel','exChev')" style="cursor:pointer;margin-bottom:0">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#6b7280">AUTRES VOLS DISPONIBLES</div>
-      <div class="cnt"><b id="cEx">0</b> vols</div>
-    </div>
-    <div id="prevEx"></div>
-  </div>
-  <div class="card">
-    <div class="fhdr" onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;margin-bottom:0">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#4be8a0">🎧 HEADSET</div>
       <div style="display:flex;align-items:center;gap:8px">
-        <div class="cnt"><b id="cHs">0</b> sélectionné(s)</div>
-        <span id="hsChev" style="color:#6b7280;font-size:16px;transition:transform .2s">▼</span>
+        <div class="cnt"><b id="cEx">0</b> vols</div>
+        <span id="exChev" style="color:#6b7280;font-size:16px;transition:transform .2s">▼</span>
       </div>
     </div>
-    <div id="hsPanel" style="display:none;margin-top:12px">
-      <div style="font-size:11px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:8px">Vols DEP dans la fenêtre — ETD directe</div>
-      <div id="hsList"></div>
+    <div id="exPanel" style="display:none;margin-top:12px"><div id="prevEx"></div></div>
+  </div>
+  <div class="card">
+    <div class="fhdr" style="margin-bottom:10px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#4be8a0">🎧 HEADSET</div>
+      <div class="cnt"><b id="cHs">0</b> sélectionné(s)</div>
+    </div>
+    <div id="hsList"></div>
+    <div style="margin-top:10px">
+      <div onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">+ AJOUTER / SUPPRIMER UN VOL</span>
+        <span id="hsChev" style="color:#6b7280;transition:transform .2s">▼</span>
+      </div>
+      <div id="hsPanel" style="display:none">
+        <div style="font-size:11px;color:#6b7280;font-family:'DM Mono',monospace;margin:8px 0">Vols DEP dans la fenêtre — ETD directe</div>
+        <div id="hsAllList"></div>
+      </div>
     </div>
   </div>
   <div class="card">
@@ -1048,16 +1077,34 @@ function renderPreview(){
     ...S.dep,
     ...S.excluded.filter(f=>f.type==='dep')
   ];
-  const hsCount=allDepForHs.filter(f=>f.hsMode===true).length;
-  document.getElementById('cHs').textContent=hsCount;
+  const hsSelected=allDepForHs.filter(f=>f.hsMode===true);
+  document.getElementById('cHs').textContent=hsSelected.length;
 
-  let hsList='';
+  // Liste persistante des vols cochés (toujours visible)
+  let hsHtml='';
+  hsSelected.forEach(f=>{
+    hsHtml+=`<div class="fi" style="border-left:3px solid #4be8a0;background:rgba(75,232,160,.06);margin-bottom:5px">
+      <div class="fi-top">
+        <div class="fi-t" style="font-size:18px;color:#e8b84b">${f.eta}<div class="fi-etd">ETD</div></div>
+        <div class="fi-b">
+          <div class="fi-f" style="font-size:12px">${f.flight}</div>
+          <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · Stand '+f.stand:''}</div>
+        </div>
+        <button class="rm-btn" onclick="setHs('${f.flight}',false)">✕</button>
+      </div>
+    </div>`;
+  });
+  if(!hsHtml)hsHtml=`<div style="color:#6b7280;font-size:12px;text-align:center;padding:10px">Aucun vol sélectionné</div>`;
+  document.getElementById('hsList').innerHTML=hsHtml;
+
+  // Panneau complet + AJOUTER/SUPPRIMER (tous les DEP dispo, avec bouton toggle)
+  let hsAllHtml='';
   if(allDepForHs.length===0){
-    hsList=`<div style="color:#6b7280;font-size:12px;text-align:center;padding:10px">Aucun vol DEP disponible</div>`;
+    hsAllHtml=`<div style="color:#6b7280;font-size:12px;text-align:center;padding:10px">Aucun vol DEP disponible</div>`;
   } else {
     allDepForHs.forEach(f=>{
       const sel=f.hsMode===true;
-      hsList+=`<div class="fi" style="border-left:3px solid ${sel?'#4be8a0':'#2a2d36'};background:${sel?'rgba(75,232,160,.06)':'#111318'};margin-bottom:5px">
+      hsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#4be8a0':'#2a2d36'};background:${sel?'rgba(75,232,160,.06)':'#111318'};margin-bottom:5px">
         <div class="fi-top">
           <div class="fi-t" style="font-size:18px;color:#e8b84b">${f.eta}<div class="fi-etd">ETD</div></div>
           <div class="fi-b">
@@ -1071,7 +1118,7 @@ function renderPreview(){
       </div>`;
     });
   }
-  document.getElementById('hsList').innerHTML=hsList;
+  document.getElementById('hsAllList').innerHTML=hsAllHtml;
 }
 
 // ── Generate PDF ──────────────────────────────────────────────────
@@ -1658,14 +1705,13 @@ function addDays(dateStr,days){
 }
 
 function getAdbWindows(dateStr,shift){
-  // AeroDataBox attend le format YYYY-MM-DDTHH:MM:SS
-  const fmt=t=>`${t}:00`;
-  if(shift==='EARLY') return [{from:fmt(`${dateStr}T04:00`),to:fmt(`${dateStr}T15:59`)}];
-  if(shift==='LATE')  return [{from:fmt(`${dateStr}T12:00`),to:fmt(`${dateStr}T23:59`)}];
+  // AeroDataBox attend le format YYYY-MM-DDTHH:mm (SANS les secondes, cf. doc officielle)
+  if(shift==='EARLY') return [{from:`${dateStr}T04:00`,to:`${dateStr}T15:59`}];
+  if(shift==='LATE')  return [{from:`${dateStr}T12:00`,to:`${dateStr}T23:59`}];
   const next=addDays(dateStr,1);
   return[
-    {from:fmt(`${dateStr}T20:00`),to:fmt(`${dateStr}T23:59`)},
-    {from:fmt(`${next}T00:00`),  to:fmt(`${next}T07:59`)}
+    {from:`${dateStr}T20:00`,to:`${dateStr}T23:59`},
+    {from:`${next}T00:00`,  to:`${next}T07:59`}
   ];
 }
 
@@ -1793,7 +1839,11 @@ async function enrichFromAeroDataBox(){
     // Appliquer les données ADB aux vols existants (pour barres jaunes timeline)
     applyAdbData([...allDeps.map(f=>({...f,isDep:true})),...allArrs.map(f=>({...f,isDep:false}))]);
     renderTimeline(); // re-rend avec barres ETA jaunes
-    setAdbStatus(`✓ ${total} vols reçus · tableau ci-dessous`,'#4be8a0');
+    if(total<Math.max(3,S.arr.length+S.dep.length-2)){
+      setAdbStatus(`⚠ ${total} vol(s) reçus — nettement moins que prévu (${S.arr.length+S.dep.length} attendus via FIDS). Vérifie ton quota/plan sur RapidAPI.`,'#f59e0b');
+    } else {
+      setAdbStatus(`✓ ${total} vols reçus · tableau ci-dessous`,'#4be8a0');
+    }
 
   }catch(e){
     setAdbStatus('❌ '+e.message,'#ef4444');
@@ -1869,6 +1919,50 @@ function renderAdbTable(arrs,deps,shift,dateStr){
   const sec=document.getElementById('adbTableSection');
   if(sec){sec.innerHTML=html;sec.style.display='block';}
 }
+// ── NAV MOBILE : scroll vers section + suivi de l'onglet actif ──────
+function navScrollTo(id,btn){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('#mobileNav .mnav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+}
+(function initMobileNavObserver(){
+  const ids=['s0','tlSection','s2','s3'];
+  const setup=()=>{
+    const targets=ids.map(id=>document.getElementById(id)).filter(Boolean);
+    if(!targets.length)return;
+    const obs=new IntersectionObserver((entries)=>{
+      // Choisit la section la plus proche du haut de l'écran parmi celles visibles
+      let best=null,bestTop=Infinity;
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const top=Math.abs(e.boundingClientRect.top);
+          if(top<bestTop){bestTop=top;best=e.target.id;}
+        }
+      });
+      if(best){
+        document.querySelectorAll('#mobileNav .mnav-btn').forEach(b=>{
+          b.classList.toggle('active',b.dataset.nav===best);
+        });
+      }
+    },{rootMargin:'-40% 0px -50% 0px',threshold:0});
+    targets.forEach(t=>obs.observe(t));
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',setup);
+  else setup();
+})();
 </script>
+
+<!-- ═══ NAV MOBILE (bas d'écran, visible uniquement sur mobile) ═══ -->
+<nav id="mobileNav">
+  <div class="mnav-row">
+    <button class="mnav-btn" data-nav="s0" onclick="navScrollTo('s0',this)"><span class="mnav-ic">🏠</span>Dashboard</button>
+    <button class="mnav-btn" data-nav="tlSection" onclick="navScrollTo('tlSection',this)"><span class="mnav-ic">⏱</span>Temps sol</button>
+    <button class="mnav-btn" data-nav="s2" onclick="navScrollTo('s2',this)"><span class="mnav-ic">✈</span>Arrivées</button>
+    <button class="mnav-btn" data-nav="s3" onclick="navScrollTo('s3',this)"><span class="mnav-ic">🛡</span>Vérification</button>
+  </div>
+</nav>
+
 </body>
 </html>
