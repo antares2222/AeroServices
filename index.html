@@ -35,6 +35,7 @@ body{background:#0a0a0a;color:#e8e8e8;font-family:'DM Sans',sans-serif;min-heigh
 @media(min-width:900px){
   .prev-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .ops-grid.has-fedex{grid-template-columns:1fr 1fr 1fr}
 }
 
 /* ── RESPONSIVE DESKTOP ── */
@@ -333,6 +334,19 @@ textarea:focus{border-color:#e8b84b}
       </div>
     </div>
 
+    <!-- FedEx -->
+    <div class="settings-section">
+      <div class="settings-section-title">📦 TABLEAU FEDEX — TYPES D'AVION</div>
+      <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:10px;line-height:1.6">
+        Affiche un petit tableau à part pour les vols FedEx dont le type d'avion correspond à cette liste.
+      </div>
+      <div class="prefix-list" id="fedex-ac-list"></div>
+      <div class="prefix-add">
+        <input type="text" id="fedex-ac-input" placeholder="ex: B738" maxlength="6">
+        <button onclick="addPrefix('fedex-ac','fedex_ac_types')">+ AJOUTER</button>
+      </div>
+    </div>
+
     <!-- Fuseau horaire -->
     <div class="settings-section">
       <div class="settings-section-title">🕐 FUSEAU HORAIRE FIDS</div>
@@ -461,7 +475,7 @@ textarea:focus{border-color:#e8b84b}
 <!-- ═══ SECTION 4 : VÉRIFICATION OPÉRATION ═══ -->
 <div class="sec" id="s3">
   <div class="lbl">04 — VÉRIFICATION OPÉRATION</div>
-  <div class="ops-grid">
+  <div class="ops-grid" id="opsGrid">
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#e8b84b">✈ CATERING</div>
@@ -489,6 +503,23 @@ textarea:focus{border-color:#e8b84b}
       </div>
       <div id="opsPanel" style="display:none"><div id="opsAllList"></div></div>
     </div>
+  </div>
+  <div class="card" id="fedexCard" style="display:none">
+    <div class="fhdr" style="margin-bottom:10px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#f59e0b">📦 FEDEX</div>
+      <div class="cnt"><b id="cFedex">0</b> vol(s)</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="border-bottom:1px solid #2a2d36">
+          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">Reg.</th>
+          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">Vol</th>
+          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">ETA</th>
+          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">Stand</th>
+        </tr>
+      </thead>
+      <tbody id="fedexTblBody"></tbody>
+    </table>
   </div>
   </div>
   <button class="btn bg" onclick="genPDFOps()" style="margin-bottom:8px">🖨 GÉNÉRER PAGE OPÉRATION</button>
@@ -570,7 +601,7 @@ textarea:focus{border-color:#e8b84b}
 </div>
 
 <script>
-const S={shift:'NIGHT',arr:[],dep:[],excluded:[]};
+const S={shift:'NIGHT',arr:[],dep:[],excluded:[],fedex:[]};
 const HL=['WFS','CHALLENGE','SWISSPORT','BAS','FEDEX','AVIAPARTNER'];
 const AC=/^(B7[0-9]{2}[LW]?|A3[0-9]{2}|B738|B763|B744|B748|A306|A332|A333|B734|B752|A321|B77[LW]|AT7[0-9]|CRJ|E[0-9]{3}|C25[ABC]|DA4[0-9]|PC1[0-9]|GLF4?|FA7X|LJ45|C510|C680)$/i;
 let manType='arr', manHandler='';
@@ -585,6 +616,7 @@ const DEFAULT_PARAMS = {
   challenge_ops:  ['AAE','CHG','ABD','ICL'],
   swissport_ops:  ['GTI','TAY','YZR','LHA'],
   avia_ops:       ['ABB'],
+  fedex_ac_types: ['B737','B738'],
 };
 
 function loadParams(){
@@ -639,7 +671,8 @@ function renderSettings(){
     'cb-swp-list':'swissport_cb','cb-avia-list':'avia_cb',
     'cat-list':'catering',
     'ops-wfs-ex-list':'wfs_ops_exclude','ops-chal-list':'challenge_ops',
-    'ops-swp-list':'swissport_ops','ops-avia-list':'avia_ops'
+    'ops-swp-list':'swissport_ops','ops-avia-list':'avia_ops',
+    'fedex-ac-list':'fedex_ac_types'
   };
   for(const [elId,key] of Object.entries(keys)){
     const el=document.getElementById(elId);
@@ -678,10 +711,11 @@ function go(n){
 }
 function selShift(s,el){S.shift=s;document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
 function reset(){
-  S.arr=[];S.dep=[];S.excluded=[];
+  S.arr=[];S.dep=[];S.excluded=[];S.fedex=[];
   setFidsStatus('','#6b7280');
   document.getElementById('tlSection').style.display='none';
   renderPreview();
+  renderFedexTable();
   document.getElementById('s0').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -770,7 +804,7 @@ async function loadFromFids(){
     const arrWin=shiftDateWindow(dateStr,S.shift);
     const depWin=shiftDateWindow(dateStr,S.shift);
 
-    const arrivals=[],departures=[],excluded=[],seen=new Set();
+    const arrivals=[],departures=[],excluded=[],fedexArr=[],seen=new Set();
 
     // ── Arrivées ──
     for(const f of arrData){
@@ -789,6 +823,11 @@ async function loadFromFids(){
       const reg=(f.aircraftRegistration||'').toUpperCase().trim();
       const stand=(f.stand||'').trim();
       const origin=(f.origin||'').toUpperCase();
+      const acType=(f.aircraftType||'').toUpperCase().trim();
+      // Tableau FedEx à part : uniquement les types d'avion configurés (par défaut B737/B738)
+      if(handler==='FEDEX'&&(PARAMS.fedex_ac_types||[]).includes(acType)){
+        fedexArr.push({flight,reg,eta,stand,acType});
+      }
       const obj={flight,reg,eta,time:eta,handler,stand,type:'arr',origin,fromFids:true};
       if(shouldInclude(flight,handler)){
         obj.wfsMode=handler==='WFS'?'handling':null;
@@ -826,7 +865,7 @@ async function loadFromFids(){
       }
     }
 
-    S.arr=arrivals; S.dep=departures; S.excluded=excluded;
+    S.arr=arrivals; S.dep=departures; S.excluded=excluded; S.fedex=fedexArr;
     const total=arrivals.length+departures.length;
     if(!total){
       setFidsStatus(`⚠ Aucun vol trouvé pour le ${dateStr} — shift ${S.shift}`,'#f59e0b');
@@ -1189,14 +1228,14 @@ function inCateringWindow(etd){
   return mins>=start||mins<end;
 }
 
-// Window for operations: shift -35min to end of shift
+// Window for operations: shift -35min à shift_fin -10min
 function inOpsWindow(eta){
   if(!eta||!/^\d{1,2}:\d{2}$/.test(eta))return false;
   const[h,m]=eta.split(':').map(Number),mins=h*60+m;
   let start,end;
-  if(S.shift==='NIGHT'){start=21*60+25;end=6*60;}    // 21h25-06h
-  else if(S.shift==='EARLY'){start=5*60+25;end=14*60;}// 05h25-14h
-  else{start=13*60+25;end=22*60;}                     // 13h25-22h (LATE)
+  if(S.shift==='NIGHT'){start=21*60+25;end=5*60+50;}    // 21h25-05h50
+  else if(S.shift==='EARLY'){start=5*60+25;end=13*60+50;}// 05h25-13h50
+  else{start=13*60+25;end=21*60+50;}                     // 13h25-21h50 (LATE)
   if(start<end) return mins>=start&&mins<end;
   return mins>=start||mins<end;
 }
@@ -1337,6 +1376,32 @@ function renderOps(){
   });
   if(!opsAllHtml)opsAllHtml=`<div style="color:#6b7280;font-size:12px;padding:8px">Aucun vol ARR disponible</div>`;
   document.getElementById('opsAllList').innerHTML=opsAllHtml;
+
+  renderFedexTable();
+}
+
+// ── Tableau FedEx (types d'avion configurés, ex: B737/B738) ──
+function renderFedexTable(){
+  const card=document.getElementById('fedexCard');
+  const grid=document.getElementById('opsGrid');
+  const body=document.getElementById('fedexTblBody');
+  const cnt=document.getElementById('cFedex');
+  const flights=S.fedex||[];
+  cnt.textContent=flights.length;
+  if(!flights.length){
+    card.style.display='none';
+    grid.classList.remove('has-fedex');
+    body.innerHTML='';
+    return;
+  }
+  grid.classList.add('has-fedex');
+  card.style.display='block';
+  body.innerHTML=flights.map(f=>`<tr style="border-bottom:1px solid rgba(42,45,54,.5)">
+    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px">${f.reg||'—'}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px;font-weight:bold">${f.flight}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px;color:#4be8a0">${f.eta}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px">${f.stand||'—'}</td>
+  </tr>`).join('');
 }
 
 function toggleCat(flight,eta,val){
