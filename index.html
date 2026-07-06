@@ -571,6 +571,19 @@ textarea:focus{border-color:#e8b84b}
     </tr></thead>
     <tbody id="shOps-ops"></tbody>
   </table>
+  <div id="shOps-fedex-block" style="display:none">
+    <br>
+    <div style="font-family:Arial;font-size:9pt;font-weight:bold;padding:4pt 0 2pt;letter-spacing:1pt">FEDEX</div>
+    <table class="pt">
+      <thead><tr>
+        <th style="width:25%">Registration</th>
+        <th style="width:25%">Flight Number</th>
+        <th style="width:25%">ETA</th>
+        <th style="width:25%">Stand</th>
+      </tr></thead>
+      <tbody id="shOps-fedex"></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- FEUILLE PRINT -->
@@ -1496,6 +1509,26 @@ function genPDFOps(){
     opsRows+=`<tr class="per"><td></td><td></td><td></td><td></td><td></td></tr>`;
   }
   document.getElementById('shOps-ops').innerHTML=opsRows;
+
+  // FedEx rows — bloc affiché uniquement s'il y a des vols
+  const fedexBlock=document.getElementById('shOps-fedex-block');
+  const fedexFlights=(S.fedex||[]).slice().sort((a,b)=>a.eta.localeCompare(b.eta));
+  if(fedexFlights.length){
+    let fedexRows='';
+    fedexFlights.forEach(f=>{
+      fedexRows+=`<tr>
+        <td class="font-lg">${f.reg||''}</td>
+        <td class="font-lg">${f.flight}</td>
+        <td class="font-lg">${f.eta}</td>
+        <td class="font-lg">${f.stand||''}</td>
+      </tr>`;
+    });
+    document.getElementById('shOps-fedex').innerHTML=fedexRows;
+    fedexBlock.style.display='block';
+  } else {
+    document.getElementById('shOps-fedex').innerHTML='';
+    fedexBlock.style.display='none';
+  }
 
   // Affiche uniquement la feuille OPS — délai court pour laisser Safari iOS peindre le DOM
   document.getElementById('sheet').classList.add('no-print');
