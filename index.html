@@ -1007,9 +1007,10 @@ function renderPreview(){
   let hArr='',hDep='';
 
   // Arrivées
-  if(S.arr.length){
-    hArr+=`<div class="grp a">✈ ARRIVÉES (${S.arr.length})</div>`;
-    S.arr.forEach(f=>{
+  const sortedArr=S.arr.slice().sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
+  if(sortedArr.length){
+    hArr+=`<div class="grp a">✈ ARRIVÉES (${sortedArr.length})</div>`;
+    sortedArr.forEach(f=>{
       const isWfs=f.handler.toUpperCase()==='WFS';
       hArr+=`<div class="fi a">
         <div class="fi-top">
@@ -1035,9 +1036,10 @@ function renderPreview(){
   document.getElementById('prevArr').innerHTML=hArr;
 
   // Départs
-  if(S.dep.length){
-    hDep+=`<div class="grp d">✈ DÉPARTS — pick up = ETD-1h15 (${S.dep.length})</div>`;
-    S.dep.forEach(f=>{
+  const sortedDep=S.dep.slice().sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
+  if(sortedDep.length){
+    hDep+=`<div class="grp d">✈ DÉPARTS — pick up = ETD-1h15 (${sortedDep.length})</div>`;
+    sortedDep.forEach(f=>{
       const isWfs=f.handler.toUpperCase()==='WFS';
       const isSwp=f.handler.toUpperCase()==='SWISSPORT';
       const showHs=isWfs||isSwp;
@@ -1070,7 +1072,7 @@ function renderPreview(){
   if(S.excluded.length>0){
     excCard.style.display='block';
     let ex='';
-    S.excluded.forEach(f=>{
+    S.excluded.slice().sort((a,b)=>chronoKey(a.time)-chronoKey(b.time)).forEach(f=>{
       const badge=f.type==='arr'?'<span class="fi-bx a" style="font-size:9px">ARR</span>':'<span class="fi-bx d" style="font-size:9px">DEP</span>';
       ex+=`<div class="fi ex">
         <div class="fi-top">
@@ -1091,7 +1093,7 @@ function renderPreview(){
 
   // ── Liste Headset : TOUS les DEP dans la fenêtre horaire, tous handlers confondus ──
   // Indépendant des règles de filtrage crew-bus (S.dep/S.excluded)
-  const allDepForHs=S.allDep||[];
+  const allDepForHs=(S.allDep||[]).slice().sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
   const hsSelected=allDepForHs.filter(f=>f.hsMode===true);
   document.getElementById('cHs').textContent=hsSelected.length;
 
@@ -1146,7 +1148,9 @@ function genPDF(){
   document.getElementById('sh-date').textContent='Crew bus service   '+dl+'   '+S.shift;
   document.getElementById('sh-shift').innerHTML='';
   let rows='';
-  S.arr.forEach(f=>{
+  const sortedArrPdf=S.arr.slice().sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
+  const sortedDepPdf=S.dep.slice().sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
+  sortedArrPdf.forEach(f=>{
     rows+=`<tr>
       <td class="col-reg font-lg">${f.reg||''}</td>
       <td class="col-flt font-lg">${f.flight}</td>
@@ -1159,7 +1163,7 @@ function genPDF(){
   });
   // Ligne vide de séparation entre arrivées et départs
   if(S.arr.length&&S.dep.length){rows+=`<tr class="per"><td></td><td></td><td class="col-arr">ARR</td><td class="col-pup">Pick up</td><td></td><td></td><td></td></tr>`;}
-  S.dep.forEach(f=>{
+  sortedDepPdf.forEach(f=>{
     rows+=`<tr>
       <td class="col-reg font-lg">${f.reg||''}</td>
       <td class="col-flt font-lg">${f.flight}</td>
@@ -1178,7 +1182,7 @@ function genPDF(){
   for(let i=0;i<emptyCount;i++){rows+=`<tr class="per"><td></td><td></td><td class="col-arr">ARR</td><td class="col-pup">Pick up</td><td></td><td></td><td></td></tr>`;}
   document.getElementById('sh-rows').innerHTML=rows;
   // Vols HS : tous DEP avec hsMode=true (tous handlers confondus, indépendant du crew-bus)
-  const allDepForHs=S.allDep||[];
+  const allDepForHs=(S.allDep||[]).slice().sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
   const hsFlights=allDepForHs.filter(f=>f.hsMode===true);
   const rentingFlights=[...S.arr,...S.dep].filter(f=>f.handler.toUpperCase()==='WFS'&&f.wfsMode==='renting');
   // Dédupliquer renting : une seule entrée par registration ET par numéro de vol
@@ -1256,6 +1260,17 @@ function inCateringWindow(etd){
 }
 
 // Window for operations: shift -35min à shift_fin -10min
+// Clé de tri chronologique tenant compte du passage de minuit pour le shift NIGHT.
+// Sans ça, un tri alphabétique classique ("03:55" < "22:05") regroupe les vols
+// après minuit avant ceux du soir, au lieu de suivre l'ordre réel du shift.
+function chronoKey(hhmm){
+  if(!hhmm||!/^\d{1,2}:\d{2}$/.test(hhmm))return 0;
+  const[h,m]=hhmm.split(':').map(Number);
+  let mins=h*60+m;
+  if(S.shift==='NIGHT'&&mins<12*60) mins+=1440; // vols après minuit passent après ceux du soir
+  return mins;
+}
+
 function inOpsWindow(eta){
   if(!eta||!/^\d{1,2}:\d{2}$/.test(eta))return false;
   const[h,m]=eta.split(':').map(Number),mins=h*60+m;
@@ -1319,7 +1334,7 @@ function buildOps(){
 
 function renderOps(){
   // ── Catering ──
-  const selCat=OPS.catering.filter(f=>f.selected);
+  const selCat=OPS.catering.filter(f=>f.selected).sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
   document.getElementById('cCat').textContent=selCat.length;
 
   let catHtml='';
@@ -1340,7 +1355,7 @@ function renderOps(){
 
   // All dep for catering menu
   let catAllHtml='';
-  OPS.catering.forEach(f=>{
+  OPS.catering.slice().sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta)).forEach(f=>{
     const sel=f.selected;
     catAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#e8b84b':'#2a2d36'};background:${sel?'rgba(232,184,75,.04)':'#111318'};margin-bottom:4px">
       <div class="fi-top">
@@ -1359,7 +1374,7 @@ function renderOps(){
   document.getElementById('catAllList').innerHTML=catAllHtml;
 
   // ── Operations ──
-  const selOps=OPS.operations.filter(f=>f.selected);
+  const selOps=OPS.operations.filter(f=>f.selected).sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
   document.getElementById('cOps').textContent=selOps.length;
 
   let opsHtml='';
@@ -1387,7 +1402,7 @@ function renderOps(){
 
   // All arr for ops menu
   let opsAllHtml='';
-  OPS.operations.forEach(f=>{
+  OPS.operations.slice().sort((a,b)=>chronoKey(a.time)-chronoKey(b.time)).forEach(f=>{
     const sel=f.selected;
     opsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#4be8a0':'#2a2d36'};background:${sel?'rgba(75,232,160,.04)':'#111318'};margin-bottom:4px">
       <div class="fi-top">
@@ -1414,7 +1429,7 @@ function renderFedexTable(){
   const grid=document.getElementById('opsGrid');
   const body=document.getElementById('fedexTblBody');
   const cnt=document.getElementById('cFedex');
-  const flights=S.fedex||[];
+  const flights=(S.fedex||[]).slice().sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
   cnt.textContent=flights.length;
   if(!flights.length){
     card.style.display='none';
@@ -1466,7 +1481,7 @@ function genPDFOps(){
   document.getElementById('sheetOps').classList.remove('do-print');
 
   // Catering rows
-  const selCat=OPS.catering.filter(f=>f.selected).sort((a,b)=>a.eta.localeCompare(b.eta));
+  const selCat=OPS.catering.filter(f=>f.selected).sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
   let catRows='';
   selCat.forEach(f=>{
     catRows+=`<tr>
@@ -1479,7 +1494,7 @@ function genPDFOps(){
   document.getElementById('shOps-cat').innerHTML=catRows;
 
   // Operations rows (ordre : Registration, Vol, Stand, ETA, Tâche)
-  const selOps=OPS.operations.filter(f=>f.selected).sort((a,b)=>a.time.localeCompare(b.time));
+  const selOps=OPS.operations.filter(f=>f.selected).sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
   let opsRows='';
   selOps.forEach(f=>{
     const task=isOpsDefault(f)?'':getTaskLabel(f.tasks);
@@ -1499,7 +1514,7 @@ function genPDFOps(){
 
   // FedEx rows — bloc affiché uniquement s'il y a des vols (Registration + ETA uniquement)
   const fedexBlock=document.getElementById('shOps-fedex-block');
-  const fedexFlights=(S.fedex||[]).slice().sort((a,b)=>a.eta.localeCompare(b.eta));
+  const fedexFlights=(S.fedex||[]).slice().sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
   if(fedexFlights.length){
     let fedexRows='';
     fedexFlights.forEach(f=>{
