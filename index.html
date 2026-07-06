@@ -167,7 +167,7 @@ textarea:focus{border-color:#e8b84b}
   .ph-l{flex:1;padding:6pt 10pt;font-size:11pt}
   .ph-m{display:none}
   .ph-r{flex:1;padding:6pt 10pt}
-  table.pt{width:100%;border-collapse:collapse}
+  table.pt{width:100%;border-collapse:collapse;table-layout:fixed}
   table.pt th{font-size:8pt;font-weight:bold;text-align:center;border:1pt solid black;padding:4pt 3pt;font-variant:small-caps}
   table.pt td{border:1pt solid black;padding:4pt 5pt;vertical-align:middle;height:10mm}
   .font-lg{font-size:14pt}
@@ -541,20 +541,14 @@ textarea:focus{border-color:#e8b84b}
 
 <!-- FEUILLE PRINT OPS (page 2) -->
 <div id="sheetOps">
-  <div class="ph">
-    <div class="ph-l" id="shOps-date"></div>
-    <div class="ph-m"></div>
-    <div class="ph-r"></div>
-  </div>
   <!-- Catering table -->
   <div style="font-family:Arial;font-size:9pt;font-weight:bold;padding:4pt 0 2pt;letter-spacing:1pt">CATERING</div>
   <table class="pt">
     <thead><tr>
-      <th style="width:16%">Registration</th>
-      <th style="width:18%">Flight Number</th>
-      <th style="width:18%">Up Lift (ETD-1h30)</th>
-      <th style="width:18%">ETD</th>
-      <th style="width:30%">Note</th>
+      <th style="width:13%">Registration</th>
+      <th style="width:15%">Flight Number</th>
+      <th style="width:12%">Up Lift</th>
+      <th style="width:12%">ETD</th>
     </tr></thead>
     <tbody id="shOps-cat"></tbody>
   </table>
@@ -563,23 +557,21 @@ textarea:focus{border-color:#e8b84b}
   <div style="font-family:Arial;font-size:9pt;font-weight:bold;padding:4pt 0 2pt;letter-spacing:1pt">OPÉRATION</div>
   <table class="pt">
     <thead><tr>
-      <th style="width:16%">Registration</th>
-      <th style="width:18%">Flight Number</th>
-      <th style="width:14%">ETA</th>
+      <th style="width:13%">Registration</th>
+      <th style="width:15%">Flight Number</th>
       <th style="width:10%">Stand</th>
-      <th style="width:42%">Tâche</th>
+      <th style="width:10%">ETA</th>
+      <th style="width:52%">Tâche</th>
     </tr></thead>
     <tbody id="shOps-ops"></tbody>
   </table>
   <div id="shOps-fedex-block" style="display:none">
     <br>
     <div style="font-family:Arial;font-size:9pt;font-weight:bold;padding:4pt 0 2pt;letter-spacing:1pt">FEDEX</div>
-    <table class="pt">
+    <table class="pt" style="width:50%;table-layout:fixed">
       <thead><tr>
-        <th style="width:25%">Registration</th>
-        <th style="width:25%">Flight Number</th>
-        <th style="width:25%">ETA</th>
-        <th style="width:25%">Stand</th>
+        <th style="width:50%">Registration</th>
+        <th style="width:50%">ETA</th>
       </tr></thead>
       <tbody id="shOps-fedex"></tbody>
     </table>
@@ -680,6 +672,7 @@ function setUtcOffset(n,el){
   PARAMS.utcOffset=n;
   document.querySelectorAll('#utc1Btn,#utc2Btn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
+  saveParamsToStorage(PARAMS); // sauvegarde immédiate
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').classList.remove('open');
@@ -721,12 +714,14 @@ function addPrefix(inputId, key){
   if(!PARAMS[key].includes(val))PARAMS[key].push(val);
   input.value='';
   renderSettings();
+  saveParamsToStorage(PARAMS); // sauvegarde immédiate, pas besoin d'attendre le clic SAUVEGARDER
 }
 
 function removePrefix(key, val){
   if(!PARAMS[key])return;
   PARAMS[key]=PARAMS[key].filter(p=>p!==val);
   renderSettings();
+  saveParamsToStorage(PARAMS); // sauvegarde immédiate
 }
 
 document.getElementById('sDate').value=new Date().toISOString().slice(0,10);
@@ -1469,9 +1464,6 @@ function genPDFOps(){
   // Sécurité : réinitialise l'état d'affichage avant de configurer la feuille OPS
   document.getElementById('sheet').classList.remove('no-print');
   document.getElementById('sheetOps').classList.remove('do-print');
-  const dateVal=document.getElementById('sDate').value;
-  const dl=dateVal?dateVal.split('-').reverse().join('/'):'—';
-  document.getElementById('shOps-date').textContent='Opération   '+dl+'   '+S.shift;
 
   // Catering rows
   const selCat=OPS.catering.filter(f=>f.selected).sort((a,b)=>a.eta.localeCompare(b.eta));
@@ -1482,16 +1474,11 @@ function genPDFOps(){
       <td class="font-lg">${f.flight}</td>
       <td class="font-lg">${uplift(f.eta)}</td>
       <td class="font-lg">${f.eta}</td>
-      <td></td>
     </tr>`;
   });
-  // Empty rows = nb vols + 2
-  for(let i=0;i<2;i++){
-    catRows+=`<tr class="per"><td></td><td></td><td></td><td></td><td></td></tr>`;
-  }
   document.getElementById('shOps-cat').innerHTML=catRows;
 
-  // Operations rows
+  // Operations rows (ordre : Registration, Vol, Stand, ETA, Tâche)
   const selOps=OPS.operations.filter(f=>f.selected).sort((a,b)=>a.time.localeCompare(b.time));
   let opsRows='';
   selOps.forEach(f=>{
@@ -1499,8 +1486,8 @@ function genPDFOps(){
     opsRows+=`<tr>
       <td class="font-lg">${f.reg||''}</td>
       <td class="font-lg">${f.flight}</td>
-      <td class="font-lg">${f.time}</td>
       <td class="font-lg">${f.stand||''}</td>
+      <td class="font-lg">${f.time}</td>
       <td style="font-size:10pt;font-weight:bold">${task}</td>
     </tr>`;
   });
@@ -1510,7 +1497,7 @@ function genPDFOps(){
   }
   document.getElementById('shOps-ops').innerHTML=opsRows;
 
-  // FedEx rows — bloc affiché uniquement s'il y a des vols
+  // FedEx rows — bloc affiché uniquement s'il y a des vols (Registration + ETA uniquement)
   const fedexBlock=document.getElementById('shOps-fedex-block');
   const fedexFlights=(S.fedex||[]).slice().sort((a,b)=>a.eta.localeCompare(b.eta));
   if(fedexFlights.length){
@@ -1518,9 +1505,7 @@ function genPDFOps(){
     fedexFlights.forEach(f=>{
       fedexRows+=`<tr>
         <td class="font-lg">${f.reg||''}</td>
-        <td class="font-lg">${f.flight}</td>
         <td class="font-lg">${f.eta}</td>
-        <td class="font-lg">${f.stand||''}</td>
       </tr>`;
     });
     document.getElementById('shOps-fedex').innerHTML=fedexRows;
