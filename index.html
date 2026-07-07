@@ -111,6 +111,12 @@ textarea:focus{border-color:#e8b84b}
 
 /* Flight item */
 .fi{border:1px solid #2a2d36;border-radius:8px;padding:9px 12px;margin-bottom:5px}
+.add-compact{display:flex;gap:6px;align-items:center;border:1px dashed #2a2d36;border-radius:8px;padding:9px 10px;margin-bottom:10px;background:#111318}
+.add-compact input{background:#0a0a0a;border:1px solid #2a2d36;border-radius:6px;color:#e8e8e8;font-family:'DM Mono',monospace;font-size:12px;padding:7px 8px;outline:none;min-width:0}
+.add-compact input.ac-time{width:56px;flex-shrink:0;text-align:center}
+.add-compact input.ac-reg{flex:1}
+.add-compact input.ac-flight{flex:1}
+.add-compact button{flex-shrink:0;background:#e8b84b;border:none;border-radius:6px;color:#0a0a0a;font-family:'Bebas Neue',sans-serif;font-size:14px;padding:7px 12px;cursor:pointer;white-space:nowrap}
 .fi.a{border-left:3px solid #4be8a0;background:rgba(75,232,160,.04)}
 .fi.d{border-left:3px solid #e84b4b;background:rgba(232,75,75,.04)}
 .fi.ex{border-left:3px solid #2a2d36;background:#111318;opacity:.8}
@@ -495,9 +501,15 @@ textarea:focus{border-color:#e8b84b}
       <div class="cnt">DEP <b id="cCat">0</b></div>
     </div>
     <div id="catList"></div>
+    <div class="add-compact">
+      <input type="text" id="catAddTime" class="ac-time" placeholder="ETD">
+      <input type="text" id="catAddReg" class="ac-reg" placeholder="Registration">
+      <input type="text" id="catAddFlight" class="ac-flight" placeholder="N° vol">
+      <button onclick="addManualCatering()">+ AJOUTER</button>
+    </div>
     <div style="margin-top:10px">
       <div onclick="toggleCollapse('catPanel','catChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
-        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">+ AJOUTER / SUPPRIMER UN VOL</span>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">VOL NON AFFICHÉ</span>
         <span id="catChev" style="color:#6b7280;transition:transform .2s">▼</span>
       </div>
       <div id="catPanel" style="display:none"><div id="catAllList"></div></div>
@@ -509,9 +521,15 @@ textarea:focus{border-color:#e8b84b}
       <div class="cnt">ARR <b id="cOps">0</b></div>
     </div>
     <div id="opsList"></div>
+    <div class="add-compact">
+      <input type="text" id="opsAddTime" class="ac-time" placeholder="ETA">
+      <input type="text" id="opsAddReg" class="ac-reg" placeholder="Registration">
+      <input type="text" id="opsAddFlight" class="ac-flight" placeholder="N° vol">
+      <button onclick="addManualOperation()">+ AJOUTER</button>
+    </div>
     <div style="margin-top:10px">
       <div onclick="toggleCollapse('opsPanel','opsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
-        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">+ AJOUTER / SUPPRIMER UN VOL</span>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">VOL NON AFFICHÉ</span>
         <span id="opsChev" style="color:#6b7280;transition:transform .2s">▼</span>
       </div>
       <div id="opsPanel" style="display:none"><div id="opsAllList"></div></div>
@@ -1332,6 +1350,48 @@ function buildOps(){
   renderOps();
 }
 
+// ── Ajout manuel compact — Catering (heure = ETD) ──
+function addManualCatering(){
+  const timeEl=document.getElementById('catAddTime');
+  const regEl=document.getElementById('catAddReg');
+  const flightEl=document.getElementById('catAddFlight');
+  const eta=timeEl.value.trim();
+  const reg=regEl.value.trim().toUpperCase();
+  const flight=flightEl.value.trim().toUpperCase();
+  if(!flight||!/^\d{1,2}:\d{2}$/.test(eta)){
+    alert('Renseigne au minimum le numéro de vol et une heure valide (HH:MM).');
+    return;
+  }
+  const existing=OPS.catering.find(c=>c.flight===flight&&c.eta===eta);
+  if(existing){existing.selected=true;}
+  else{
+    OPS.catering.push({flight,reg,eta,time:eta,handler:'',stand:'',type:'dep',manual:true,selected:true});
+  }
+  timeEl.value='';regEl.value='';flightEl.value='';
+  renderOps();
+}
+
+// ── Ajout manuel compact — Opération (heure = ETA) ──
+function addManualOperation(){
+  const timeEl=document.getElementById('opsAddTime');
+  const regEl=document.getElementById('opsAddReg');
+  const flightEl=document.getElementById('opsAddFlight');
+  const eta=timeEl.value.trim();
+  const reg=regEl.value.trim().toUpperCase();
+  const flight=flightEl.value.trim().toUpperCase();
+  if(!flight||!/^\d{1,2}:\d{2}$/.test(eta)){
+    alert('Renseigne au minimum le numéro de vol et une heure valide (HH:MM).');
+    return;
+  }
+  const existing=OPS.operations.find(o=>o.flight===flight&&o.eta===eta);
+  if(existing){existing.selected=true;}
+  else{
+    OPS.operations.push({flight,reg,eta,time:eta,handler:'',stand:'',type:'arr',manual:true,selected:true,tasks:{cleaning:false,toilet:false,water:false}});
+  }
+  timeEl.value='';regEl.value='';flightEl.value='';
+  renderOps();
+}
+
 function renderOps(){
   // ── Catering ──
   const selCat=OPS.catering.filter(f=>f.selected).sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
@@ -1362,7 +1422,7 @@ function renderOps(){
         <div class="fi-t" style="font-size:16px;color:#e8b84b">${f.eta}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'} · ${f.handler}</div>
+          <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}</div>
         </div>
         <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleCat('${f.flight}','${f.eta}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
@@ -1386,7 +1446,7 @@ function renderOps(){
         <div class="fi-t" style="font-size:16px">${f.time}</div>
         <div class="fi-b">
           <div class="fi-f">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'}${f.stand?' · Stand '+f.stand:''} · ${f.handler}</div>
+          <div class="fi-r">${f.reg||'—'}${f.stand?' · Stand '+f.stand:''} · ${f.handler||'—'}</div>
         </div>
         <button class="rm-btn" onclick="toggleOps('${f.flight}','${f.eta}',false)">✕</button>
       </div>
@@ -1409,7 +1469,7 @@ function renderOps(){
         <div class="fi-t" style="font-size:16px;color:#e8b84b">${f.time}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'} · ${f.handler}</div>
+          <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}</div>
         </div>
         <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleOps('${f.flight}','${f.eta}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
