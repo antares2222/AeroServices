@@ -1,0 +1,38 @@
+/* PRINT */
+#sheet{display:none}
+#sheetOps{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:white;color:black;padding:0;font-family:Arial,sans-serif;font-size:10pt}
+  /* Par défaut : cacher tout sauf #sheet */
+  .header,.sec,#sheetOps,#tlSection,#mobileNav{display:none!important}
+  #sheet{display:block!important}
+  /* Quand on imprime les opérations : inverser */
+  #sheet.no-print{display:none!important}
+  #sheetOps.do-print{display:block!important}
+  @page{size:A4 portrait;margin:10mm}
+  .ph{display:flex;align-items:stretch;border:1.5pt solid black;margin-bottom:0}
+  .ph-l{flex:1;padding:6pt 10pt;font-size:11pt}
+  .ph-m{display:none}
+  .ph-r{flex:1;padding:6pt 10pt}
+  table.pt{width:100%;border-collapse:collapse;table-layout:fixed}
+  table.pt th{font-size:8pt;font-weight:bold;text-align:center;border:1pt solid black;padding:4pt 3pt;font-variant:small-caps}
+  table.pt td{border:1pt solid black;padding:4pt 5pt;vertical-align:middle;height:10mm}
+  .font-lg{font-size:14pt}
+  .col-reg{width:13%}.col-flt{width:13%}
+  .col-arr{width:7%;text-align:center;font-size:8pt;font-weight:bold}
+  .col-pup{width:8%;text-align:center;font-weight:bold;font-size:9pt}
+  .col-time{width:10%;font-size:18pt;letter-spacing:1pt;text-align:center}.col-note{width:28%}.col-stand{width:7%;text-align:center}
+  .badge-arr{display:inline-block;border:1.5pt solid #2d7a2d;border-radius:3pt;padding:1pt 4pt;font-size:7pt;font-weight:bold;background:#d4edda;color:#1a5c1a}
+  .badge-pup{display:inline-block;border:1.5pt solid #c0392b;border-radius:3pt;padding:1pt 5pt;font-size:8pt;font-style:italic;background:#fde8e8;color:#7b1010;white-space:nowrap}
+  .psep td{background:#f0f0f0;font-size:7pt;font-weight:bold;letter-spacing:2pt;text-align:center;padding:2pt;border:1pt solid black}
+  .per{height:10mm}.per td{border:1pt solid black}
+  table.pb{width:100%;border-collapse:collapse;margin-top:8pt}
+  table.pb th{font-size:8pt;font-weight:bold;text-align:center;border:1pt solid black;padding:4pt 3pt;font-variant:small-caps}
+  table.pb td{border:1pt solid black;padding:4pt;vertical-align:middle;text-align:center;font-size:9pt}
+  /* Bordure épaisse à droite de Headset et Handling au lieu des cellules pdv */
+  .pb-sep-r{border-right:4pt solid black !important}
+  .psh{font-weight:bold;font-size:9pt;text-align:center;padding:5pt;border:1pt solid black}
+  .crossed{background:repeating-linear-gradient(45deg,#ddd,#ddd 1pt,white 1pt,white 4pt);}
+  table.pb tr{height:30pt}
+}
