@@ -18,10 +18,6 @@ function removeVol(flight){
 }
 
 // ── Éditer registration / stand ──────────────────────────────────
-function editField(flight,field,val){
-  [...S.arr,...S.dep].forEach(f=>{if(f.flight===flight)f[field]=val.toUpperCase().trim();});
-}
-
 // ── WFS mode ─────────────────────────────────────────────────────
 function toggleCollapse(panelId,chevId){
   const p=document.getElementById(panelId);
@@ -62,7 +58,7 @@ function addManual(){
   const eta=timeRaw;
   const time=manType==='dep'?pickup(eta):eta;
   const wfsMode=manHandler==='WFS'?'handling':null;
-  const obj={flight,reg,eta,time,handler:manHandler,stand,type:manType,wfsMode,manual:true};
+  const obj={_id:newId(),flight,reg,eta,time,handler:manHandler,stand,type:manType,wfsMode,manual:true};
   if(manType==='dep')S.dep.push(obj);else S.arr.push(obj);
   // Reset form
   document.getElementById('manFlight').value='';
@@ -88,12 +84,12 @@ function renderPreview(){
       const isWfs=f.handler.toUpperCase()==='WFS';
       hArr+=`<div class="fi a">
         <div class="fi-top">
-          <div class="fi-t">${f.time}</div>
+          <div class="fi-t">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
           <div class="fi-b">
-            <div class="fi-f">${f.flight}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
+            <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
             <div class="fi-r">
-              <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editField('${f.flight}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
-              <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editField('${f.flight}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
+              <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editFlight('${f._id}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
+              <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editFlight('${f._id}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
               <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
             </div>
           </div>
@@ -119,12 +115,12 @@ function renderPreview(){
       const showHs=isWfs||isSwp;
       hDep+=`<div class="fi d">
         <div class="fi-top">
-          <div class="fi-t">${f.time}<div class="fi-etd">ETD ${f.eta}</div></div>
+          <div class="fi-t">${f.time}<div class="fi-etd">ETD ${edInp(f,'eta','HH:MM',56,'ed-t ed-s')}</div></div>
           <div class="fi-b">
-            <div class="fi-f">${f.flight}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
+            <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
             <div class="fi-r">
-              <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editField('${f.flight}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
-              <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editField('${f.flight}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
+              <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editFlight('${f._id}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
+              <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editFlight('${f._id}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
               <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
             </div>
           </div>

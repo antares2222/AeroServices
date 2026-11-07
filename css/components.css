@@ -94,3 +94,10 @@ textarea:focus{border-color:#e8b84b}
 .tbtn.sel-a{border-color:#4be8a0;color:#4be8a0;background:rgba(75,232,160,.08)}
 .tbtn.sel-d{border-color:#e84b4b;color:#e84b4b;background:rgba(232,75,75,.08)}
 
+
+/* Champs éditables inline (vol / registration / heure) */
+input.ed{display:inline-block;background:transparent;border:1px dashed #2a2d36;border-radius:6px;color:inherit;font-family:'DM Mono',monospace;font-size:11px;padding:3px 6px;margin:0 4px 0 0;outline:none;max-width:100%}
+input.ed:focus{border-color:#e8b84b;background:#0a0a0a}
+input.ed-t{font-family:'Bebas Neue',sans-serif;font-size:17px;color:#e8b84b;text-align:center;letter-spacing:.5px}
+input.ed-s{font-size:10px;color:#6b7280;padding:1px 4px}
+input.ed-f{font-size:13px;font-weight:700;color:#e8e8e8}

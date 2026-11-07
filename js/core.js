@@ -1,5 +1,5 @@
-function selShift(s,el){S.shift=s;document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
-function reset(){
+// Vide toutes les listes (crew-bus, Catering, Opération, Headset, FedEx, timeline)
+function clearAllData(){
   S.arr=[];S.dep=[];S.excluded=[];S.fedex=[];S.allArr=[];S.allDep=[];
   OPS.catering=[];OPS.operations=[];
   setFidsStatus('','#6b7280');
@@ -7,7 +7,48 @@ function reset(){
   renderPreview();
   renderFedexTable();
   renderOps();
+}
+function selShift(s,el){
+  const changed=S.shift!==s;
+  S.shift=s;
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  // Changer de shift quand un autre est déjà chargé : on repart de zéro
+  if(changed)clearAllData();
+}
+function reset(){
+  clearAllData();
   document.getElementById('s0').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── Édition inline (n° de vol, registration, heure) — synchronisée partout ──
+let _uid=0;
+function newId(){return 'f'+(++_uid);}
+function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function edInp(f,field,ph,w,cls){
+  return `<input type="text" class="ed ${cls||''}" value="${esc(f[field])}" placeholder="${ph}" style="width:${w}px" onchange="editFlight('${f._id}','${field}',this.value)">`;
+}
+function editFlight(id,field,val){
+  val=(val||'').trim();
+  if(field==='eta'){
+    const m=val.match(/^(\d{1,2})[:hH.]?(\d{2})$/);
+    if(!m||+m[1]>23||+m[2]>59){alert('Heure invalide (format HH:MM).');refreshAll();return;}
+    val=m[1].padStart(2,'0')+':'+m[2];
+  } else if(field==='flight'||field==='reg'||field==='stand'){
+    val=val.toUpperCase();
+    if(field==='flight'&&!val){refreshAll();return;}
+  }
+  [S.arr,S.dep,S.excluded,S.allArr,S.allDep,S.fedex,OPS.catering,OPS.operations].forEach(l=>(l||[]).forEach(f=>{
+    if(f._id!==id)return;
+    if(field==='eta'){f.eta=val;f.time=f.type==='dep'?pickup(val):val;}
+    else f[field]=val;
+  }));
+  refreshAll();
+}
+function refreshAll(){
+  renderPreview();renderOps();
+  const tl=document.getElementById('tlSection');
+  if(tl&&tl.style.display!=='none'&&typeof renderTimeline==='function')renderTimeline();
 }
 
 function shouldInclude(flight,raw){

@@ -125,7 +125,7 @@ function addManualCatering(){
   const existing=OPS.catering.find(c=>c.flight===flight&&c.eta===eta);
   if(existing){existing.selected=true;}
   else{
-    OPS.catering.push({flight,reg,eta,time:eta,handler:'',stand:'',type:'dep',manual:true,selected:true});
+    OPS.catering.push({_id:newId(),flight,reg,eta,time:eta,handler:'',stand:'',type:'dep',manual:true,selected:true});
   }
   timeEl.value='';regEl.value='';flightEl.value='';
   renderOps();
@@ -146,7 +146,7 @@ function addManualOperation(){
   const existing=OPS.operations.find(o=>o.flight===flight&&o.eta===eta);
   if(existing){existing.selected=true;}
   else{
-    OPS.operations.push({flight,reg,eta,time:eta,handler:'',stand:'',type:'arr',manual:true,selected:true,tasks:{cleaning:false,toilet:false,water:false}});
+    OPS.operations.push({_id:newId(),flight,reg,eta,time:eta,handler:'',stand:'',type:'arr',manual:true,selected:true,tasks:{cleaning:false,toilet:false,water:false}});
   }
   timeEl.value='';regEl.value='';flightEl.value='';
   renderOps();
@@ -161,10 +161,10 @@ function renderOps(){
   selCat.forEach(f=>{
     catHtml+=`<div class="fi d" style="margin-bottom:5px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px">${f.eta}</div>
+        <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
         <div class="fi-b">
-          <div class="fi-f">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'}${f.stand?' · Stand '+f.stand:''}</div>
+          <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',90)}${f.stand?' · Stand '+esc(f.stand):''}</div>
         </div>
         <button class="rm-btn" onclick="toggleCat('${f.flight}','${f.eta}',false)">✕</button>
       </div>
@@ -179,10 +179,10 @@ function renderOps(){
     const sel=f.selected;
     catAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#e8b84b':'#2a2d36'};background:${sel?'rgba(232,184,75,.04)':'#111318'};margin-bottom:4px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px;color:#e8b84b">${f.eta}</div>
+        <div class="fi-t" style="font-size:16px;color:#e8b84b">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
         <div class="fi-b">
-          <div class="fi-f" style="font-size:12px">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}</div>
+          <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
         </div>
         <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleCat('${f.flight}','${f.eta}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
@@ -203,10 +203,10 @@ function renderOps(){
     const isExtra=!isOpsDefault(f);
     opsHtml+=`<div class="fi a" style="margin-bottom:5px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px">${f.time}</div>
+        <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
         <div class="fi-b">
-          <div class="fi-f">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'}${f.stand?' · Stand '+f.stand:''} · ${f.handler||'—'}</div>
+          <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',90)}${f.stand?' · Stand '+esc(f.stand):''} · ${f.handler||'—'}</div>
         </div>
         <button class="rm-btn" onclick="toggleOps('${f.flight}','${f.eta}',false)">✕</button>
       </div>
@@ -226,10 +226,10 @@ function renderOps(){
     const sel=f.selected;
     opsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#4be8a0':'#2a2d36'};background:${sel?'rgba(75,232,160,.04)':'#111318'};margin-bottom:4px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px;color:#e8b84b">${f.time}</div>
+        <div class="fi-t" style="font-size:16px;color:#e8b84b">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
         <div class="fi-b">
-          <div class="fi-f" style="font-size:12px">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}</div>
+          <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
         </div>
         <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleOps('${f.flight}','${f.eta}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
@@ -260,9 +260,9 @@ function renderFedexTable(){
   grid.classList.add('has-fedex');
   card.style.display='block';
   body.innerHTML=flights.map(f=>`<tr style="border-bottom:1px solid rgba(42,45,54,.5)">
-    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px">${f.reg||'—'}</td>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px;font-weight:bold">${f.flight}</td>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px;color:#4be8a0">${f.eta}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px">${edInp(f,'reg','Registration',90)}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px;font-weight:bold">${edInp(f,'flight','Vol',90)}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px;color:#4be8a0">${edInp(f,'eta','HH:MM',60)}</td>
     <td style="font-family:'DM Mono',monospace;font-size:11px;padding:6px">${f.stand||'—'}</td>
   </tr>`).join('');
 }
