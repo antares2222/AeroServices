@@ -101,3 +101,6 @@ input.ed:focus{border-color:#e8b84b;background:#0a0a0a}
 input.ed-t{font-family:'Bebas Neue',sans-serif;font-size:17px;color:#e8b84b;text-align:center;letter-spacing:.5px}
 input.ed-s{font-size:10px;color:#6b7280;padding:1px 4px}
 input.ed-f{font-size:13px;font-weight:700;color:#e8e8e8}
+
+.add-compact .ac-chk{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:11px;color:#6b7280;cursor:pointer;white-space:nowrap}
+.add-compact .ac-chk input{width:16px;height:16px;padding:0;accent-color:#4be8a0}

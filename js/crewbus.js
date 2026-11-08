@@ -3,7 +3,7 @@ function addFromExcluded(flight){
   const idx=S.excluded.findIndex(f=>f.flight===flight);
   if(idx===-1)return;
   const f=S.excluded.splice(idx,1)[0];
-  f.wfsMode=f.handler.toUpperCase()==='WFS'?'handling':null;
+  f.wfsMode=isAero(f.handler)?'handling':null;
   if(f.type==='dep')S.dep.push(f);else S.arr.push(f);
   renderPreview();
 }
@@ -33,40 +33,26 @@ function setHs(flight,val){
   });
   renderPreview();
 }
-function setWfs(flight,mode){[...S.arr,...S.dep].forEach(f=>{if(f.flight===flight)f.wfsMode=mode;});renderPreview();}
+// Bouton « Handling aero » : bascule le vol en handling sur la feuille crew-bus
+function toggleHandling(flight,type){
+  [...S.arr,...S.dep].forEach(f=>{if(f.flight===flight&&f.type===type)f.wfsMode=f.wfsMode==='handling'?null:'handling';});
+  renderPreview();
+}
 
-// ── Ajout manuel ─────────────────────────────────────────────────
-function setManType(t){
-  manType=t;
-  document.getElementById('manTypeA').className='tbtn'+(t==='arr'?' sel-a':'');
-  document.getElementById('manTypeD').className='tbtn'+(t==='dep'?' sel-d':'');
-}
-function setManHandler(h){
-  manHandler=h;
-  ['WFS','CHAL','SWP'].forEach(id=>document.getElementById('h'+id).classList.remove('sel-hand'));
-  const map={WFS:'hWFS',CHALLENGE:'hCHAL',SWISSPORT:'hSWP'};
-  if(map[h])document.getElementById(map[h]).classList.add('sel-hand');
-}
-function addManual(){
-  const flight=document.getElementById('manFlight').value.toUpperCase().trim();
-  const timeRaw=document.getElementById('manTime').value.trim();
-  const reg=document.getElementById('manReg').value.toUpperCase().trim();
-  const stand=document.getElementById('manStand').value.trim();
-  if(!flight){alert('Numéro de vol obligatoire.');return;}
-  if(!timeRaw||!/^\d{1,2}:\d{2}$/.test(timeRaw)){alert('Heure invalide (format HH:MM).');return;}
-  if([...S.arr,...S.dep].some(f=>f.flight===flight)){alert('Ce vol est déjà dans la liste.');return;}
-  const eta=timeRaw;
-  const time=manType==='dep'?pickup(eta):eta;
-  const wfsMode=manHandler==='WFS'?'handling':null;
-  const obj={_id:newId(),flight,reg,eta,time,handler:manHandler,stand,type:manType,wfsMode,manual:true};
-  if(manType==='dep')S.dep.push(obj);else S.arr.push(obj);
-  // Reset form
-  document.getElementById('manFlight').value='';
-  document.getElementById('manTime').value='';
-  document.getElementById('manReg').value='';
-  document.getElementById('manStand').value='';
-  manHandler='';
-  ['hWFS','hCHAL','hSWP'].forEach(id=>document.getElementById(id).classList.remove('sel-hand'));
+// ── Ajout manuel compact (ARR ou DEP) — même affichage que Opération ──
+function addManual(type){
+  const p=type==='dep'?'manD':'manA';
+  const timeEl=document.getElementById(p+'Time'),regEl=document.getElementById(p+'Reg'),
+        fltEl=document.getElementById(p+'Flight'),hdEl=document.getElementById(p+'Hand');
+  const flight=fltEl.value.toUpperCase().trim();
+  const eta=timeEl.value.trim();
+  const reg=regEl.value.toUpperCase().trim();
+  if(!flight||!/^\d{1,2}:\d{2}$/.test(eta)){alert('Renseigne au minimum le numéro de vol et une heure valide (HH:MM).');return;}
+  const list=type==='dep'?S.dep:S.arr;
+  if(list.some(f=>f.flight===flight)){alert('Ce vol est déjà dans la liste.');return;}
+  const time=type==='dep'?pickup(eta):eta;
+  list.push({_id:newId(),flight,reg,eta,time,handler:'',stand:'',type,wfsMode:hdEl.checked?'handling':null,manual:true});
+  timeEl.value='';regEl.value='';fltEl.value='';hdEl.checked=false;
   renderPreview();
 }
 
@@ -81,7 +67,6 @@ function renderPreview(){
   if(sortedArr.length){
     hArr+=`<div class="grp a">✈ ARRIVÉES (${sortedArr.length})</div>`;
     sortedArr.forEach(f=>{
-      const isWfs=f.handler.toUpperCase()==='WFS';
       hArr+=`<div class="fi a">
         <div class="fi-top">
           <div class="fi-t">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
@@ -98,7 +83,7 @@ function renderPreview(){
             <button class="rm-btn" onclick="removeVol('${f.flight}')">✕</button>
           </div>
         </div>
-        ${isWfs?`<div class="wfs-toggle"><button class="wfs-btn ${f.wfsMode==='renting'?'sel-rent':''}" onclick="setWfs('${f.flight}','renting')">🚙 Renting</button><button class="wfs-btn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="setWfs('${f.flight}','handling')">✈️ Handling</button></div>`:''}
+        ${canHandling(f)?`<div class="wfs-toggle"><button class="wfs-btn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="toggleHandling('${f.flight}','${f.type}')">✈️ Handling aero</button></div>`:''}
       </div>`;
     });
   }
@@ -110,9 +95,8 @@ function renderPreview(){
   if(sortedDep.length){
     hDep+=`<div class="grp d">✈ DÉPARTS — pick up = ETD-1h15 (${sortedDep.length})</div>`;
     sortedDep.forEach(f=>{
-      const isWfs=f.handler.toUpperCase()==='WFS';
       const isSwp=f.handler.toUpperCase()==='SWISSPORT';
-      const showHs=isWfs||isSwp;
+      const showHs=f.handler.toUpperCase()==='WFS'||isSwp;
       hDep+=`<div class="fi d">
         <div class="fi-top">
           <div class="fi-t">${f.time}<div class="fi-etd">ETD ${edInp(f,'eta','HH:MM',56,'ed-t ed-s')}</div></div>
@@ -129,7 +113,7 @@ function renderPreview(){
             <button class="rm-btn" onclick="removeVol('${f.flight}')">✕</button>
           </div>
         </div>
-        ${isWfs?`<div class="wfs-toggle"><button class="wfs-btn ${f.wfsMode==='renting'?'sel-rent':''}" onclick="setWfs('${f.flight}','renting')">🚙 Renting</button><button class="wfs-btn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="setWfs('${f.flight}','handling')">✈️ Handling</button></div>`:''}
+        ${canHandling(f)?`<div class="wfs-toggle"><button class="wfs-btn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="toggleHandling('${f.flight}','${f.type}')">✈️ Handling aero</button></div>`:''}
       </div>`;
     });
   }
@@ -227,7 +211,7 @@ function genPDF(){
       <td class="col-arr"><span class="badge-arr">ARR</span></td>
       <td class="col-pup">Pick up</td>
       <td class="col-time font-lg">${f.time}</td>
-      <td class="col-note"></td>
+      <td class="col-note">${isAero(f.handler)?'HANDLING AERO ARR':''}</td>
       <td class="col-stand">${f.stand||''}</td>
     </tr>`;
   });
@@ -240,7 +224,7 @@ function genPDF(){
       <td class="col-arr">ARR</td>
       <td class="col-pup"><span class="badge-pup">Pick up</span></td>
       <td class="col-time font-lg">${f.time}</td>
-      <td class="col-note"></td>
+      <td class="col-note">${isAero(f.handler)?'HANDLING AERO DEP':''}</td>
       <td class="col-stand">${f.stand||''}</td>
     </tr>`;
   });
@@ -266,12 +250,13 @@ function genPDF(){
     rentingSeen.add(keyFlt);
     return true;
   });
-  const handlingFlights=[...S.arr,...S.dep].filter(f=>f.handler.toUpperCase()==='WFS'&&f.wfsMode==='handling');
+  const handlingFlights=[...S.arr,...S.dep].filter(f=>f.wfsMode==='handling');
   const handlingMap={};
   handlingFlights.forEach(f=>{const key=f.reg||f.flight;if(!handlingMap[key])handlingMap[key]={reg:f.reg,arr:null,dep:null,flights:[]};handlingMap[key].flights.push(f);if(f.type==='arr')handlingMap[key].arr=f;else handlingMap[key].dep=f;});
   const handlingGroups=Object.values(handlingMap);
   let bottomRows='';
-  for(let i=0;i<4;i++){
+  const nBottom=Math.max(4,hsFlights.length,handlingGroups.length,rentingDedup.length);
+  for(let i=0;i<nBottom;i++){
     const hs=hsFlights[i]||null;
     const h=handlingGroups[i]||null;
     const r=rentingDedup[i]||null;

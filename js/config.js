@@ -1,5 +1,4 @@
 const S={shift:'NIGHT',arr:[],dep:[],excluded:[],fedex:[],allArr:[],allDep:[]};
-let manType='arr', manHandler='';
 
 // ── PARAMÈTRES (localStorage) ─────────────────────────────────────
 const DEFAULT_PARAMS = {

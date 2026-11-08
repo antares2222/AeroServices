@@ -239,34 +239,33 @@
     </div>
   </div>
   <div class="card">
-    <div class="fhdr" onclick="toggleCollapse('manPanel','manChev')" style="cursor:pointer;margin-bottom:0">
+    <div class="fhdr" style="margin-bottom:10px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#e8b84b">+ AJOUTER UN VOL</div>
-      <span id="manChev" style="color:#6b7280;font-size:16px;transition:transform .2s">▼</span>
     </div>
-    <div id="manPanel" style="display:none;margin-top:12px">
-      <div class="type-grid">
-        <button class="tbtn sel-a" id="manTypeA" onclick="setManType('arr')">✈ ARRIVÉE</button>
-        <button class="tbtn" id="manTypeD" onclick="setManType('dep')">✈ DÉPART</button>
-      </div>
-      <div class="add-form-grid">
-        <div><div class="edit-lbl">VOL *</div><input type="text" id="manFlight" placeholder="ex: ICL601"></div>
-        <div><div class="edit-lbl">HEURE (ETA/ETD) *</div><input type="text" id="manTime" placeholder="ex: 14:35"></div>
-        <div><div class="edit-lbl">REGISTRATION</div><input type="text" id="manReg" placeholder="ex: 9HCAD"></div>
-        <div><div class="edit-lbl">STAND</div><input type="text" id="manStand" placeholder="ex: 134"></div>
-      </div>
-      <div style="margin-bottom:8px">
-        <div class="edit-lbl">HANDLER</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-          <button class="wfs-btn" id="hWFS" onclick="setManHandler('WFS')">WFS</button>
-          <button class="wfs-btn" id="hCHAL" onclick="setManHandler('CHALLENGE')">CHALLENGE</button>
-          <button class="wfs-btn" id="hSWP" onclick="setManHandler('SWISSPORT')">SWISSPORT</button>
+    <div class="prev-grid">
+      <div>
+        <div class="grp a" style="margin-bottom:6px">✈ ARRIVÉE</div>
+        <div class="add-compact" style="flex-wrap:wrap">
+          <input type="text" id="manATime" class="ac-time" placeholder="ETA">
+          <input type="text" id="manAReg" class="ac-reg" placeholder="Registration">
+          <input type="text" id="manAFlight" class="ac-flight" placeholder="N° vol">
+          <label class="ac-chk"><input type="checkbox" id="manAHand"> Handling</label>
+          <button onclick="addManual('arr')">+ AJOUTER</button>
         </div>
       </div>
-      <button class="btn bp" onclick="addManual()" style="font-size:14px;padding:12px">+ AJOUTER CE VOL</button>
+      <div>
+        <div class="grp d" style="margin-bottom:6px">✈ DÉPART</div>
+        <div class="add-compact" style="flex-wrap:wrap">
+          <input type="text" id="manDTime" class="ac-time" placeholder="ETD">
+          <input type="text" id="manDReg" class="ac-reg" placeholder="Registration">
+          <input type="text" id="manDFlight" class="ac-flight" placeholder="N° vol">
+          <label class="ac-chk"><input type="checkbox" id="manDHand"> Handling</label>
+          <button onclick="addManual('dep')">+ AJOUTER</button>
+        </div>
+      </div>
     </div>
   </div>
   <button class="btn bg" onclick="genPDF()" style="margin-bottom:8px">🖨 GÉNÉRER LA FEUILLE PDF</button>
-  <button class="btn bs" onclick="reset()">RECOMMENCER</button>
 </div>
 
 <!-- ═══ SECTION 4 : VÉRIFICATION OPÉRATION ═══ -->
@@ -332,7 +331,6 @@
   </div>
   </div>
   <button class="btn bg" onclick="genPDFOps()" style="margin-bottom:8px">🖨 GÉNÉRER PAGE OPÉRATION</button>
-  <button class="btn bs" onclick="reset()">RECOMMENCER</button>
 </div>
 
 <!-- FEUILLE PRINT OPS (page 2) -->

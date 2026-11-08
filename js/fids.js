@@ -86,11 +86,11 @@ async function loadFromFids(){
       if(handler==='FEDEX'&&(PARAMS.fedex_ac_types||[]).includes(acType)){
         fedexArr.push({_id:newId(),flight,reg,eta,stand,acType});
       }
-      const obj={_id:newId(),flight,reg,eta,time:eta,handler,stand,type:'arr',origin,fromFids:true};
+      const obj={_id:newId(),flight,reg,eta,time:eta,handler,stand,type:'arr',origin,acType,fromFids:true};
       // Liste complète, indépendante des règles crew-bus — utilisée par Catering/Opération/Headset
       allArrivals.push({...obj});
       if(shouldInclude(flight,handler)){
-        obj.wfsMode=handler==='WFS'?'handling':null;
+        obj.wfsMode=isAero(handler)?'handling':null;
         arrivals.push(obj);
       } else if(canPropose(handler)){
         excluded.push(obj);
@@ -117,12 +117,12 @@ async function loadFromFids(){
       const dest=(f.destination||'').toUpperCase();
       const pickupHHMM=pickupDt.toTimeString().slice(0,5);
       // Sélection HS par défaut : vols dont le n° correspond à un préfixe configuré dans les paramètres
-      const hsDefault=(PARAMS.headset_default||[]).some(p=>flight.startsWith(p));
+      const hsDefault=isAero(handler)||(PARAMS.headset_default||[]).some(p=>flight.startsWith(p));
       const obj={_id:newId(),flight,reg,eta,time:pickupHHMM,handler,stand,type:'dep',dest,fromFids:true,hsMode:hsDefault?true:undefined};
       // Liste complète, indépendante des règles crew-bus — utilisée par Catering/Opération/Headset
       allDepartures.push({...obj});
       if(shouldInclude(flight,handler)){
-        obj.wfsMode=handler==='WFS'?'handling':null;
+        obj.wfsMode=isAero(handler)?'handling':null;
         departures.push(obj);
       } else if(canPropose(handler)){
         excluded.push(obj);

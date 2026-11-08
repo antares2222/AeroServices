@@ -58,6 +58,7 @@ function inOpsWindow(eta){
 function isOpsDefault(f){
   const hw=f.handler.toUpperCase();
   const fl=f.flight.toUpperCase();
+  if(isAero(hw))return true;
   if(hw==='WFS'){
     const excl=PARAMS.wfs_ops_exclude||[];
     if(excl.some(e=>fl.startsWith(e)))return false;
@@ -101,6 +102,8 @@ function buildOps(){
   // Operations: ARR flights within shift -35min window
   const allArrOps=(S.allArr||[]).filter(f=>inOpsWindow(f.eta));
   allArrOps.forEach(f=>{
+    // Les FedEx (types du tableau FedEx) ont déjà leur tableau dédié : pas dans la liste à ajouter
+    if((f.handler||'').toUpperCase()==='FEDEX'&&(PARAMS.fedex_ac_types||[]).includes(f.acType))return;
     const existing=OPS.operations.find(o=>o.flight===f.flight&&o.eta===f.eta);
     if(!existing){
       OPS.operations.push({...f, selected: isOpsDefault(f), tasks:{cleaning:false,toilet:false,water:false}});
@@ -317,7 +320,7 @@ function genPDFOps(){
   const selOps=OPS.operations.filter(f=>f.selected).sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
   let opsRows='';
   selOps.forEach(f=>{
-    const task=isOpsDefault(f)?'':getTaskLabel(f.tasks);
+    const task=isAero(f.handler)?'HANDLING AERO ARR':(isOpsDefault(f)?'':getTaskLabel(f.tasks));
     opsRows+=`<tr>
       <td class="font-lg">${f.reg||''}</td>
       <td class="font-lg">${f.flight}</td>

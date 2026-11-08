@@ -16,10 +16,6 @@ function selShift(s,el){
   // Changer de shift quand un autre est déjà chargé : on repart de zéro
   if(changed)clearAllData();
 }
-function reset(){
-  clearAllData();
-  document.getElementById('s0').scrollIntoView({behavior:'smooth',block:'start'});
-}
 
 // ── Édition inline (n° de vol, registration, heure) — synchronisée partout ──
 let _uid=0;
@@ -51,9 +47,15 @@ function refreshAll(){
   if(tl&&tl.style.display!=='none'&&typeof renderTimeline==='function')renderTimeline();
 }
 
+// Handler AERO (Aero Services) : toujours crew-bus + handling + headset + opération
+function isAero(handler){return /^AERO/.test((handler||'').toUpperCase().trim());}
+// Vol sur lequel on peut activer le bouton « Handling aero »
+function canHandling(f){return f.manual||f.handler.toUpperCase()==='WFS'||isAero(f.handler);}
+
 function shouldInclude(flight,raw){
   if(!raw)return false;
   const r=raw.toUpperCase().trim();
+  if(isAero(r))return true;
   if(r==='CHALLENGE'||r==='WFS')return true;
   if(r==='SWISSPORT'&&(PARAMS.swissport_cb||[]).some(p=>flight.toUpperCase().startsWith(p)))return true;
   if(r==='AVIAPARTNER'&&(PARAMS.avia_cb||[]).some(p=>flight.toUpperCase().startsWith(p)))return true;
