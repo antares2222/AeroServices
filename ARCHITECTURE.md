@@ -1,6 +1,6 @@
 # Aero Services Dispatch — carte du code
 
-Ordre de chargement (index.html) : config → settings → core → fids → crewbus → ops → timeline → nav
+Ordre de chargement (index.html) : config → settings → core → fids → crewbus → ops → timeline → nav → sync → init
 (scripts classiques : les `const`/`let` sont partagés, l'ordre compte)
 
 | Fichier | Rôle | À toucher pour… |
@@ -18,4 +18,6 @@ Ordre de chargement (index.html) : config → settings → core → fids → cre
 | js/ops.js | Catering / Opération / Headset / FedEx + PDF ops | feuille opérations |
 | js/timeline.js | Timeline | timeline |
 | js/nav.js | Barre de navigation mobile | nav |
+| js/sync.js | Fusion des données à la synchro FIDS (garde éditions/sélections) | règles de synchro |
+| js/init.js | Démarrage : shift actuel, synchro chaque minute, flèches de date | comportement au lancement |
 | netlify/functions/fids.js | Proxy FIDS | (rarement) |

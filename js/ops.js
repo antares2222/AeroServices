@@ -79,7 +79,7 @@ function isOpsDefault(f){
   return false;
 }
 
-function buildOps(){
+function buildOps(prev){
   // Repart de zéro à chaque génération — sinon les vols des shifts précédents
   // restent accumulés indéfiniment dans OPS.catering/OPS.operations.
   OPS.catering=[];
@@ -110,6 +110,15 @@ function buildOps(){
     }
   });
 
+  // Synchro : on reprend les sélections / tâches / vols manuels de l'état précédent
+  if(prev){
+    const pc=indexByK(prev.cat),po=indexByK(prev.ops);
+    OPS.catering.forEach(n=>{const x=pc.get(n._k);if(x)n.selected=x.selected;});
+    OPS.operations.forEach(n=>{const x=po.get(n._k);if(x){n.selected=x.selected;n.tasks=x.tasks;}});
+    prev.cat.filter(x=>x.manual&&!OPS.catering.some(n=>n._k===x._k)).forEach(x=>OPS.catering.push(x));
+    prev.ops.filter(x=>x.manual&&!OPS.operations.some(n=>n._k===x._k)).forEach(x=>OPS.operations.push(x));
+  }
+
   renderOps();
 }
 
@@ -128,7 +137,7 @@ function addManualCatering(){
   const existing=OPS.catering.find(c=>c.flight===flight&&c.eta===eta);
   if(existing){existing.selected=true;}
   else{
-    OPS.catering.push({_id:newId(),flight,reg,eta,time:eta,handler:'',stand:'',type:'dep',manual:true,selected:true});
+    OPS.catering.push({_id:newId(),_k:'dep:'+flight,flight,reg,eta,time:eta,handler:'',stand:'',type:'dep',manual:true,selected:true});
   }
   timeEl.value='';regEl.value='';flightEl.value='';
   renderOps();
@@ -149,7 +158,7 @@ function addManualOperation(){
   const existing=OPS.operations.find(o=>o.flight===flight&&o.eta===eta);
   if(existing){existing.selected=true;}
   else{
-    OPS.operations.push({_id:newId(),flight,reg,eta,time:eta,handler:'',stand:'',type:'arr',manual:true,selected:true,tasks:{cleaning:false,toilet:false,water:false}});
+    OPS.operations.push({_id:newId(),_k:'arr:'+flight,flight,reg,eta,time:eta,handler:'',stand:'',type:'arr',manual:true,selected:true,tasks:{cleaning:false,toilet:false,water:false}});
   }
   timeEl.value='';regEl.value='';flightEl.value='';
   renderOps();

@@ -45,11 +45,23 @@ function setFidsStatus(msg,color){
   if(el){el.innerHTML=msg;el.style.color=color||'#6b7280';}
 }
 
-async function loadFromFids(){
+// opts : {merge:true} = synchro (garde sélections, éditions, vols manuels) ;
+//        {silent:true} = synchro automatique (pas de message de chargement, ni d'erreur bloquante) ;
+//        {scroll:true} = défile vers la timeline après affichage
+let _fidsLoading=false;
+async function loadFromFids(opts){
+  opts=opts||{};
+  if(_fidsLoading)return;
+  _fidsLoading=true;
   const btn=document.getElementById('fidsLoadBtn');
+  const sbtn=document.getElementById('fidsSyncBtn');
+  const hadData=(S.allArr.length+S.allDep.length)>0;
   try{
-    if(btn){btn.disabled=true;btn.textContent='⏳ CONNEXION AU FIDS...';}
-    setFidsStatus('Chargement en cours...','#e8b84b');
+    if(!opts.silent){
+      if(btn){btn.disabled=true;if(!opts.merge)btn.textContent='⏳ CHARGEMENT...';}
+      if(sbtn){sbtn.disabled=true;if(opts.merge)sbtn.textContent='⏳ ...';}
+      setFidsStatus('Chargement en cours...','#e8b84b');
+    }
 
     const [arrRes,depRes]=await Promise.all([
       fetch(FIDS_ARR_URL),
@@ -84,9 +96,9 @@ async function loadFromFids(){
       const acType=(f.aircraftType||'').toUpperCase().trim();
       // Tableau FedEx à part : uniquement les types d'avion configurés (par défaut B737/B738)
       if(handler==='FEDEX'&&(PARAMS.fedex_ac_types||[]).includes(acType)){
-        fedexArr.push({_id:newId(),flight,reg,eta,stand,acType});
+        fedexArr.push({_id:newId(),_k:'fx:'+flight,flight,reg,eta,stand,acType});
       }
-      const obj={_id:newId(),flight,reg,eta,time:eta,handler,stand,type:'arr',origin,acType,fromFids:true};
+      const obj={_id:newId(),_k:'arr:'+flight,flight,reg,eta,time:eta,handler,stand,type:'arr',origin,acType,fromFids:true};
       // Liste complète, indépendante des règles crew-bus — utilisée par Catering/Opération/Headset
       allArrivals.push({...obj});
       if(shouldInclude(flight,handler)){
@@ -118,7 +130,7 @@ async function loadFromFids(){
       const pickupHHMM=pickupDt.toTimeString().slice(0,5);
       // Sélection HS par défaut : vols dont le n° correspond à un préfixe configuré dans les paramètres
       const hsDefault=isAero(handler)||(PARAMS.headset_default||[]).some(p=>flight.startsWith(p));
-      const obj={_id:newId(),flight,reg,eta,time:pickupHHMM,handler,stand,type:'dep',dest,fromFids:true,hsMode:hsDefault?true:undefined};
+      const obj={_id:newId(),_k:'dep:'+flight,flight,reg,eta,time:pickupHHMM,handler,stand,type:'dep',dest,fromFids:true,hsMode:hsDefault?true:undefined};
       // Liste complète, indépendante des règles crew-bus — utilisée par Catering/Opération/Headset
       allDepartures.push({...obj});
       if(shouldInclude(flight,handler)){
@@ -129,25 +141,36 @@ async function loadFromFids(){
       }
     }
 
-    S.arr=arrivals; S.dep=departures; S.excluded=excluded; S.fedex=fedexArr;
-    S.allArr=allArrivals; S.allDep=allDepartures;
-    const total=arrivals.length+departures.length;
-    if(!total){
+    const nw={arrivals,departures,excluded,fedexArr,allArrivals,allDepartures};
+    const prev=opts.merge?snapshotState():null;
+    if(prev)carryOver(prev,nw);
+    S.arr=nw.arrivals; S.dep=nw.departures; S.excluded=nw.excluded; S.fedex=nw.fedexArr;
+    S.allArr=nw.allArrivals; S.allDep=nw.allDepartures;
+    const total=S.arr.length+S.dep.length;
+    if(!total&&!(prev&&(S.excluded.length||S.allArr.length||S.allDep.length))){
       setFidsStatus(`⚠ Aucun vol trouvé pour le ${dateStr} — shift ${S.shift}`,'#f59e0b');
       return;
     }
 
-    setFidsStatus(`✓ FIDS — ${arrivals.length} ARR · ${departures.length} DEP · ${dateStr} · shift ${S.shift}`,'#4be8a0');
+    const now=new Date();
+    setFidsStatus(`✓ FIDS — ${S.arr.length} ARR · ${S.dep.length} DEP · ${dateStr} · shift ${S.shift} · synchro ${pad2(now.getHours())}:${pad2(now.getMinutes())}`,'#4be8a0');
     renderTimeline();
     renderPreview();
-    buildOps();
-    setTimeout(()=>{
-      const tl=document.getElementById('tlSection');
-      if(tl)tl.scrollIntoView({behavior:'smooth',block:'start'});
-    },100);
+    buildOps(prev);
+    if(opts.scroll){
+      setTimeout(()=>{
+        const tl=document.getElementById('tlSection');
+        if(tl)tl.scrollIntoView({behavior:'smooth',block:'start'});
+      },100);
+    }
 
   }catch(e){
     console.error('FIDS load error:',e);
+    if(opts.silent&&hadData){
+      const n=new Date();
+      setFidsStatus(`⚠ Synchro impossible (${pad2(n.getHours())}:${pad2(n.getMinutes())}) — données conservées`,'#f59e0b');
+      return;
+    }
     const isCors=e.message&&(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')||e.message.includes('CORS'));
     if(isCors){
       setFidsStatus('❌ Connexion réseau impossible — réessaie','#ef4444');
@@ -155,7 +178,9 @@ async function loadFromFids(){
       setFidsStatus('❌ '+( e.message||'Erreur connexion FIDS'),'#ef4444');
     }
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='🔄 CHARGER DEPUIS FIDS LGG';}
+    _fidsLoading=false;
+    if(btn){btn.disabled=false;btn.textContent='📡 AFFICHER';}
+    if(sbtn){sbtn.disabled=false;sbtn.textContent='🔄 SYNCHR';}
   }
 }
 

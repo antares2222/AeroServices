@@ -104,3 +104,10 @@ input.ed-f{font-size:13px;font-weight:700;color:#e8e8e8}
 
 .add-compact .ac-chk{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:11px;color:#6b7280;cursor:pointer;white-space:nowrap}
 .add-compact .ac-chk input{width:16px;height:16px;padding:0;accent-color:#4be8a0}
+
+.date-nav{display:flex;gap:8px;align-items:stretch}
+.date-nav input[type=date]{flex:1;min-width:0;text-align:center}
+.dn-btn{flex-shrink:0;width:46px;background:#111318;border:1px solid #2a2d36;border-radius:8px;color:#e8b84b;font-size:24px;line-height:1;cursor:pointer}
+.dn-btn:active{background:#1a1d24}
+.fids-btns{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:6px}
+.fids-btns .btn{margin:0}

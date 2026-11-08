@@ -168,7 +168,11 @@
   <div class="card">
     <div style="margin-bottom:12px">
       <label>DATE</label>
-      <input type="date" id="sDate">
+      <div class="date-nav">
+        <button class="dn-btn" onclick="shiftDay(-1)" aria-label="Jour précédent">‹</button>
+        <input type="date" id="sDate" onchange="onDateChange()">
+        <button class="dn-btn" onclick="shiftDay(1)" aria-label="Jour suivant">›</button>
+      </div>
     </div>
     <div>
       <label>SHIFT</label>
@@ -181,7 +185,10 @@
   </div>
 
   <!-- ── FIDS AUTO-LOAD ── -->
-  <button class="btn bg" id="fidsLoadBtn" onclick="loadFromFids()" style="margin-bottom:6px">🔄 CHARGER DEPUIS FIDS LGG</button>
+  <div class="fids-btns">
+    <button class="btn bg" id="fidsLoadBtn" onclick="loadFromFids({scroll:true})">📡 AFFICHER</button>
+    <button class="btn bs" id="fidsSyncBtn" onclick="loadFromFids({merge:true})">🔄 SYNCHR</button>
+  </div>
   <div id="fidsStatus" style="font-family:'DM Mono',monospace;font-size:11px;text-align:center;min-height:16px;margin-bottom:10px;color:#6b7280"></div>
 </div>
 
@@ -420,6 +427,8 @@
 <script src="js/ops.js"></script>
 <script src="js/timeline.js"></script>
 <script src="js/nav.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/init.js"></script>
 
 <!-- ═══ NAV MOBILE (bas d'écran, visible uniquement sur mobile) ═══ -->
 <nav id="mobileNav">

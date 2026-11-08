@@ -71,4 +71,3 @@ function removePrefix(key, val){
   saveParamsToStorage(PARAMS); // sauvegarde immédiate
 }
 
-document.getElementById('sDate').value=new Date().toISOString().slice(0,10);

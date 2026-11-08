@@ -51,7 +51,7 @@ function addManual(type){
   const list=type==='dep'?S.dep:S.arr;
   if(list.some(f=>f.flight===flight)){alert('Ce vol est déjà dans la liste.');return;}
   const time=type==='dep'?pickup(eta):eta;
-  list.push({_id:newId(),flight,reg,eta,time,handler:'',stand:'',type,wfsMode:hdEl.checked?'handling':null,manual:true});
+  list.push({_id:newId(),_k:type+':'+flight,flight,reg,eta,time,handler:'',stand:'',type,wfsMode:hdEl.checked?'handling':null,manual:true});
   timeEl.value='';regEl.value='';fltEl.value='';hdEl.checked=false;
   renderPreview();
 }

@@ -14,7 +14,7 @@ function selShift(s,el){
   document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
   // Changer de shift quand un autre est déjà chargé : on repart de zéro
-  if(changed)clearAllData();
+  if(changed){clearAllData();loadFromFids();}
 }
 
 // ── Édition inline (n° de vol, registration, heure) — synchronisée partout ──
@@ -36,6 +36,7 @@ function editFlight(id,field,val){
   }
   [S.arr,S.dep,S.excluded,S.allArr,S.allDep,S.fedex,OPS.catering,OPS.operations].forEach(l=>(l||[]).forEach(f=>{
     if(f._id!==id)return;
+    f._ed=f._ed||{};f._ed[field]=true;
     if(field==='eta'){f.eta=val;f.time=f.type==='dep'?pickup(val):val;}
     else f[field]=val;
   }));
