@@ -3,7 +3,8 @@
 #sheetOps{display:none}
 @media print{
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{background:white;color:black;padding:0;font-family:Arial,sans-serif;font-size:10pt}
+  html,body{background:#fff!important;color:#000!important;padding:0;font-family:Arial,sans-serif;font-size:10pt}
+  #sheet,#sheetOps{background:#fff!important;color:#000!important}
   /* Par défaut : cacher tout sauf #sheet */
   .header,.sec,#sheetOps,#tlSection,#mobileNav{display:none!important}
   #sheet{display:block!important}
