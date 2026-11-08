@@ -70,7 +70,7 @@ function renderPreview(){
           <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
           <div class="fi-b">
             <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#8ab4f8">✋</span>':''}</div>
-            <div class="fi-r">${edInp(f,'reg','Reg.',74)}${edInp(f,'stand','Stand',52)}${f.handler?'<span style="margin-left:2px">'+f.handler+'</span>':''}</div>
+            <div class="fi-r">${edInp(f,'reg','Registration',96)}${flightMeta(f)}</div>
           </div>
           ${canHandling(f)?`<button class="wfs-btn hbtn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="toggleHandling('${f._id}')"><span class="hl-full">Handling</span><span class="hl-short">HDL</span></button>`:''}
           <button class="rm-btn" onclick="removeVol('${f._id}')">✕</button>
@@ -91,7 +91,7 @@ function renderPreview(){
           <div class="fi-t" style="font-size:16px">${f.time}<div class="fi-etd">ETD ${edInp(f,'eta','HH:MM',56,'ed-t ed-s')}</div></div>
           <div class="fi-b">
             <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#8ab4f8">✋</span>':''}</div>
-            <div class="fi-r">${edInp(f,'reg','Reg.',74)}${edInp(f,'stand','Stand',52)}${f.handler?'<span style="margin-left:2px">'+f.handler+'</span>':''}</div>
+            <div class="fi-r">${edInp(f,'reg','Registration',96)}${flightMeta(f)}</div>
           </div>
           ${canHandling(f)?`<button class="wfs-btn hbtn ${f.wfsMode==='handling'?'sel-hand':''}" onclick="toggleHandling('${f._id}')"><span class="hl-full">Handling</span><span class="hl-short">HDL</span></button>`:''}
           <button class="rm-btn" onclick="removeVol('${f._id}')">✕</button>
@@ -115,7 +115,7 @@ function renderPreview(){
           <div class="fi-t" style="font-size:17px">${f.time}</div>
           <div class="fi-b">
             <div class="fi-f" style="font-size:12px">${f.flight}</div>
-            <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · '+f.stand:''}</div>
+            <div class="fi-r">${f.reg||'—'} · ${hAbbr(f.handler)||'—'}${f.stand?' · '+f.stand:''}</div>
           </div>
           ${badge}
           <button class="add-btn" onclick="addFromExcluded('${f._id}')">+ AJOUTER</button>
@@ -141,7 +141,7 @@ function renderPreview(){
         <div class="fi-t" style="font-size:18px;color:#8ab4f8">${f.eta}<div class="fi-etd">ETD</div></div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${f.flight}</div>
-          <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · Stand '+f.stand:''}</div>
+          <div class="fi-r">${f.reg||'—'} · ${hAbbr(f.handler)||'—'}${f.stand?' · '+f.stand:''}</div>
         </div>
         <button class="rm-btn" onclick="setHs('${f._id}',false)">✕</button>
       </div>
@@ -162,7 +162,7 @@ function renderPreview(){
           <div class="fi-t" style="font-size:18px;color:#8ab4f8">${f.eta}<div class="fi-etd">ETD</div></div>
           <div class="fi-b">
             <div class="fi-f" style="font-size:12px">${f.flight}</div>
-            <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · Stand '+f.stand:''}</div>
+            <div class="fi-r">${f.reg||'—'} · ${hAbbr(f.handler)||'—'}${f.stand?' · '+f.stand:''}</div>
           </div>
           <button class="wfs-btn ${sel?'sel-hand':''}" onclick="setHs('${f._id}',${sel?'false':'true'})" style="white-space:nowrap">
             🎧 ${sel?'Retiré ✓':'Ajouter'}

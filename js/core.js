@@ -70,3 +70,14 @@ function canPropose(raw){
 
 function pickup(t){if(!/^\d{1,2}:\d{2}$/.test(t||''))return '';const[h,m]=t.split(':').map(Number);let x=h*60+m-75;if(x<0)x+=1440;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0');}
 
+
+// Affichage compact : SWISSPORT → SWP, CHALLENGE → CHH
+function hAbbr(h){
+  const u=(h||'').toUpperCase().trim();
+  return u==='SWISSPORT'?'SWP':u==='CHALLENGE'?'CHH':u;
+}
+// « stand · handler » dans une seule étiquette (même taille/typo/couleur)
+function flightMeta(f){
+  const t=[f.stand,hAbbr(f.handler)].filter(Boolean).map(esc).join(' · ');
+  return t?'<span class="fi-meta">'+t+'</span>':'';
+}

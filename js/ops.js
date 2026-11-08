@@ -163,7 +163,7 @@ function renderOps(){
         <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}</div>
-          <div class="fi-r">${edInp(f,'reg','Registration',90)}${f.stand?' · Stand '+esc(f.stand):''}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',96)}${flightMeta(f)}</div>
         </div>
         <button class="rm-btn" onclick="toggleCat('${f._id}',false)">✕</button>
       </div>
@@ -181,7 +181,7 @@ function renderOps(){
         <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
-          <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',96)}${flightMeta(f)}</div>
         </div>
         <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleCat('${f._id}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
@@ -205,7 +205,7 @@ function renderOps(){
         <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}</div>
-          <div class="fi-r">${edInp(f,'reg','Registration',90)}${f.stand?' · Stand '+esc(f.stand):''} · ${f.handler||'—'}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',96)}${flightMeta(f)}</div>
         </div>
         <button class="rm-btn" onclick="toggleOps('${f._id}',false)">✕</button>
       </div>
@@ -228,7 +228,7 @@ function renderOps(){
         <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
-          <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
+          <div class="fi-r">${edInp(f,'reg','Registration',96)}${flightMeta(f)}</div>
         </div>
         <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleOps('${f._id}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
