@@ -15,6 +15,7 @@ const OPS_DEFAULT = [
 function flightPrefix(flight){return flight.replace(/\d.*$/,'');}
 
 function uplift(etd){
+  if(!/^\d{1,2}:\d{2}$/.test(etd||''))return '';
   const[h,m]=etd.split(':').map(Number);
   let x=h*60+m-90;if(x<0)x+=1440;
   return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
@@ -130,15 +131,8 @@ function addManualCatering(){
   const eta=timeEl.value.trim();
   const reg=regEl.value.trim().toUpperCase();
   const flight=flightEl.value.trim().toUpperCase();
-  if(!flight||!/^\d{1,2}:\d{2}$/.test(eta)){
-    alert('Renseigne au minimum le numéro de vol et une heure valide (HH:MM).');
-    return;
-  }
-  const existing=OPS.catering.find(c=>c.flight===flight&&c.eta===eta);
-  if(existing){existing.selected=true;}
-  else{
-    OPS.catering.push({_id:newId(),_k:'dep:'+flight,flight,reg,eta,time:eta,handler:'',stand:'',type:'dep',manual:true,selected:true});
-  }
+  const id=newId();
+  OPS.catering.push({_id:id,_k:'m:'+id,flight,reg,eta,time:eta,handler:'',stand:'',type:'dep',manual:true,selected:true});
   timeEl.value='';regEl.value='';flightEl.value='';
   renderOps();
 }
@@ -151,15 +145,8 @@ function addManualOperation(){
   const eta=timeEl.value.trim();
   const reg=regEl.value.trim().toUpperCase();
   const flight=flightEl.value.trim().toUpperCase();
-  if(!flight||!/^\d{1,2}:\d{2}$/.test(eta)){
-    alert('Renseigne au minimum le numéro de vol et une heure valide (HH:MM).');
-    return;
-  }
-  const existing=OPS.operations.find(o=>o.flight===flight&&o.eta===eta);
-  if(existing){existing.selected=true;}
-  else{
-    OPS.operations.push({_id:newId(),_k:'arr:'+flight,flight,reg,eta,time:eta,handler:'',stand:'',type:'arr',manual:true,selected:true,tasks:{cleaning:false,toilet:false,water:false}});
-  }
+  const id=newId();
+  OPS.operations.push({_id:id,_k:'m:'+id,flight,reg,eta,time:eta,handler:'',stand:'',type:'arr',manual:true,selected:true,tasks:{cleaning:false,toilet:false,water:false}});
   timeEl.value='';regEl.value='';flightEl.value='';
   renderOps();
 }
@@ -173,12 +160,12 @@ function renderOps(){
   selCat.forEach(f=>{
     catHtml+=`<div class="fi d" style="margin-bottom:5px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
+        <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}</div>
           <div class="fi-r">${edInp(f,'reg','Registration',90)}${f.stand?' · Stand '+esc(f.stand):''}</div>
         </div>
-        <button class="rm-btn" onclick="toggleCat('${f.flight}','${f.eta}',false)">✕</button>
+        <button class="rm-btn" onclick="toggleCat('${f._id}',false)">✕</button>
       </div>
     </div>`;
   });
@@ -191,12 +178,12 @@ function renderOps(){
     const sel=f.selected;
     catAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#8ab4f8':'#363940'};background:${sel?'rgba(138,180,248,.04)':'#17181c'};margin-bottom:4px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
+        <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
           <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
         </div>
-        <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleCat('${f.flight}','${f.eta}',${!sel})">
+        <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleCat('${f._id}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
         </button>
       </div>
@@ -215,17 +202,17 @@ function renderOps(){
     const isExtra=!isOpsDefault(f);
     opsHtml+=`<div class="fi a" style="margin-bottom:5px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
+        <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}</div>
           <div class="fi-r">${edInp(f,'reg','Registration',90)}${f.stand?' · Stand '+esc(f.stand):''} · ${f.handler||'—'}</div>
         </div>
-        <button class="rm-btn" onclick="toggleOps('${f.flight}','${f.eta}',false)">✕</button>
+        <button class="rm-btn" onclick="toggleOps('${f._id}',false)">✕</button>
       </div>
       ${isExtra?`<div class="wfs-toggle" style="flex-wrap:wrap;gap:4px">
-        <button class="wfs-btn ${t.cleaning?'sel-hand':''}" onclick="toggleTask('${f.flight}','${f.eta}','cleaning')">🧹 Cleaning</button>
-        <button class="wfs-btn ${t.toilet?'sel-hand':''}" onclick="toggleTask('${f.flight}','${f.eta}','toilet')">🚽 Toilet</button>
-        <button class="wfs-btn ${t.water?'sel-hand':''}" onclick="toggleTask('${f.flight}','${f.eta}','water')">💧 Water</button>
+        <button class="wfs-btn ${t.cleaning?'sel-hand':''}" onclick="toggleTask('${f._id}','cleaning')">🧹 Cleaning</button>
+        <button class="wfs-btn ${t.toilet?'sel-hand':''}" onclick="toggleTask('${f._id}','toilet')">🚽 Toilet</button>
+        <button class="wfs-btn ${t.water?'sel-hand':''}" onclick="toggleTask('${f._id}','water')">💧 Water</button>
       </div>`:''}
     </div>`;
   });
@@ -238,12 +225,12 @@ function renderOps(){
     const sel=f.selected;
     opsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#81c995':'#363940'};background:${sel?'rgba(129,201,149,.04)':'#17181c'};margin-bottom:4px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
+        <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
           <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
         </div>
-        <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleOps('${f.flight}','${f.eta}',${!sel})">
+        <button class="wfs-btn ${sel?'sel-hand':''}" onclick="toggleOps('${f._id}',${!sel})">
           ${sel?'✕ Retirer':'+ Ajouter'}
         </button>
       </div>
@@ -279,18 +266,18 @@ function renderFedexTable(){
   </tr>`).join('');
 }
 
-function toggleCat(flight,eta,val){
-  const f=OPS.catering.find(c=>c.flight===flight&&c.eta===eta);
+function toggleCat(id,val){
+  const f=OPS.catering.find(c=>c._id===id);
   if(f)f.selected=val;
   renderOps();
 }
-function toggleOps(flight,eta,val){
-  const f=OPS.operations.find(o=>o.flight===flight&&o.eta===eta);
+function toggleOps(id,val){
+  const f=OPS.operations.find(o=>o._id===id);
   if(f)f.selected=val;
   renderOps();
 }
-function toggleTask(flight,eta,task){
-  const f=OPS.operations.find(o=>o.flight===flight&&o.eta===eta);
+function toggleTask(id,task){
+  const f=OPS.operations.find(o=>o._id===id);
   if(!f)return;
   if(!f.tasks)f.tasks={cleaning:false,toilet:false,water:false};
   f.tasks[task]=!f.tasks[task];

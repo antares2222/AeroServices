@@ -28,11 +28,9 @@ function editFlight(id,field,val){
   val=(val||'').trim();
   if(field==='eta'){
     const m=val.match(/^(\d{1,2})[:hH.]?(\d{2})$/);
-    if(!m||+m[1]>23||+m[2]>59){alert('Heure invalide (format HH:MM).');refreshAll();return;}
-    val=m[1].padStart(2,'0')+':'+m[2];
+    if(m&&+m[1]<=23&&+m[2]<=59)val=m[1].padStart(2,'0')+':'+m[2];   // normalise si valide, sinon garde tel quel
   } else if(field==='flight'||field==='reg'||field==='stand'){
     val=val.toUpperCase();
-    if(field==='flight'&&!val){refreshAll();return;}
   }
   [S.arr,S.dep,S.excluded,S.allArr,S.allDep,S.fedex,OPS.catering,OPS.operations].forEach(l=>(l||[]).forEach(f=>{
     if(f._id!==id)return;
@@ -70,5 +68,5 @@ function canPropose(raw){
   return true;
 }
 
-function pickup(t){const[h,m]=t.split(':').map(Number);let x=h*60+m-75;if(x<0)x+=1440;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0');}
+function pickup(t){if(!/^\d{1,2}:\d{2}$/.test(t||''))return '';const[h,m]=t.split(':').map(Number);let x=h*60+m-75;if(x<0)x+=1440;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0');}
 
