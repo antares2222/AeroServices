@@ -10,6 +10,7 @@ Ordre de chargement (index.html) : config → settings → core → fids → cre
 | css/components.css | Réglages, vols, boutons, formulaire manuel | look d'un composant |
 | css/print.css | Impression PDF | mise en page PDF |
 | css/timeline.css | Timeline | look timeline |
+| css/theme.css | Thème Firefox (polices, boutons, en-tête) — chargé en dernier | changer le look global |
 | js/config.js | État `S`, `DEFAULT_PARAMS`, `PARAMS` (localStorage) | préfixes par défaut |
 | js/settings.js | Écran paramètres, mot de passe, décalage UTC | réglages |
 | js/core.js | selShift, reset, shouldInclude, pickup | règles de base |

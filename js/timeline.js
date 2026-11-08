@@ -137,7 +137,7 @@ function renderTimeline(){
 
   const inner=document.getElementById('tlInner');
   if(!rowCount){
-    inner.innerHTML='<div style="color:#6b7280;font-size:11px;font-family:\'DM Mono\',monospace;padding:10px;text-align:center">Aucune immatriculation détectée dans le FIDS.</div>';
+    inner.innerHTML='<div style="color:#a1a0ad;font-size:11px;font-family:var(--f-m);padding:10px;text-align:center">Aucune immatriculation détectée dans le FIDS.</div>';
   }else{
     inner.innerHTML=`<div class="tl-axis-row">${axisH}</div>${rowsH}`;
   }

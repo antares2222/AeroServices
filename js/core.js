@@ -2,7 +2,7 @@
 function clearAllData(){
   S.arr=[];S.dep=[];S.excluded=[];S.fedex=[];S.allArr=[];S.allDep=[];
   OPS.catering=[];OPS.operations=[];
-  setFidsStatus('','#6b7280');
+  setFidsStatus('','#a1a0ad');
   document.getElementById('tlSection').style.display='none';
   renderPreview();
   renderFedexTable();

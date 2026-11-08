@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1c1b22">
 <title>Aero Services — Dispatch</title>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/print.css">
 <link rel="stylesheet" href="css/timeline.css">
+<link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
 
@@ -83,7 +85,7 @@
         <span class="settings-rule-handler">WFS</span>
         <div class="prefix-list" id="ops-wfs-list"></div>
       </div>
-      <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin:4px 0 6px 98px">Préfixes exclus :</div>
+      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin:4px 0 6px 98px">Préfixes exclus :</div>
       <div class="prefix-add" style="margin-left:98px">
         <input type="text" id="ops-wfs-ex-input" placeholder="ex: SVA (exclu)" maxlength="6">
         <button onclick="addPrefix('ops-wfs-ex','wfs_ops_exclude')">+ EXCLURE</button>
@@ -121,7 +123,7 @@
     <!-- Headset par défaut -->
     <div class="settings-section">
       <div class="settings-section-title">🎧 HEADSET — SÉLECTION PAR DÉFAUT</div>
-      <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:10px;line-height:1.6">
+      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
         Vols DEP à cocher automatiquement en Headset dès le chargement (n° de vol complet ou préfixe compagnie, ex: QTR8235 ou QTR).
       </div>
       <div class="prefix-list" id="hs-default-list"></div>
@@ -134,7 +136,7 @@
     <!-- FedEx -->
     <div class="settings-section">
       <div class="settings-section-title">📦 TABLEAU FEDEX — TYPES D'AVION</div>
-      <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:10px;line-height:1.6">
+      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
         Affiche un petit tableau à part pour les vols FedEx dont le type d'avion correspond à cette liste.
       </div>
       <div class="prefix-list" id="fedex-ac-list"></div>
@@ -147,7 +149,7 @@
     <!-- Fuseau horaire -->
     <div class="settings-section">
       <div class="settings-section-title">🕐 FUSEAU HORAIRE FIDS</div>
-      <div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-bottom:10px;line-height:1.6">
+      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
         Le FIDS de Liège Airport donne ses heures en UTC. Choisis le décalage à appliquer selon la saison pour afficher l'heure locale belge.
       </div>
       <div class="sgrid" style="grid-template-columns:1fr 1fr">
@@ -189,7 +191,7 @@
     <button class="btn bg" id="fidsLoadBtn" onclick="loadFromFids({scroll:true})">📡 AFFICHER</button>
     <button class="btn bs" id="fidsSyncBtn" onclick="loadFromFids({merge:true})">🔄 SYNCHR</button>
   </div>
-  <div id="fidsStatus" style="font-family:'DM Mono',monospace;font-size:11px;text-align:center;min-height:16px;margin-bottom:10px;color:#6b7280"></div>
+  <div id="fidsStatus" style="font-family:var(--f-m);font-size:11px;text-align:center;min-height:16px;margin-bottom:10px;color:#a1a0ad"></div>
 </div>
 
 <!-- ═══ SECTION 2 : TIMELINE ═══ -->
@@ -210,7 +212,7 @@
   <div class="lbl">03 — VÉRIFICATION CREW-BUS</div>
   <div class="card">
     <div class="fhdr">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px">VOLS SÉLECTIONNÉS</div>
+      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px">VOLS SÉLECTIONNÉS</div>
       <div class="cnt">ARR <b id="cA">0</b> · DEP <b id="cD">0</b></div>
     </div>
     <div class="prev-grid">
@@ -220,34 +222,34 @@
   </div>
   <div class="card" id="cardExcluded" style="display:none">
     <div class="fhdr" onclick="toggleCollapse('exPanel','exChev')" style="cursor:pointer;margin-bottom:0">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#6b7280">AUTRES VOLS DISPONIBLES</div>
+      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#a1a0ad">AUTRES VOLS DISPONIBLES</div>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="cnt"><b id="cEx">0</b> vols</div>
-        <span id="exChev" style="color:#6b7280;font-size:16px;transition:transform .2s">▼</span>
+        <span id="exChev" style="color:#a1a0ad;font-size:16px;transition:transform .2s">▼</span>
       </div>
     </div>
     <div id="exPanel" style="display:none;margin-top:12px"><div id="prevEx"></div></div>
   </div>
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#4be8a0">🎧 HEADSET</div>
+      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#54ffbd">🎧 HEADSET</div>
       <div class="cnt"><b id="cHs">0</b> sélectionné(s)</div>
     </div>
     <div id="hsList"></div>
     <div style="margin-top:10px">
-      <div onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
-        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">+ AJOUTER / SUPPRIMER UN VOL</span>
-        <span id="hsChev" style="color:#6b7280;transition:transform .2s">▼</span>
+      <div onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #42414d">
+        <span style="font-family:var(--f-m);font-size:11px;color:#a1a0ad">+ AJOUTER / SUPPRIMER UN VOL</span>
+        <span id="hsChev" style="color:#a1a0ad;transition:transform .2s">▼</span>
       </div>
       <div id="hsPanel" style="display:none">
-        <div style="font-size:11px;color:#6b7280;font-family:'DM Mono',monospace;margin:8px 0">Vols DEP dans la fenêtre — ETD directe</div>
+        <div style="font-size:11px;color:#a1a0ad;font-family:var(--f-m);margin:8px 0">Vols DEP dans la fenêtre — ETD directe</div>
         <div id="hsAllList"></div>
       </div>
     </div>
   </div>
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#e8b84b">+ AJOUTER UN VOL</div>
+      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#ab71ff">+ AJOUTER UN VOL</div>
     </div>
     <div class="prev-grid">
       <div>
@@ -281,7 +283,7 @@
   <div class="ops-grid" id="opsGrid">
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#e8b84b">✈ CATERING</div>
+      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#ab71ff">✈ CATERING</div>
       <div class="cnt">DEP <b id="cCat">0</b></div>
     </div>
     <div id="catList"></div>
@@ -292,16 +294,16 @@
       <button onclick="addManualCatering()">+ AJOUTER</button>
     </div>
     <div style="margin-top:10px">
-      <div onclick="toggleCollapse('catPanel','catChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
-        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">VOL NON AFFICHÉ</span>
-        <span id="catChev" style="color:#6b7280;transition:transform .2s">▼</span>
+      <div onclick="toggleCollapse('catPanel','catChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #42414d">
+        <span style="font-family:var(--f-m);font-size:11px;color:#a1a0ad">VOL NON AFFICHÉ</span>
+        <span id="catChev" style="color:#a1a0ad;transition:transform .2s">▼</span>
       </div>
       <div id="catPanel" style="display:none"><div id="catAllList"></div></div>
     </div>
   </div>
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#4be8a0">🔧 OPÉRATION</div>
+      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#54ffbd">🔧 OPÉRATION</div>
       <div class="cnt">ARR <b id="cOps">0</b></div>
     </div>
     <div id="opsList"></div>
@@ -312,25 +314,25 @@
       <button onclick="addManualOperation()">+ AJOUTER</button>
     </div>
     <div style="margin-top:10px">
-      <div onclick="toggleCollapse('opsPanel','opsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #2a2d36">
-        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b7280">VOL NON AFFICHÉ</span>
-        <span id="opsChev" style="color:#6b7280;transition:transform .2s">▼</span>
+      <div onclick="toggleCollapse('opsPanel','opsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #42414d">
+        <span style="font-family:var(--f-m);font-size:11px;color:#a1a0ad">VOL NON AFFICHÉ</span>
+        <span id="opsChev" style="color:#a1a0ad;transition:transform .2s">▼</span>
       </div>
       <div id="opsPanel" style="display:none"><div id="opsAllList"></div></div>
     </div>
   </div>
   <div class="card" id="fedexCard" style="display:none">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:#f59e0b">📦 FEDEX</div>
+      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#ffa436">📦 FEDEX</div>
       <div class="cnt"><b id="cFedex">0</b> vol(s)</div>
     </div>
     <table style="width:100%;border-collapse:collapse">
       <thead>
-        <tr style="border-bottom:1px solid #2a2d36">
-          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">Reg.</th>
-          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">Vol</th>
-          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">ETA</th>
-          <th style="text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:#6b7280;padding:5px 6px;text-transform:uppercase">Stand</th>
+        <tr style="border-bottom:1px solid #42414d">
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">Reg.</th>
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">Vol</th>
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">ETA</th>
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">Stand</th>
         </tr>
       </thead>
       <tbody id="fedexTblBody"></tbody>

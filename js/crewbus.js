@@ -71,11 +71,11 @@ function renderPreview(){
         <div class="fi-top">
           <div class="fi-t">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
           <div class="fi-b">
-            <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
+            <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#ab71ff">✋</span>':''}</div>
             <div class="fi-r">
               <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editFlight('${f._id}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
               <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editFlight('${f._id}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
-              <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
+              <span style="color:#a1a0ad;font-size:10px;margin-left:4px">${f.handler}</span>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
@@ -87,7 +87,7 @@ function renderPreview(){
       </div>`;
     });
   }
-  if(!hArr)hArr=`<div style="color:#6b7280;text-align:center;padding:20px;font-size:13px">Aucune arrivée</div>`;
+  if(!hArr)hArr=`<div style="color:#a1a0ad;text-align:center;padding:20px;font-size:13px">Aucune arrivée</div>`;
   document.getElementById('prevArr').innerHTML=hArr;
 
   // Départs
@@ -101,11 +101,11 @@ function renderPreview(){
         <div class="fi-top">
           <div class="fi-t">${f.time}<div class="fi-etd">ETD ${edInp(f,'eta','HH:MM',56,'ed-t ed-s')}</div></div>
           <div class="fi-b">
-            <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#e8b84b">✋</span>':''}</div>
+            <div class="fi-f">${edInp(f,'flight','Vol',96,'ed-f')}${f.manual?' <span style="font-size:9px;color:#ab71ff">✋</span>':''}</div>
             <div class="fi-r">
               <input type="text" value="${f.reg||''}" placeholder="Registration" onchange="editFlight('${f._id}','reg',this.value)" style="width:90px;font-size:11px;padding:3px 6px;margin-right:4px;display:inline-block">
               <input type="text" value="${f.stand||''}" placeholder="Stand" onchange="editFlight('${f._id}','stand',this.value)" style="width:60px;font-size:11px;padding:3px 6px;display:inline-block">
-              <span style="color:#6b7280;font-size:10px;margin-left:4px">${f.handler}</span>
+              <span style="color:#a1a0ad;font-size:10px;margin-left:4px">${f.handler}</span>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
@@ -117,7 +117,7 @@ function renderPreview(){
       </div>`;
     });
   }
-  if(!hDep)hDep=`<div style="color:#6b7280;text-align:center;padding:20px;font-size:13px">Aucun départ</div>`;
+  if(!hDep)hDep=`<div style="color:#a1a0ad;text-align:center;padding:20px;font-size:13px">Aucun départ</div>`;
   document.getElementById('prevDep').innerHTML=hDep;
 
   // Vols exclus proposables
@@ -154,9 +154,9 @@ function renderPreview(){
   // Liste persistante des vols cochés (toujours visible)
   let hsHtml='';
   hsSelected.forEach(f=>{
-    hsHtml+=`<div class="fi" style="border-left:3px solid #4be8a0;background:rgba(75,232,160,.06);margin-bottom:5px">
+    hsHtml+=`<div class="fi" style="border-left:3px solid #54ffbd;background:rgba(84,255,189,.06);margin-bottom:5px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:18px;color:#e8b84b">${f.eta}<div class="fi-etd">ETD</div></div>
+        <div class="fi-t" style="font-size:18px;color:#ab71ff">${f.eta}<div class="fi-etd">ETD</div></div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${f.flight}</div>
           <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · Stand '+f.stand:''}</div>
@@ -165,19 +165,19 @@ function renderPreview(){
       </div>
     </div>`;
   });
-  if(!hsHtml)hsHtml=`<div style="color:#6b7280;font-size:12px;text-align:center;padding:10px">Aucun vol sélectionné</div>`;
+  if(!hsHtml)hsHtml=`<div style="color:#a1a0ad;font-size:12px;text-align:center;padding:10px">Aucun vol sélectionné</div>`;
   document.getElementById('hsList').innerHTML=hsHtml;
 
   // Panneau complet + AJOUTER/SUPPRIMER (tous les DEP dispo, avec bouton toggle)
   let hsAllHtml='';
   if(allDepForHs.length===0){
-    hsAllHtml=`<div style="color:#6b7280;font-size:12px;text-align:center;padding:10px">Aucun vol DEP disponible</div>`;
+    hsAllHtml=`<div style="color:#a1a0ad;font-size:12px;text-align:center;padding:10px">Aucun vol DEP disponible</div>`;
   } else {
     allDepForHs.forEach(f=>{
       const sel=f.hsMode===true;
-      hsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#4be8a0':'#2a2d36'};background:${sel?'rgba(75,232,160,.06)':'#111318'};margin-bottom:5px">
+      hsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#54ffbd':'#42414d'};background:${sel?'rgba(84,255,189,.06)':'#23222a'};margin-bottom:5px">
         <div class="fi-top">
-          <div class="fi-t" style="font-size:18px;color:#e8b84b">${f.eta}<div class="fi-etd">ETD</div></div>
+          <div class="fi-t" style="font-size:18px;color:#ab71ff">${f.eta}<div class="fi-etd">ETD</div></div>
           <div class="fi-b">
             <div class="fi-f" style="font-size:12px">${f.flight}</div>
             <div class="fi-r">${f.reg||'—'} · ${f.handler||'—'}${f.stand?' · Stand '+f.stand:''}</div>

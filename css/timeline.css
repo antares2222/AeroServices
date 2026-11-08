@@ -1,21 +1,21 @@
 /* ── TIMELINE ───────────────────────────────────────────────── */
 .tl-section{display:none;margin-bottom:12px}
-.tl-card{background:#1a1d24;border:1px solid #2a2d36;border-radius:12px;padding:14px 14px 10px;overflow:hidden}
+.tl-card{background:#2b2a33;border:1px solid #42414d;border-radius:12px;padding:14px 14px 10px;overflow:hidden}
 .tl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.tl-title{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#6b7280}
+.tl-title{font-family:var(--f-d);font-size:12px;letter-spacing:2px;color:#a1a0ad}
 .tl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px 6px}
 .tl-inner{min-width:580px;position:relative}
-.tl-axis-row{display:flex;height:22px;margin-left:90px;position:relative;border-bottom:1px solid #2a2d36;margin-bottom:1px}
-.tl-tick{position:absolute;font-size:8px;color:#4b5563;font-family:'DM Mono',monospace;transform:translateX(-50%);top:4px;user-select:none}
-.tl-aircraft-row{display:flex;align-items:center;min-height:34px;border-bottom:1px solid rgba(42,45,54,.5)}
+.tl-axis-row{display:flex;height:22px;margin-left:90px;position:relative;border-bottom:1px solid #42414d;margin-bottom:1px}
+.tl-tick{position:absolute;font-size:8px;color:#4b5563;font-family:var(--f-m);transform:translateX(-50%);top:4px;user-select:none}
+.tl-aircraft-row{display:flex;align-items:center;min-height:34px;border-bottom:1px solid rgba(66,65,77,.5)}
 .tl-aircraft-row:last-child{border-bottom:none}
-.tl-reg-lbl{width:90px;flex-shrink:0;font-size:10px;font-family:'DM Mono',monospace;color:#ffffff;font-weight:600;text-align:right;padding-right:8px;line-height:1.3}
-.tl-flt-lbl{font-size:8px;color:#6b7280;display:block;font-weight:400;margin-top:1px}
+.tl-reg-lbl{width:90px;flex-shrink:0;font-size:10px;font-family:var(--f-m);color:#ffffff;font-weight:600;text-align:right;padding-right:8px;line-height:1.3}
+.tl-flt-lbl{font-size:8px;color:#a1a0ad;display:block;font-weight:400;margin-top:1px}
 .tl-track{flex:1;height:34px;position:relative}
-.tl-shift-band{position:absolute;top:0;bottom:0;background:rgba(232,184,75,.07);border-left:1.5px solid rgba(232,184,75,.22);border-right:1.5px solid rgba(232,184,75,.22);pointer-events:none;z-index:0}
-.tl-gridln{position:absolute;top:0;bottom:0;width:1px;background:rgba(42,45,54,.9);pointer-events:none;z-index:0}
+.tl-shift-band{position:absolute;top:0;bottom:0;background:rgba(171,113,255,.07);border-left:1.5px solid rgba(171,113,255,.22);border-right:1.5px solid rgba(171,113,255,.22);pointer-events:none;z-index:0}
+.tl-gridln{position:absolute;top:0;bottom:0;width:1px;background:rgba(66,65,77,.9);pointer-events:none;z-index:0}
 .tl-bar{position:absolute;top:7px;height:20px;border-radius:3px;z-index:1;display:flex;align-items:center;justify-content:center;min-width:3px;overflow:hidden}
-.tl-bar-lbl{font-size:7px;font-family:'DM Mono',monospace;color:rgba(0,0,0,.85);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;font-weight:600}
+.tl-bar-lbl{font-size:7px;font-family:var(--f-m);color:rgba(0,0,0,.85);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;font-weight:600}
 .tl-bar-full{background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.25)}
 .tl-bar-arr-only{background:linear-gradient(to right,rgba(255,255,255,.8) 0%,rgba(255,255,255,.15) 70%,transparent 100%);border:none}
 .tl-bar-dep-only{background:linear-gradient(to left,rgba(255,255,255,.8) 0%,rgba(255,255,255,.15) 70%,transparent 100%);border:none}

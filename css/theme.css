@@ -1,0 +1,90 @@
+/* ── Thème « Firefox » (sombre, style Proton) ──────────────────────────
+   Se charge en dernier : ajuste polices, rayons, boutons et titres.
+   Palette : fond #1c1b22 · cartes #2b2a33 · traits #42414d · texte #fbfbfe
+   Accent violet #ab71ff · flamme #ff9400 → #ff4aa2 → #9059ff · ARR vert · DEP rouge */
+:root{
+  --f-d:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-b:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-m:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --flame:linear-gradient(90deg,#ff9400 0%,#ff4aa2 55%,#9059ff 100%);
+}
+body{font-feature-settings:'tnum' 1,'cv11' 1;-webkit-font-smoothing:antialiased}
+
+/* En-tête : barre d'outils Firefox + filet flamme */
+.header{background:#23222a;border-bottom:none;position:sticky;box-shadow:0 1px 0 #42414d}
+.header::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--flame);opacity:.9}
+.logo{font-weight:700;font-size:22px;letter-spacing:.04em;color:#fbfbfe;
+  background:var(--flame);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.logo span{font-family:var(--f-b);font-weight:500;font-size:11px;letter-spacing:.32em;color:#a1a0ad;-webkit-text-fill-color:#a1a0ad;margin-top:3px}
+@media(min-width:700px){.logo{font-size:26px}.logo span{font-size:12px}}
+.settings-btn{border-radius:8px;border-color:#42414d;background:#2b2a33}
+.settings-btn:hover{background:#34333d;border-color:#ab71ff}
+
+/* Titres de section */
+.lbl{font-weight:600;font-size:15px;letter-spacing:.01em;color:#fbfbfe;margin-bottom:12px}
+.grp{font-weight:600;font-size:11px;letter-spacing:.08em}
+.settings-title{font-weight:600;font-size:17px;letter-spacing:0}
+.settings-section-title{font-weight:600;font-size:12px;letter-spacing:.06em}
+.settings-panel{border-radius:12px;border:1px solid #42414d;background:#2b2a33}
+
+/* Cartes */
+.card{border-radius:12px;border-color:#42414d;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+@media(min-width:700px){.card{border-radius:12px}}
+
+/* Champs */
+input[type=date],input[type=text],textarea{border-radius:8px;background:#1c1b22;border-color:#5b5a66;font-size:14px}
+input:focus,textarea:focus{border-color:#ab71ff;box-shadow:0 0 0 3px rgba(171,113,255,.28)}
+input[type=date]{color-scheme:dark}
+
+/* Boutons */
+.btn{border-radius:8px;font-weight:600;font-size:14px;letter-spacing:.02em;padding:13px}
+.bg,.bp{background:#9059ff;color:#fff}
+.bg:hover,.bp:hover{background:#a47bff}
+.bg:active,.bp:active{background:#7a3fe8}
+.bs{background:#42414d;border:none;color:#fbfbfe}
+.bs:hover{background:#52525e}
+.btn:disabled{opacity:.6;cursor:default}
+.settings-save{border-radius:8px;font-weight:600;font-size:14px;letter-spacing:.02em;background:#54ffbd}
+.dn-btn{background:#42414d;border:none;border-radius:8px;color:#fbfbfe}
+.dn-btn:hover{background:#52525e}
+
+/* Choix du shift : onglets pastille */
+.sbtn{font-weight:600;font-size:14px;letter-spacing:.02em;border-radius:8px;background:#1c1b22;border-color:#42414d;padding:11px 4px}
+.sbtn:hover{background:#34333d}
+.sbtn.sel{background:rgba(171,113,255,.16);border-color:#ab71ff;color:#fbfbfe}
+.sbtn span{font-size:10px;color:#a1a0ad}
+.sbtn.sel span{color:#d6c3ff}
+
+/* Vols */
+.fi{border-radius:8px;background:#2b2a33}
+.fi.a{background:linear-gradient(90deg,rgba(84,255,189,.07),transparent 60%),#2b2a33}
+.fi.d{background:linear-gradient(90deg,rgba(255,106,117,.07),transparent 60%),#2b2a33}
+.fi.ex{background:#23222a}
+.fi-t{font-family:var(--f-m);font-weight:600;font-size:17px;color:#fbfbfe;letter-spacing:-.02em;min-width:54px}
+.fi-f{font-weight:600;font-size:13px}
+.fi-bx{font-family:var(--f-b);font-weight:700;font-size:10px;letter-spacing:.06em;border-radius:6px}
+.cnt{font-weight:500;border-radius:999px;background:#42414d;color:#cfcfd8}
+.cnt b{color:#fbfbfe}
+.wfs-btn{border-radius:6px;background:#1c1b22;border-color:#5b5a66;color:#cfcfd8}
+.wfs-btn:hover{background:#34333d}
+.wfs-btn.sel-hand{background:rgba(84,255,189,.14);border-color:#54ffbd;color:#54ffbd}
+.add-compact{background:#23222a;border-color:#5b5a66;border-radius:8px}
+.add-compact button{background:#9059ff;color:#fff;font-family:var(--f-b);font-weight:600;font-size:12px;border-radius:6px}
+.add-btn,.rm-btn{border-radius:6px}
+
+/* Champs éditables inline */
+input.ed{border-color:transparent;background:transparent;border-radius:6px}
+input.ed:hover{border-color:#5b5a66;background:#1c1b22}
+input.ed:focus{border-color:#ab71ff;background:#1c1b22}
+input.ed-t{font-family:var(--f-m);font-weight:600;font-size:16px;color:#fbfbfe;letter-spacing:-.02em}
+input.ed-s{font-size:10px;color:#a1a0ad}
+input.ed-f{font-family:var(--f-m);font-weight:600;font-size:13px;color:#fbfbfe}
+
+/* Navigation mobile : barre type onglets Firefox */
+#mobileNav{background:rgba(35,34,42,.94);border-top:1px solid #42414d}
+#mobileNav .mnav-btn{font-family:var(--f-b);font-weight:500;font-size:10px;letter-spacing:.02em}
+#mobileNav .mnav-btn.active{color:#fff}
+#mobileNav .mnav-btn.active .mnav-ic{filter:drop-shadow(0 0 6px rgba(171,113,255,.7))}
+
+/* Barre de statut */
+#fidsStatus{font-family:var(--f-b)!important;font-size:12px!important}

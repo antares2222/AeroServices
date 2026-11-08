@@ -42,7 +42,7 @@ function inDateWindow(dt,win){
 
 function setFidsStatus(msg,color){
   const el=document.getElementById('fidsStatus');
-  if(el){el.innerHTML=msg;el.style.color=color||'#6b7280';}
+  if(el){el.innerHTML=msg;el.style.color=color||'#a1a0ad';}
 }
 
 // opts : {merge:true} = synchro (garde sélections, éditions, vols manuels) ;
@@ -60,7 +60,7 @@ async function loadFromFids(opts){
     if(!opts.silent){
       if(btn){btn.disabled=true;if(!opts.merge)btn.textContent='⏳ CHARGEMENT...';}
       if(sbtn){sbtn.disabled=true;if(opts.merge)sbtn.textContent='⏳ ...';}
-      setFidsStatus('Chargement en cours...','#e8b84b');
+      setFidsStatus('Chargement en cours...','#ab71ff');
     }
 
     const [arrRes,depRes]=await Promise.all([
@@ -148,12 +148,12 @@ async function loadFromFids(opts){
     S.allArr=nw.allArrivals; S.allDep=nw.allDepartures;
     const total=S.arr.length+S.dep.length;
     if(!total&&!(prev&&(S.excluded.length||S.allArr.length||S.allDep.length))){
-      setFidsStatus(`⚠ Aucun vol trouvé pour le ${dateStr} — shift ${S.shift}`,'#f59e0b');
+      setFidsStatus(`⚠ Aucun vol trouvé pour le ${dateStr} — shift ${S.shift}`,'#ffa436');
       return;
     }
 
     const now=new Date();
-    setFidsStatus(`✓ FIDS — ${S.arr.length} ARR · ${S.dep.length} DEP · ${dateStr} · shift ${S.shift} · synchro ${pad2(now.getHours())}:${pad2(now.getMinutes())}`,'#4be8a0');
+    setFidsStatus(`✓ FIDS — ${S.arr.length} ARR · ${S.dep.length} DEP · ${dateStr} · shift ${S.shift} · synchro ${pad2(now.getHours())}:${pad2(now.getMinutes())}`,'#54ffbd');
     renderTimeline();
     renderPreview();
     buildOps(prev);
@@ -168,14 +168,14 @@ async function loadFromFids(opts){
     console.error('FIDS load error:',e);
     if(opts.silent&&hadData){
       const n=new Date();
-      setFidsStatus(`⚠ Synchro impossible (${pad2(n.getHours())}:${pad2(n.getMinutes())}) — données conservées`,'#f59e0b');
+      setFidsStatus(`⚠ Synchro impossible (${pad2(n.getHours())}:${pad2(n.getMinutes())}) — données conservées`,'#ffa436');
       return;
     }
     const isCors=e.message&&(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')||e.message.includes('CORS'));
     if(isCors){
-      setFidsStatus('❌ Connexion réseau impossible — réessaie','#ef4444');
+      setFidsStatus('❌ Connexion réseau impossible — réessaie','#ff6a75');
     } else {
-      setFidsStatus('❌ '+( e.message||'Erreur connexion FIDS'),'#ef4444');
+      setFidsStatus('❌ '+( e.message||'Erreur connexion FIDS'),'#ff6a75');
     }
   }finally{
     _fidsLoading=false;
