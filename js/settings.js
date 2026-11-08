@@ -48,7 +48,7 @@ function renderSettings(){
     const list=PARAMS[key]||[];
     el.innerHTML=list.length
       ? list.map(p=>`<span class="prefix-tag">${p}<button onclick="removePrefix('${key}','${p}')">✕</button></span>`).join('')
-      : `<span style="color:#a1a0ad;font-size:11px;font-family:var(--f-m)">Aucun</span>`;
+      : `<span style="color:#9aa0a6;font-size:11px;font-family:var(--f-m)">Aucun</span>`;
   }
 }
 

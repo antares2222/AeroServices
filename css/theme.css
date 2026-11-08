@@ -1,90 +1,120 @@
-/* ── Thème « Firefox » (sombre, style Proton) ──────────────────────────
-   Se charge en dernier : ajuste polices, rayons, boutons et titres.
-   Palette : fond #1c1b22 · cartes #2b2a33 · traits #42414d · texte #fbfbfe
-   Accent violet #ab71ff · flamme #ff9400 → #ff4aa2 → #9059ff · ARR vert · DEP rouge */
+/* ── Thème « Material sombre » ─────────────────────────────────────────
+   Fond #111214 · cartes #1f2127 · champs #2a2b31 · traits #363940
+   Accent bleu clair #8ab4f8 · action verte #34a853 · ARR vert · DEP rouge
+   Se charge en dernier : polices, grands arrondis, pastilles, en-tête. */
 :root{
   --f-d:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --f-b:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --f-m:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
-  --flame:linear-gradient(90deg,#ff9400 0%,#ff4aa2 55%,#9059ff 100%);
+  --bg:#111214;--card:#1f2127;--field:#2a2b31;--line:#363940;--tone:#2b3a55;--blue:#8ab4f8;--muted:#9aa0a6;
 }
-body{font-feature-settings:'tnum' 1,'cv11' 1;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);font-feature-settings:'tnum' 1;-webkit-font-smoothing:antialiased}
+@media(min-width:700px){body{background:var(--bg)}}
 
-/* En-tête : barre d'outils Firefox + filet flamme */
-.header{background:#23222a;border-bottom:none;position:sticky;box-shadow:0 1px 0 #42414d}
-.header::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--flame);opacity:.9}
-.logo{font-weight:700;font-size:22px;letter-spacing:.04em;color:#fbfbfe;
-  background:var(--flame);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.logo span{font-family:var(--f-b);font-weight:500;font-size:11px;letter-spacing:.32em;color:#a1a0ad;-webkit-text-fill-color:#a1a0ad;margin-top:3px}
-@media(min-width:700px){.logo{font-size:26px}.logo span{font-size:12px}}
-.settings-btn{border-radius:8px;border-color:#42414d;background:#2b2a33}
-.settings-btn:hover{background:#34333d;border-color:#ab71ff}
+/* En-tête : pastille « barre d'adresse » */
+.header{background:var(--bg);border-bottom:1px solid #26282e;padding:14px 16px 12px}
+.header-top{display:flex;align-items:center;gap:6px;max-width:1100px;margin:0 auto;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 10px 8px 8px}
+.header-left{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;grid-column:auto}
+.logo-ic{flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--tone);color:#aecbfa;display:grid;place-items:center}
+.logo-ic svg{width:19px;height:19px}
+.logo{display:flex;align-items:baseline;gap:8px;white-space:nowrap;font-weight:700;font-size:15px;letter-spacing:.02em;color:#e3e3e8;background:none;-webkit-text-fill-color:currentColor}
+.logo span{display:inline;margin:0;font-family:var(--f-b);font-weight:600;font-size:15px;letter-spacing:.02em;color:var(--blue)}
+.logo span::before{content:'·';color:var(--muted);margin-right:8px}
+@media(max-width:420px){.logo{font-size:13px;gap:6px}.logo span{font-size:13px}.logo span::before{margin-right:6px}}
+.icon-btn{flex-shrink:0;width:40px;height:40px;border:none;border-radius:50%;background:transparent;color:#c4c7cc;display:grid;place-items:center;cursor:pointer;transition:background .15s}
+.icon-btn:hover,.icon-btn:active{background:var(--field);color:#fff}
+.icon-btn svg{width:20px;height:20px}
+.steps{display:none}
 
-/* Titres de section */
-.lbl{font-weight:600;font-size:15px;letter-spacing:.01em;color:#fbfbfe;margin-bottom:12px}
-.grp{font-weight:600;font-size:11px;letter-spacing:.08em}
-.settings-title{font-weight:600;font-size:17px;letter-spacing:0}
-.settings-section-title{font-weight:600;font-size:12px;letter-spacing:.06em}
-.settings-panel{border-radius:12px;border:1px solid #42414d;background:#2b2a33}
+/* Titres de section : repère vertical bleu */
+.lbl{display:flex;align-items:center;gap:14px;font-weight:700;font-size:17px;letter-spacing:.04em;color:#f1f3f4;margin:6px 0 14px}
+.lbl::before{content:'';width:10px;height:28px;border-radius:6px;background:var(--blue);flex-shrink:0}
+.grp{font-weight:700;font-size:11px;letter-spacing:.08em}
+.settings-title{font-weight:700;font-size:17px;letter-spacing:.02em}
+.settings-section-title{font-weight:700;font-size:12px;letter-spacing:.06em}
+.settings-panel{border-radius:28px;background:var(--card);border:1px solid var(--line)}
 
 /* Cartes */
-.card{border-radius:12px;border-color:#42414d;box-shadow:0 1px 2px rgba(0,0,0,.25)}
-@media(min-width:700px){.card{border-radius:12px}}
+.card{background:var(--card);border-color:var(--line);border-radius:28px;padding:20px}
+@media(min-width:700px){.card{border-radius:28px}}
+@media(max-width:420px){.card{padding:16px;border-radius:26px}}
+.fhdr>div:first-child{font-weight:700;letter-spacing:.04em}
+label{font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
 
 /* Champs */
-input[type=date],input[type=text],textarea{border-radius:8px;background:#1c1b22;border-color:#5b5a66;font-size:14px}
-input:focus,textarea:focus{border-color:#ab71ff;box-shadow:0 0 0 3px rgba(171,113,255,.28)}
-input[type=date]{color-scheme:dark}
+input[type=date],input[type=text],textarea{background:var(--field);border:1px solid var(--line);border-radius:22px;font-size:15px;padding:13px 16px;color:#e3e3e8}
+input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(138,180,248,.22)}
+input[type=date]{color-scheme:dark;text-align:left;padding-left:50px;font-family:var(--f-m);font-weight:500;font-size:16px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ab4f8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:16px center;background-size:22px}
+.date-nav input[type=date]{text-align:center;padding-left:50px}
+.dn-btn{width:48px;border:none;border-radius:50%;background:var(--field);color:var(--blue);font-size:24px}
+.dn-btn:hover{background:#34353c}
+
+/* Shift : contrôle segmenté */
+.sgrid{background:#16171b;border:1px solid var(--line);border-radius:26px;padding:6px;gap:4px}
+.sbtn{background:transparent;border:none;border-radius:20px;font-weight:700;font-size:15px;letter-spacing:.03em;color:var(--muted);padding:14px 4px}
+.sbtn span{font-size:11px;font-weight:500;color:#7c8188}
+.sbtn:hover{background:rgba(255,255,255,.04)}
+.sbtn.sel{background:var(--tone);color:var(--blue)}
+.sbtn.sel span{color:var(--blue)}
 
 /* Boutons */
-.btn{border-radius:8px;font-weight:600;font-size:14px;letter-spacing:.02em;padding:13px}
-.bg,.bp{background:#9059ff;color:#fff}
-.bg:hover,.bp:hover{background:#a47bff}
-.bg:active,.bp:active{background:#7a3fe8}
-.bs{background:#42414d;border:none;color:#fbfbfe}
-.bs:hover{background:#52525e}
+.btn{border-radius:999px;font-weight:700;font-size:15px;letter-spacing:.04em;padding:16px}
+.bg{background:#34a853;color:#fff}
+.bg:hover{background:#3dbb5f}
+.bg:active{background:#2d9549}
+.bp{background:var(--blue);color:#16171b}
+.bs{background:var(--field);border:none;color:#e3e3e8}
+.bs:hover{background:#34353c}
 .btn:disabled{opacity:.6;cursor:default}
-.settings-save{border-radius:8px;font-weight:600;font-size:14px;letter-spacing:.02em;background:#54ffbd}
-.dn-btn{background:#42414d;border:none;border-radius:8px;color:#fbfbfe}
-.dn-btn:hover{background:#52525e}
+.settings-save{border-radius:999px;font-weight:700;font-size:15px;letter-spacing:.04em;background:#34a853;color:#fff}
+.fids-btns{grid-template-columns:2fr 1fr}
 
-/* Choix du shift : onglets pastille */
-.sbtn{font-weight:600;font-size:14px;letter-spacing:.02em;border-radius:8px;background:#1c1b22;border-color:#42414d;padding:11px 4px}
-.sbtn:hover{background:#34333d}
-.sbtn.sel{background:rgba(171,113,255,.16);border-color:#ab71ff;color:#fbfbfe}
-.sbtn span{font-size:10px;color:#a1a0ad}
-.sbtn.sel span{color:#d6c3ff}
+/* Pastilles de compteur */
+.cnt{background:transparent;border:1px solid var(--line);border-radius:999px;font-weight:600;padding:6px 14px;color:var(--muted)}
+.cnt b{color:var(--blue)}
+#cD{color:#fdd663}
 
 /* Vols */
-.fi{border-radius:8px;background:#2b2a33}
-.fi.a{background:linear-gradient(90deg,rgba(84,255,189,.07),transparent 60%),#2b2a33}
-.fi.d{background:linear-gradient(90deg,rgba(255,106,117,.07),transparent 60%),#2b2a33}
-.fi.ex{background:#23222a}
-.fi-t{font-family:var(--f-m);font-weight:600;font-size:17px;color:#fbfbfe;letter-spacing:-.02em;min-width:54px}
-.fi-f{font-weight:600;font-size:13px}
-.fi-bx{font-family:var(--f-b);font-weight:700;font-size:10px;letter-spacing:.06em;border-radius:6px}
-.cnt{font-weight:500;border-radius:999px;background:#42414d;color:#cfcfd8}
-.cnt b{color:#fbfbfe}
-.wfs-btn{border-radius:6px;background:#1c1b22;border-color:#5b5a66;color:#cfcfd8}
-.wfs-btn:hover{background:#34333d}
-.wfs-btn.sel-hand{background:rgba(84,255,189,.14);border-color:#54ffbd;color:#54ffbd}
-.add-compact{background:#23222a;border-color:#5b5a66;border-radius:8px}
-.add-compact button{background:#9059ff;color:#fff;font-family:var(--f-b);font-weight:600;font-size:12px;border-radius:6px}
-.add-btn,.rm-btn{border-radius:6px}
+.fi{border-radius:18px;background:#1b1d22;border-color:var(--line);padding:11px 14px}
+.fi.a{background:linear-gradient(90deg,rgba(129,201,149,.08),transparent 55%),#1b1d22}
+.fi.d{background:linear-gradient(90deg,rgba(242,139,130,.08),transparent 55%),#1b1d22}
+.fi.ex{background:#17181c}
+.fi-t{font-family:var(--f-m);font-weight:600;font-size:17px;color:#f1f3f4;letter-spacing:-.02em;min-width:56px}
+.fi-f{font-weight:700;font-size:13px}
+.fi-bx{font-family:var(--f-b);font-weight:700;font-size:10px;letter-spacing:.06em;border-radius:999px;padding:3px 9px}
+.wfs-btn{border-radius:999px;background:var(--field);border:1px solid var(--line);color:#c4c7cc;padding:9px 6px}
+.wfs-btn:hover{background:#34353c}
+.wfs-btn.sel-hand{background:rgba(129,201,149,.16);border-color:#81c995;color:#81c995}
+.add-compact{background:#1b1d22;border:1px dashed #4a4d56;border-radius:22px;padding:10px}
+.add-compact input{border-radius:999px;padding:9px 12px}
+.add-compact button{background:var(--blue);color:#16171b;font-family:var(--f-b);font-weight:700;font-size:12px;border-radius:999px;padding:9px 14px}
+.add-btn,.rm-btn{border-radius:999px}
+.prefix-tag{border-radius:999px}
+.prefix-add input,.prefix-add button{border-radius:999px}
 
 /* Champs éditables inline */
-input.ed{border-color:transparent;background:transparent;border-radius:6px}
-input.ed:hover{border-color:#5b5a66;background:#1c1b22}
-input.ed:focus{border-color:#ab71ff;background:#1c1b22}
-input.ed-t{font-family:var(--f-m);font-weight:600;font-size:16px;color:#fbfbfe;letter-spacing:-.02em}
-input.ed-s{font-size:10px;color:#a1a0ad}
-input.ed-f{font-family:var(--f-m);font-weight:600;font-size:13px;color:#fbfbfe}
+input.ed{border-color:transparent;background:transparent;border-radius:999px;padding:3px 8px}
+input.ed:hover{border-color:var(--line);background:var(--field)}
+input.ed:focus{border-color:var(--blue);background:var(--field);box-shadow:none}
+input.ed-t{font-family:var(--f-m);font-weight:600;font-size:16px;color:#f1f3f4;letter-spacing:-.02em}
+input.ed-s{font-size:10px;color:var(--muted)}
+input.ed-f{font-family:var(--f-m);font-weight:600;font-size:13px;color:#f1f3f4}
 
-/* Navigation mobile : barre type onglets Firefox */
-#mobileNav{background:rgba(35,34,42,.94);border-top:1px solid #42414d}
-#mobileNav .mnav-btn{font-family:var(--f-b);font-weight:500;font-size:10px;letter-spacing:.02em}
-#mobileNav .mnav-btn.active{color:#fff}
-#mobileNav .mnav-btn.active .mnav-ic{filter:drop-shadow(0 0 6px rgba(171,113,255,.7))}
+/* Navigation mobile : icône dans une pastille quand actif */
+#mobileNav{background:#17181c;backdrop-filter:none;-webkit-backdrop-filter:none;border-top:1px solid #26282e}
+#mobileNav .mnav-btn{font-family:var(--f-b);font-weight:600;font-size:11px;letter-spacing:.01em;color:var(--muted);gap:4px}
+#mobileNav .mnav-btn .mnav-ic{width:64px;height:32px;border-radius:16px;display:grid;place-items:center;transition:background .15s}
+#mobileNav .mnav-btn .mnav-ic svg{width:22px;height:22px}
+#mobileNav .mnav-btn.active{color:var(--blue)}
+#mobileNav .mnav-btn.active .mnav-ic{background:var(--tone)}
 
-/* Barre de statut */
 #fidsStatus{font-family:var(--f-b)!important;font-size:12px!important}
+
+/* Détails */
+.fids-btns{grid-template-columns:3fr 2fr}
+.fids-btns .btn{white-space:nowrap;padding:16px 8px}
+input[type=date]{position:relative}
+input[type=date]::-webkit-calendar-picker-indicator{opacity:0;position:absolute;right:8px;top:0;width:44px;height:100%;cursor:pointer}

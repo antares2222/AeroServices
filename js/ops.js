@@ -182,16 +182,16 @@ function renderOps(){
       </div>
     </div>`;
   });
-  if(!catHtml)catHtml=`<div style="color:#a1a0ad;font-size:12px;padding:8px">Aucun vol sélectionné</div>`;
+  if(!catHtml)catHtml=`<div style="color:#9aa0a6;font-size:12px;padding:8px">Aucun vol sélectionné</div>`;
   document.getElementById('catList').innerHTML=catHtml;
 
   // All dep for catering menu
   let catAllHtml='';
   OPS.catering.slice().sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta)).forEach(f=>{
     const sel=f.selected;
-    catAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#ab71ff':'#42414d'};background:${sel?'rgba(171,113,255,.04)':'#23222a'};margin-bottom:4px">
+    catAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#8ab4f8':'#363940'};background:${sel?'rgba(138,180,248,.04)':'#17181c'};margin-bottom:4px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px;color:#ab71ff">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
+        <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
           <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
@@ -202,7 +202,7 @@ function renderOps(){
       </div>
     </div>`;
   });
-  if(!catAllHtml)catAllHtml=`<div style="color:#a1a0ad;font-size:12px;padding:8px">Aucun vol DEP disponible</div>`;
+  if(!catAllHtml)catAllHtml=`<div style="color:#9aa0a6;font-size:12px;padding:8px">Aucun vol DEP disponible</div>`;
   document.getElementById('catAllList').innerHTML=catAllHtml;
 
   // ── Operations ──
@@ -229,16 +229,16 @@ function renderOps(){
       </div>`:''}
     </div>`;
   });
-  if(!opsHtml)opsHtml=`<div style="color:#a1a0ad;font-size:12px;padding:8px">Aucun vol sélectionné</div>`;
+  if(!opsHtml)opsHtml=`<div style="color:#9aa0a6;font-size:12px;padding:8px">Aucun vol sélectionné</div>`;
   document.getElementById('opsList').innerHTML=opsHtml;
 
   // All arr for ops menu
   let opsAllHtml='';
   OPS.operations.slice().sort((a,b)=>chronoKey(a.time)-chronoKey(b.time)).forEach(f=>{
     const sel=f.selected;
-    opsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#54ffbd':'#42414d'};background:${sel?'rgba(84,255,189,.04)':'#23222a'};margin-bottom:4px">
+    opsAllHtml+=`<div class="fi" style="border-left:3px solid ${sel?'#81c995':'#363940'};background:${sel?'rgba(129,201,149,.04)':'#17181c'};margin-bottom:4px">
       <div class="fi-top">
-        <div class="fi-t" style="font-size:16px;color:#ab71ff">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
+        <div class="fi-t" style="font-size:16px;color:#8ab4f8">${edInp(f,'eta','HH:MM',64,'ed-t')}</div>
         <div class="fi-b">
           <div class="fi-f" style="font-size:12px">${edInp(f,'flight','Vol',96,'ed-f')}</div>
           <div class="fi-r">${edInp(f,'reg','Registration',90)} · ${f.handler||'—'}</div>
@@ -249,7 +249,7 @@ function renderOps(){
       </div>
     </div>`;
   });
-  if(!opsAllHtml)opsAllHtml=`<div style="color:#a1a0ad;font-size:12px;padding:8px">Aucun vol ARR disponible</div>`;
+  if(!opsAllHtml)opsAllHtml=`<div style="color:#9aa0a6;font-size:12px;padding:8px">Aucun vol ARR disponible</div>`;
   document.getElementById('opsAllList').innerHTML=opsAllHtml;
 
   renderFedexTable();
@@ -271,10 +271,10 @@ function renderFedexTable(){
   }
   grid.classList.add('has-fedex');
   card.style.display='block';
-  body.innerHTML=flights.map(f=>`<tr style="border-bottom:1px solid rgba(66,65,77,.5)">
+  body.innerHTML=flights.map(f=>`<tr style="border-bottom:1px solid rgba(54,57,64,.5)">
     <td style="font-family:var(--f-m);font-size:11px;padding:6px">${edInp(f,'reg','Registration',90)}</td>
     <td style="font-family:var(--f-m);font-size:11px;padding:6px;font-weight:bold">${edInp(f,'flight','Vol',90)}</td>
-    <td style="font-family:var(--f-m);font-size:11px;padding:6px;color:#54ffbd">${edInp(f,'eta','HH:MM',60)}</td>
+    <td style="font-family:var(--f-m);font-size:11px;padding:6px;color:#81c995">${edInp(f,'eta','HH:MM',60)}</td>
     <td style="font-family:var(--f-m);font-size:11px;padding:6px">${f.stand||'—'}</td>
   </tr>`).join('');
 }

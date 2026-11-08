@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#1c1b22">
+<meta name="theme-color" content="#111214">
 <title>Aero Services — Dispatch</title>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
@@ -18,9 +18,11 @@
   <div class="header-inner">
     <div class="header-top">
       <div class="header-left">
+        <span class="logo-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
         <div class="logo">AERO SERVICES<span>DISPATCH</span></div>
       </div>
-      <button class="settings-btn" onclick="openSettings()">⚙️</button>
+      <button class="icon-btn" onclick="loadFromFids({merge:true})" aria-label="Synchroniser"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button>
+      <button class="icon-btn" onclick="openSettings()" aria-label="Paramètres"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="steps">
       <div class="dot on" id="d0"></div>
@@ -85,7 +87,7 @@
         <span class="settings-rule-handler">WFS</span>
         <div class="prefix-list" id="ops-wfs-list"></div>
       </div>
-      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin:4px 0 6px 98px">Préfixes exclus :</div>
+      <div style="font-size:10px;color:#9aa0a6;font-family:var(--f-m);margin:4px 0 6px 98px">Préfixes exclus :</div>
       <div class="prefix-add" style="margin-left:98px">
         <input type="text" id="ops-wfs-ex-input" placeholder="ex: SVA (exclu)" maxlength="6">
         <button onclick="addPrefix('ops-wfs-ex','wfs_ops_exclude')">+ EXCLURE</button>
@@ -123,7 +125,7 @@
     <!-- Headset par défaut -->
     <div class="settings-section">
       <div class="settings-section-title">🎧 HEADSET — SÉLECTION PAR DÉFAUT</div>
-      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
+      <div style="font-size:10px;color:#9aa0a6;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
         Vols DEP à cocher automatiquement en Headset dès le chargement (n° de vol complet ou préfixe compagnie, ex: QTR8235 ou QTR).
       </div>
       <div class="prefix-list" id="hs-default-list"></div>
@@ -136,7 +138,7 @@
     <!-- FedEx -->
     <div class="settings-section">
       <div class="settings-section-title">📦 TABLEAU FEDEX — TYPES D'AVION</div>
-      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
+      <div style="font-size:10px;color:#9aa0a6;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
         Affiche un petit tableau à part pour les vols FedEx dont le type d'avion correspond à cette liste.
       </div>
       <div class="prefix-list" id="fedex-ac-list"></div>
@@ -149,7 +151,7 @@
     <!-- Fuseau horaire -->
     <div class="settings-section">
       <div class="settings-section-title">🕐 FUSEAU HORAIRE FIDS</div>
-      <div style="font-size:10px;color:#a1a0ad;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
+      <div style="font-size:10px;color:#9aa0a6;font-family:var(--f-m);margin-bottom:10px;line-height:1.6">
         Le FIDS de Liège Airport donne ses heures en UTC. Choisis le décalage à appliquer selon la saison pour afficher l'heure locale belge.
       </div>
       <div class="sgrid" style="grid-template-columns:1fr 1fr">
@@ -191,7 +193,7 @@
     <button class="btn bg" id="fidsLoadBtn" onclick="loadFromFids({scroll:true})">📡 AFFICHER</button>
     <button class="btn bs" id="fidsSyncBtn" onclick="loadFromFids({merge:true})">🔄 SYNCHR</button>
   </div>
-  <div id="fidsStatus" style="font-family:var(--f-m);font-size:11px;text-align:center;min-height:16px;margin-bottom:10px;color:#a1a0ad"></div>
+  <div id="fidsStatus" style="font-family:var(--f-m);font-size:11px;text-align:center;min-height:16px;margin-bottom:10px;color:#9aa0a6"></div>
 </div>
 
 <!-- ═══ SECTION 2 : TIMELINE ═══ -->
@@ -222,34 +224,34 @@
   </div>
   <div class="card" id="cardExcluded" style="display:none">
     <div class="fhdr" onclick="toggleCollapse('exPanel','exChev')" style="cursor:pointer;margin-bottom:0">
-      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#a1a0ad">AUTRES VOLS DISPONIBLES</div>
+      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#9aa0a6">AUTRES VOLS DISPONIBLES</div>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="cnt"><b id="cEx">0</b> vols</div>
-        <span id="exChev" style="color:#a1a0ad;font-size:16px;transition:transform .2s">▼</span>
+        <span id="exChev" style="color:#9aa0a6;font-size:16px;transition:transform .2s">▼</span>
       </div>
     </div>
     <div id="exPanel" style="display:none;margin-top:12px"><div id="prevEx"></div></div>
   </div>
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#54ffbd">🎧 HEADSET</div>
+      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#81c995">🎧 HEADSET</div>
       <div class="cnt"><b id="cHs">0</b> sélectionné(s)</div>
     </div>
     <div id="hsList"></div>
     <div style="margin-top:10px">
-      <div onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #42414d">
-        <span style="font-family:var(--f-m);font-size:11px;color:#a1a0ad">+ AJOUTER / SUPPRIMER UN VOL</span>
-        <span id="hsChev" style="color:#a1a0ad;transition:transform .2s">▼</span>
+      <div onclick="toggleCollapse('hsPanel','hsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #363940">
+        <span style="font-family:var(--f-m);font-size:11px;color:#9aa0a6">+ AJOUTER / SUPPRIMER UN VOL</span>
+        <span id="hsChev" style="color:#9aa0a6;transition:transform .2s">▼</span>
       </div>
       <div id="hsPanel" style="display:none">
-        <div style="font-size:11px;color:#a1a0ad;font-family:var(--f-m);margin:8px 0">Vols DEP dans la fenêtre — ETD directe</div>
+        <div style="font-size:11px;color:#9aa0a6;font-family:var(--f-m);margin:8px 0">Vols DEP dans la fenêtre — ETD directe</div>
         <div id="hsAllList"></div>
       </div>
     </div>
   </div>
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#ab71ff">+ AJOUTER UN VOL</div>
+      <div style="font-family:var(--f-d);font-size:13px;letter-spacing:1px;color:#8ab4f8">+ AJOUTER UN VOL</div>
     </div>
     <div class="prev-grid">
       <div>
@@ -283,7 +285,7 @@
   <div class="ops-grid" id="opsGrid">
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#ab71ff">✈ CATERING</div>
+      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#8ab4f8">✈ CATERING</div>
       <div class="cnt">DEP <b id="cCat">0</b></div>
     </div>
     <div id="catList"></div>
@@ -294,16 +296,16 @@
       <button onclick="addManualCatering()">+ AJOUTER</button>
     </div>
     <div style="margin-top:10px">
-      <div onclick="toggleCollapse('catPanel','catChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #42414d">
-        <span style="font-family:var(--f-m);font-size:11px;color:#a1a0ad">VOL NON AFFICHÉ</span>
-        <span id="catChev" style="color:#a1a0ad;transition:transform .2s">▼</span>
+      <div onclick="toggleCollapse('catPanel','catChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #363940">
+        <span style="font-family:var(--f-m);font-size:11px;color:#9aa0a6">VOL NON AFFICHÉ</span>
+        <span id="catChev" style="color:#9aa0a6;transition:transform .2s">▼</span>
       </div>
       <div id="catPanel" style="display:none"><div id="catAllList"></div></div>
     </div>
   </div>
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#54ffbd">🔧 OPÉRATION</div>
+      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#81c995">🔧 OPÉRATION</div>
       <div class="cnt">ARR <b id="cOps">0</b></div>
     </div>
     <div id="opsList"></div>
@@ -314,25 +316,25 @@
       <button onclick="addManualOperation()">+ AJOUTER</button>
     </div>
     <div style="margin-top:10px">
-      <div onclick="toggleCollapse('opsPanel','opsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #42414d">
-        <span style="font-family:var(--f-m);font-size:11px;color:#a1a0ad">VOL NON AFFICHÉ</span>
-        <span id="opsChev" style="color:#a1a0ad;transition:transform .2s">▼</span>
+      <div onclick="toggleCollapse('opsPanel','opsChev')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #363940">
+        <span style="font-family:var(--f-m);font-size:11px;color:#9aa0a6">VOL NON AFFICHÉ</span>
+        <span id="opsChev" style="color:#9aa0a6;transition:transform .2s">▼</span>
       </div>
       <div id="opsPanel" style="display:none"><div id="opsAllList"></div></div>
     </div>
   </div>
   <div class="card" id="fedexCard" style="display:none">
     <div class="fhdr" style="margin-bottom:10px">
-      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#ffa436">📦 FEDEX</div>
+      <div style="font-family:var(--f-d);font-size:15px;letter-spacing:1px;color:#fdd663">📦 FEDEX</div>
       <div class="cnt"><b id="cFedex">0</b> vol(s)</div>
     </div>
     <table style="width:100%;border-collapse:collapse">
       <thead>
-        <tr style="border-bottom:1px solid #42414d">
-          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">Reg.</th>
-          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">Vol</th>
-          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">ETA</th>
-          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#a1a0ad;padding:5px 6px;text-transform:uppercase">Stand</th>
+        <tr style="border-bottom:1px solid #363940">
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#9aa0a6;padding:5px 6px;text-transform:uppercase">Reg.</th>
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#9aa0a6;padding:5px 6px;text-transform:uppercase">Vol</th>
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#9aa0a6;padding:5px 6px;text-transform:uppercase">ETA</th>
+          <th style="text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.5px;color:#9aa0a6;padding:5px 6px;text-transform:uppercase">Stand</th>
         </tr>
       </thead>
       <tbody id="fedexTblBody"></tbody>
@@ -435,10 +437,10 @@
 <!-- ═══ NAV MOBILE (bas d'écran, visible uniquement sur mobile) ═══ -->
 <nav id="mobileNav">
   <div class="mnav-row">
-    <button class="mnav-btn" data-nav="s0" onclick="navScrollTo('s0',this)"><span class="mnav-ic">🏠</span>Dashboard</button>
-    <button class="mnav-btn" data-nav="tlSection" onclick="navScrollTo('tlSection',this)"><span class="mnav-ic">⏱</span>Temps sol</button>
-    <button class="mnav-btn" data-nav="s2" onclick="navScrollTo('s2',this)"><span class="mnav-ic">✈</span>Arrivées</button>
-    <button class="mnav-btn" data-nav="s3" onclick="navScrollTo('s3',this)"><span class="mnav-ic">🛡</span>Vérification</button>
+    <button class="mnav-btn" data-nav="s0" onclick="navScrollTo('s0',this)"><span class="mnav-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span>Dashboard</button>
+    <button class="mnav-btn" data-nav="tlSection" onclick="navScrollTo('tlSection',this)"><span class="mnav-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg></span>Temps sol</button>
+    <button class="mnav-btn" data-nav="s2" onclick="navScrollTo('s2',this)"><span class="mnav-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span>Arrivées</button>
+    <button class="mnav-btn" data-nav="s3" onclick="navScrollTo('s3',this)"><span class="mnav-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>Vérification</button>
   </div>
 </nav>
 
