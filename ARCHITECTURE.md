@@ -1,6 +1,6 @@
 # Aero Services Dispatch — carte du code
 
-Ordre de chargement (index.html) : config → settings → core → fids → crewbus → ops → timeline → nav → sync → init
+Ordre de chargement (index.html) : config → settings → core → fids → crewbus → ops → workorder → wo-settings → timeline → nav → sync → init
 (scripts classiques : les `const`/`let` sont partagés, l'ordre compte)
 
 | Fichier | Rôle | À toucher pour… |
@@ -17,6 +17,9 @@ Ordre de chargement (index.html) : config → settings → core → fids → cre
 | js/fids.js | Appel FIDS, fuseau, fenêtres de dates | filtre / chargement des vols |
 | js/crewbus.js | Feuille crew-bus, ajout manuel, PDF crew-bus | feuille crew-bus |
 | js/ops.js | Catering / Opération / Headset / FedEx + PDF ops | feuille opérations |
+| js/workorder.js | Work Order A4 : compagnie, tâches, dates, pages, impression | règles/feuille WO |
+| js/wo-settings.js | Paramètres WO (flotte, tâches, handler→compagnie) | écran réglages WO |
+| css/workorder.css | Mise en page de la feuille Work Order | look de la feuille WO |
 | js/timeline.js | Timeline | timeline |
 | js/nav.js | Barre de navigation mobile | nav |
 | js/sync.js | Fusion des données à la synchro FIDS (garde éditions/sélections) | règles de synchro |

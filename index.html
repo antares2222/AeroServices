@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/print.css">
 <link rel="stylesheet" href="css/timeline.css">
+<link rel="stylesheet" href="css/workorder.css">
 <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
@@ -161,6 +162,9 @@
     </div>
 
     <div style="padding:16px 20px">
+    <!-- Work Order -->
+    <div class="settings-section" id="woSettings"></div>
+
       <button class="settings-save" onclick="saveSettings()">✓ SAUVEGARDER</button>
     </div>
   </div>
@@ -298,6 +302,7 @@
       </div>
       <div id="catPanel" style="display:none"><div id="catAllList"></div></div>
     </div>
+    <button class="btn bs wo-btn" id="woCatBtn" onclick="printWorkOrders('cat')">🖨 WORK ORDERS (0)</button>
   </div>
   <div class="card">
     <div class="fhdr" style="margin-bottom:10px">
@@ -318,6 +323,7 @@
       </div>
       <div id="opsPanel" style="display:none"><div id="opsAllList"></div></div>
     </div>
+    <button class="btn bs wo-btn" id="woOpsBtn" onclick="printWorkOrders('ops')">🖨 WORK ORDERS (0)</button>
   </div>
   <div class="card" id="fedexCard" style="display:none">
     <div class="fhdr" style="margin-bottom:10px">
@@ -335,10 +341,13 @@
       </thead>
       <tbody id="fedexTblBody"></tbody>
     </table>
+    <button class="btn bs wo-btn" id="woFedexBtn" onclick="printWorkOrders('fedex')">🖨 WORK ORDERS (0)</button>
   </div>
   </div>
   <button class="btn bg" onclick="genPDFOps()" style="margin-bottom:8px">🖨 GÉNÉRER PAGE OPÉRATION</button>
 </div>
+
+<div id="sheetWO"></div>
 
 <!-- FEUILLE PRINT OPS (page 2) -->
 <div id="sheetOps">
@@ -425,6 +434,9 @@
 <script src="js/fids.js"></script>
 <script src="js/crewbus.js"></script>
 <script src="js/ops.js"></script>
+<script src="js/wo-logo.js"></script>
+<script src="js/workorder.js"></script>
+<script src="js/wo-settings.js"></script>
 <script src="js/timeline.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/sync.js"></script>
