@@ -96,9 +96,9 @@ async function loadFromFids(opts){
       const acType=(f.aircraftType||'').toUpperCase().trim();
       // Tableau FedEx à part : uniquement les types d'avion configurés (par défaut B737/B738)
       if(handler==='FEDEX'&&(PARAMS.fedex_ac_types||[]).includes(acType)){
-        fedexArr.push({_id:newId(),_k:'fx:'+flight,flight,reg,eta,stand,acType});
+        fedexArr.push({_id:newId(),_k:'fx:'+flight,flight,reg,eta,stand,acType,handler,type:'arr',date:ymd(dt)});
       }
-      const obj={_id:newId(),_k:'arr:'+flight,flight,reg,eta,time:eta,handler,stand,type:'arr',origin,acType,fromFids:true};
+      const obj={_id:newId(),_k:'arr:'+flight,flight,reg,eta,time:eta,handler,stand,type:'arr',origin,acType,date:ymd(dt),fromFids:true};
       // Liste complète, indépendante des règles crew-bus — utilisée par Catering/Opération/Headset
       allArrivals.push({...obj});
       if(shouldInclude(flight,handler)){
@@ -130,7 +130,7 @@ async function loadFromFids(opts){
       const pickupHHMM=pickupDt.toTimeString().slice(0,5);
       // Sélection HS par défaut : vols dont le n° correspond à un préfixe configuré dans les paramètres
       const hsDefault=isAero(handler)||(PARAMS.headset_default||[]).some(p=>flight.startsWith(p));
-      const obj={_id:newId(),_k:'dep:'+flight,flight,reg,eta,time:pickupHHMM,handler,stand,type:'dep',dest,fromFids:true,hsMode:hsDefault?true:undefined};
+      const obj={_id:newId(),_k:'dep:'+flight,flight,reg,eta,time:pickupHHMM,handler,stand,type:'dep',dest,acType:(f.aircraftType||'').toUpperCase().trim(),date:ymd(etdDt),fromFids:true,hsMode:hsDefault?true:undefined};
       // Liste complète, indépendante des règles crew-bus — utilisée par Catering/Opération/Headset
       allDepartures.push({...obj});
       if(shouldInclude(flight,handler)){

@@ -50,6 +50,7 @@ function renderSettings(){
       ? list.map(p=>`<span class="prefix-tag">${p}<button onclick="removePrefix('${key}','${p}')">✕</button></span>`).join('')
       : `<span style="color:#9aa0a6;font-size:11px;font-family:var(--f-m)">Aucun</span>`;
   }
+  if(typeof renderWoSettings==='function')renderWoSettings();
 }
 
 function addPrefix(inputId, key){

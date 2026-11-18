@@ -172,6 +172,7 @@ function renderPreview(){
     });
   }
   document.getElementById('hsAllList').innerHTML=hsAllHtml;
+  updateWoButtons();
 }
 
 // ── Generate PDF ──────────────────────────────────────────────────
@@ -179,6 +180,7 @@ function genPDF(){
   // Sécurité : s'assure que la feuille OPS n'est pas restée affichée (bug iOS Safari)
   document.getElementById('sheet').classList.remove('no-print');
   document.getElementById('sheetOps').classList.remove('do-print');
+  document.getElementById('sheetWO').classList.remove('do-print');
   const dateVal=document.getElementById('sDate').value;
   const dl=dateVal?dateVal.split('-').reverse().join('/'):'—';
   document.getElementById('sh-date').textContent='Crew bus service   '+dl+'   '+S.shift;

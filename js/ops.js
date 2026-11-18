@@ -199,7 +199,8 @@ function renderOps(){
   let opsHtml='';
   selOps.forEach(f=>{
     const t=f.tasks||{};
-    const isExtra=!isOpsDefault(f);
+    const isExtra=!isOpsDefault(f)&&!woRecognized(f);
+    const wo=woResolve(f,'ops');
     opsHtml+=`<div class="fi a" style="margin-bottom:5px">
       <div class="fi-top">
         <div class="fi-t" style="font-size:16px">${edInp(f,'eta','HH:MM',66,'ed-t')}</div>
@@ -213,7 +214,7 @@ function renderOps(){
         <button class="wfs-btn ${t.cleaning?'sel-hand':''}" onclick="toggleTask('${f._id}','cleaning')">🧹 Cleaning</button>
         <button class="wfs-btn ${t.toilet?'sel-hand':''}" onclick="toggleTask('${f._id}','toilet')">🚽 Toilet</button>
         <button class="wfs-btn ${t.water?'sel-hand':''}" onclick="toggleTask('${f._id}','water')">💧 Water</button>
-      </div>`:''}
+      </div>`:(wo.tasks.length?`<div class="wo-note">WO · ${esc(wo.company||'—')} · ${wo.tasks.map(esc).join(' · ')}</div>`:'')}
     </div>`;
   });
   if(!opsHtml)opsHtml=`<div style="color:#9aa0a6;font-size:12px;padding:8px">Aucun vol sélectionné</div>`;
@@ -240,6 +241,7 @@ function renderOps(){
   document.getElementById('opsAllList').innerHTML=opsAllHtml;
 
   renderFedexTable();
+  updateWoButtons();
 }
 
 // ── Tableau FedEx (types d'avion configurés, ex: B737/B738) ──
@@ -264,6 +266,7 @@ function renderFedexTable(){
     <td style="font-family:var(--f-m);font-size:11px;padding:6px;color:#81c995">${edInp(f,'eta','HH:MM',60)}</td>
     <td style="font-family:var(--f-m);font-size:11px;padding:6px">${f.stand||'—'}</td>
   </tr>`).join('');
+  updateWoButtons();
 }
 
 function toggleCat(id,val){
@@ -298,6 +301,7 @@ function genPDFOps(){
   // Sécurité : réinitialise l'état d'affichage avant de configurer la feuille OPS
   document.getElementById('sheet').classList.remove('no-print');
   document.getElementById('sheetOps').classList.remove('do-print');
+  document.getElementById('sheetWO').classList.remove('do-print');
 
   // Catering rows
   const selCat=OPS.catering.filter(f=>f.selected).sort((a,b)=>chronoKey(a.eta)-chronoKey(b.eta));
