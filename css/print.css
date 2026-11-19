@@ -11,7 +11,7 @@
   /* Quand on imprime les opérations : inverser */
   #sheet.no-print{display:none!important}
   #sheetOps.do-print{display:block!important}
-  @page{size:A4 portrait;margin:10mm}
+  @page{size:A4 portrait;margin:6mm}
   .ph{display:flex;align-items:stretch;border:1.5pt solid black;margin-bottom:0}
   .ph-l{flex:1;padding:6pt 10pt;font-size:11pt}
   .ph-m{display:none}

@@ -119,8 +119,10 @@ function woPageHtml(v){
   const set=new Set(v.tasks);
   const sel=n=>set.has(n)?' wo-sel':'';
   return `<div class="wo-page">
+  <div class="wo-head">
   <div class="wo-logo"><img src="${WO_LOGO}" alt="Aero Services"></div>
   <div class="wo-title">WORK PERFORMED</div>
+  </div>
   <div class="wo-sheet">
     <div class="wo-row wo-h14">
       <div class="wo-cell wo-s1">AEROSERVICES</div>
