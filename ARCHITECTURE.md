@@ -24,4 +24,9 @@ Ordre de chargement (index.html) : config → settings → core → fids → cre
 | js/nav.js | Barre de navigation mobile | nav |
 | js/sync.js | Fusion des données à la synchro FIDS (garde éditions/sélections) | règles de synchro |
 | js/init.js | Démarrage : shift actuel, synchro chaque minute, flèches de date | comportement au lancement |
-| netlify/functions/fids.js | Proxy FIDS | (rarement) |
+| worker/fids-worker.js | Proxy FIDS (Cloudflare Worker, déployé une fois) | (rarement) |
+
+## Hébergement (sans Netlify)
+- Site : GitHub Pages (branche main, racine). Chaque push met à jour le site.
+- Proxy FIDS : Cloudflare Worker (worker/fids-worker.js), adresse à renseigner dans `FIDS_PROXY` (js/fids.js).
+- Cache : après une modification, change le `?v=...` des balises <link>/<script> dans index.html pour forcer le rechargement.

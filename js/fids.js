@@ -1,6 +1,8 @@
-// ── FIDS API (via fonction Netlify — pas de CORS) ─────────────────────
-const FIDS_ARR_URL='/.netlify/functions/fids?type=arrivals';
-const FIDS_DEP_URL='/.netlify/functions/fids?type=departures';
+// ── FIDS API (via Cloudflare Worker — pas de CORS) ───────────────────
+// Colle ici l'adresse de ton Worker (sans / final), ex : 'https://fids.moncompte.workers.dev'
+const FIDS_PROXY='';
+const FIDS_ARR_URL=FIDS_PROXY?FIDS_PROXY+'/?type=arrivals':'/.netlify/functions/fids?type=arrivals';
+const FIDS_DEP_URL=FIDS_PROXY?FIDS_PROXY+'/?type=departures':'/.netlify/functions/fids?type=departures';
 
 function pad2(n){return String(n).padStart(2,'0');}
 function hhmmFromDate(dt){return dt?pad2(dt.getHours())+':'+pad2(dt.getMinutes()):null;}
