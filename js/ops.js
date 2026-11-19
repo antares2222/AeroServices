@@ -363,18 +363,7 @@ function genPDFOps(){
     cleaned=true;
     document.getElementById('sheet').classList.remove('no-print');
     document.getElementById('sheetOps').classList.remove('do-print');
-    window.onafterprint=null;
   };
-  // onafterprint est plus fiable que setTimeout sur iOS Safari, où window.print()
-  // ne bloque pas l'exécution du script (le nettoyage ne doit JAMAIS arriver avant
-  // qu'iOS ait fini de capturer le contenu à imprimer/exporter en PDF).
-  window.onafterprint=cleanup;
-
-  setTimeout(()=>{
-    window.print();
-    // Filet de sécurité si onafterprint ne se déclenche pas (certaines versions iOS) :
-    // on laisse largement le temps à l'utilisateur de valider l'export avant de nettoyer.
-    setTimeout(cleanup,4000);
-  },300);
+  setTimeout(()=>{window.print();armPrintCleanup(cleanup);},300);
 }
 

@@ -260,8 +260,6 @@ function printWorkOrders(kind){
   const cleanup=()=>{
     if(cleaned)return;cleaned=true;
     sheet.classList.remove('no-print');box.classList.remove('do-print');
-    window.onafterprint=null;
   };
-  window.onafterprint=cleanup;
-  setTimeout(()=>{window.print();setTimeout(cleanup,4000);},300);
+  setTimeout(()=>{window.print();armPrintCleanup(cleanup);},300);
 }

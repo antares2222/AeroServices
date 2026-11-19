@@ -81,3 +81,12 @@ function flightMeta(f){
   const t=[f.stand,hAbbr(f.handler)].filter(Boolean).map(esc).join(' · ');
   return t?'<span class="fi-meta">'+t+'</span>':'';
 }
+
+// Nettoyage après impression : ne JAMAIS le faire sur un timer ni sur onafterprint (iOS les déclenche
+// avant la fin de l'aperçu → la feuille crew-bus réapparaît). On attend le prochain toucher/clic.
+function armPrintCleanup(fn){
+  let done=false;
+  const run=()=>{if(done)return;done=true;document.removeEventListener('pointerdown',h,true);fn();};
+  const h=()=>setTimeout(run,300);
+  setTimeout(()=>document.addEventListener('pointerdown',h,true),1500);
+}
