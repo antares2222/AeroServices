@@ -353,6 +353,7 @@ function genPDFOps(){
     fedexBlock.style.display='none';
   }
 
+  if(openPrintTab('sheetOps','do-print'))return;
   // Affiche uniquement la feuille OPS — délai court pour laisser Safari iOS peindre le DOM
   document.getElementById('sheet').classList.add('no-print');
   document.getElementById('sheetOps').classList.add('do-print');

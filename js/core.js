@@ -90,3 +90,12 @@ function armPrintCleanup(fn){
   const h=()=>setTimeout(run,300);
   setTimeout(()=>document.addEventListener('pointerdown',h,true),1500);
 }
+
+// Impression robuste (iOS) : la feuille est envoyée dans un onglet dédié (print.html) qui ne contient
+// QUE cette feuille. Renvoie false si le navigateur bloque l'ouverture → ancienne méthode en secours.
+function openPrintTab(id,cls){
+  try{
+    localStorage.setItem('print_payload',JSON.stringify({id:id,cls:cls,html:document.getElementById(id).innerHTML}));
+    return !!window.open('print.html','_blank');
+  }catch(e){return false;}
+}

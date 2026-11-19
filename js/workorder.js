@@ -252,6 +252,7 @@ function printWorkOrders(kind){
   if(!list.length){alert('Aucun vol à imprimer pour ce Work Order.');return;}
   const box=document.getElementById('sheetWO');
   box.innerHTML=list.map(it=>'<div class="wo-wrap">'+woBuildPage(it)+'</div>').join('');
+  if(openPrintTab('sheetWO','do-print'))return;
   const sheet=document.getElementById('sheet'),ops=document.getElementById('sheetOps');
   ops.classList.remove('do-print');
   sheet.classList.add('no-print');

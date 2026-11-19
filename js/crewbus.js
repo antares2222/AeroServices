@@ -261,6 +261,7 @@ function genPDF(){
     </tr>`;
   }
   document.getElementById('sh-bottom-rows').innerHTML=bottomRows;
+  if(openPrintTab('sheet',''))return;
   setTimeout(()=>window.print(),50);
 }
 
