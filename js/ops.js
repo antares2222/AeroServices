@@ -199,7 +199,7 @@ function renderOps(){
   let opsHtml='';
   selOps.forEach(f=>{
     const t=f.tasks||{};
-    const isExtra=!isOpsDefault(f)&&!woRecognized(f);
+    const isExtra=!isAero(f.handler)&&!woRecognized(f); // pas de tâche déjà attribuée → choix Cleaning / Toilet / Water
     const wo=woResolve(f,'ops');
     opsHtml+=`<div class="fi a" style="margin-bottom:5px">
       <div class="fi-top">
@@ -321,7 +321,7 @@ function genPDFOps(){
   const selOps=OPS.operations.filter(f=>f.selected).sort((a,b)=>chronoKey(a.time)-chronoKey(b.time));
   let opsRows='';
   selOps.forEach(f=>{
-    const task=isAero(f.handler)?'HANDLING AERO ARR':(isOpsDefault(f)?'':getTaskLabel(f.tasks));
+    const task=isAero(f.handler)?'HANDLING AERO ARR':getTaskLabel(f.tasks);
     opsRows+=`<tr>
       <td class="font-lg">${f.reg||''}</td>
       <td class="font-lg">${f.flight}</td>
