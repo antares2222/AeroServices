@@ -1,6 +1,6 @@
 // ── FIDS API (via Cloudflare Worker — pas de CORS) ───────────────────
 // Colle ici l'adresse de ton Worker (sans / final), ex : 'https://fids.moncompte.workers.dev'
-const FIDS_PROXY='';
+const FIDS_PROXY='https://fids.robingraceffa.workers.dev';
 const FIDS_ARR_URL=FIDS_PROXY?FIDS_PROXY+'/?type=arrivals':'/.netlify/functions/fids?type=arrivals';
 const FIDS_DEP_URL=FIDS_PROXY?FIDS_PROXY+'/?type=departures':'/.netlify/functions/fids?type=departures';
 
