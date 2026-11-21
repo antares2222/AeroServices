@@ -13,7 +13,7 @@ function fidsIsoToLocalDate(isoStr){
   if(!isoStr)return null;
   const m=isoStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
   if(!m)return null;
-  const offset=(PARAMS&&PARAMS.utcOffset)||2;
+  const offset=(PARAMS&&PARAMS.utcOffset)||1;
   // On construit la date avec les valeurs UTC littérales, puis on ajoute le décalage en heures.
   const dt=new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],0);
   dt.setHours(dt.getHours()+offset);

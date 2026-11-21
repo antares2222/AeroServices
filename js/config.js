@@ -2,7 +2,7 @@ const S={shift:'NIGHT',arr:[],dep:[],excluded:[],fedex:[],allArr:[],allDep:[]};
 
 // ── PARAMÈTRES (localStorage) ─────────────────────────────────────
 const DEFAULT_PARAMS = {
-  utcOffset:      2, // UTC+1 (hiver) ou UTC+2 (été) — Belgique
+  utcOffset:      1, // UTC+1 (défaut) ou UTC+2 (été) — Belgique
   swissport_cb:   ['TAY'],
   avia_cb:        ['ABB'],
   catering:       ['ETH','QTR','LHA'],
