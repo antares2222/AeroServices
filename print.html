@@ -2,8 +2,8 @@
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Impression — Aero Services</title>
-<link rel="stylesheet" href="css/print.css?v=20261121a">
-<link rel="stylesheet" href="css/workorder.css?v=20261121a">
+<link rel="stylesheet" href="css/print.css?v=20261121b">
+<link rel="stylesheet" href="css/workorder.css?v=20261121b">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 @media screen{
@@ -15,18 +15,23 @@
 @media print{.tb{display:none!important}}
 </style></head>
 <body>
-<div class="tb"><p id="msg">Préparation de la feuille…</p>
+<div class="tb" id="tb" style="display:none"><p id="msg"></p>
 <button onclick="window.print()">🖨 Imprimer / PDF</button>
 <button class="s" onclick="window.close();history.length>1&&history.back()">Fermer</button></div>
 <div id="sheet"></div><div id="sheetOps"></div><div id="sheetWO"></div>
 <script>
 (function(){
   var d=null;try{d=JSON.parse(localStorage.getItem('print_payload')||'null');}catch(e){}
-  var msg=document.getElementById('msg');
-  if(!d||!document.getElementById(d.id)){msg.textContent='Aucune feuille à imprimer. Reviens sur l’application et relance la génération.';return;}
+  var tb=document.getElementById('tb'),msg=document.getElementById('msg');
+  function show(t){msg.textContent=t;tb.style.display='block';}
+  if(!d||!document.getElementById(d.id)){show('Aucune feuille à imprimer. Reviens sur l\u2019application et relance la génération.');return;}
   var el=document.getElementById(d.id);
   el.innerHTML=d.html;if(d.cls)el.classList.add(d.cls);
-  msg.textContent='Feuille prête. Touche « Imprimer / PDF » si la fenêtre d’impression ne s’ouvre pas.';
-  setTimeout(function(){try{window.print();}catch(e){}},700);
+  var ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  // ordinateur : l'onglet se referme tout seul après l'impression
+  if(!ios)window.onafterprint=function(){setTimeout(function(){window.close();},300);};
+  setTimeout(function(){try{window.print();}catch(e){}},300);
+  // secours si la fenêtre d'impression n'apparaît pas
+  setTimeout(function(){show('Touche « Imprimer / PDF » pour ouvrir l\u2019impression.');},3500);
 })();
 </script></body></html>
