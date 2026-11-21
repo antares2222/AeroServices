@@ -46,7 +46,7 @@
 
 .wo-h14{min-height:14mm} .wo-h115{min-height:11.5mm} .wo-h10{min-height:10mm} .wo-h105{min-height:10.5mm}
 .wo-h8{min-height:8mm} .wo-h235{min-height:23.5mm} .wo-h21{min-height:21mm} .wo-h15{min-height:15mm}
-.wo-hs1{min-height:8mm} .wo-hs2{min-height:9.5mm} .wo-hs3{min-height:11mm} .wo-hs4{min-height:9.5mm} .wo-hs5{min-height:8mm} .wo-hs6{min-height:8mm}
+.wo-hs1,.wo-hs2,.wo-hs3,.wo-hs4,.wo-hs5,.wo-hs6{min-height:10mm}
 
 .wo-lgg{ background:var(--grey-lgg); font-size:var(--fs-lgg); letter-spacing:.2mm; }
 .wo-lgg span{ text-decoration:underline double; text-underline-offset:.7mm; text-decoration-thickness:.4mm; }
