@@ -4,7 +4,7 @@
 @page wo{size:A4 portrait;margin:0}
 @media print{
   #sheetWO.do-print{display:block!important;background:#fff!important;page:wo}
-  .wo-wrap{position:relative;width:100%;box-sizing:border-box;padding:6mm 10mm;break-after:page;page-break-after:always}
+  .wo-wrap{position:relative;width:100%;box-sizing:border-box;padding:12mm;break-after:page;page-break-after:always}
   .wo-wrap:last-child{break-after:auto;page-break-after:auto}
   .wo-cell.wo-sel{background:#cfcfcf!important;color:#000!important;box-shadow:inset 0 0 0 .55mm #000;font-weight:900}
 }
