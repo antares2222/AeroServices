@@ -32,11 +32,12 @@ function shiftDay(delta){
   const cur=currentShift();
   document.getElementById('sDate').value=cur.date;
   setShiftUI(cur.shift);
-  loadFromFids();                                   // affichage automatique du shift actuel
+  pullParams().finally(()=>loadFromFids());          // paramètres partagés d'abord, puis affichage du shift actuel
   setInterval(()=>{                                 // synchro silencieuse chaque minute
     if(document.hidden)return;
     const a=document.activeElement;
     if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))return; // ne pas écraser une saisie en cours
+    if(!document.getElementById('settingsOverlay').classList.contains('open'))pullParams(); // paramètres partagés (effet à la synchro suivante)
     loadFromFids({merge:true,silent:true});
   },60000);
 })();

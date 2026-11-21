@@ -1,14 +1,24 @@
 const SETTINGS_PASSWORD='azerty1234';
-function openSettings(){
+async function openSettings(){
   if(sessionStorage.getItem('crewbus_settings_unlocked')!=='1'){
     const pwd=prompt('🔒 Mot de passe requis pour accéder aux paramètres :');
     if(pwd===null)return; // annulé
-    if(pwd!==SETTINGS_PASSWORD){
-      alert('❌ Mot de passe incorrect.');
-      return;
+    // Le serveur (Worker) fait foi ; si injoignable ou non configuré, repli sur le mot de passe local
+    let ok=null;
+    const url=cloudUrl('auth=1');
+    if(url){
+      try{
+        const r=await fetch(url,{headers:{'X-Settings-Password':pwd},cache:'no-store'});
+        if(r.status===200)ok=true;else if(r.status===401)ok=false;
+      }catch(e){}
     }
+    if(ok===null)ok=(pwd===SETTINGS_PASSWORD);
+    if(!ok){alert('❌ Mot de passe incorrect.');return;}
     sessionStorage.setItem('crewbus_settings_unlocked','1');
+    if(ok===true&&url)sessionStorage.setItem('crewbus_settings_pwd',pwd);
   }
+  if(_remoteEmpty&&sessionStorage.getItem('crewbus_settings_pwd'))pushParams(); // première mise en ligne des paramètres
+  cloudStatusIdle();
   renderSettings();
   // Refléter le décalage UTC actuellement sélectionné
   document.getElementById('utc1Btn').classList.toggle('sel',PARAMS.utcOffset===1);

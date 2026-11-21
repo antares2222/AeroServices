@@ -46,6 +46,50 @@ function loadParams(){
 }
 function saveParamsToStorage(p){
   try{localStorage.setItem('crewbus_params',JSON.stringify(p));}catch(e){}
+  pushParams();
+}
+
+// ── Stockage partagé (Worker Cloudflare + KV) ─────────────────────
+// Le serveur est la référence : au démarrage on lit les paramètres du serveur ; chaque sauvegarde
+// (session déverrouillée avec le mot de passe) les renvoie au serveur. localStorage = copie de secours.
+let _pushTimer=null,_remoteEmpty=false;
+function cloudUrl(q){return(typeof FIDS_PROXY!=='undefined'&&FIDS_PROXY)?FIDS_PROXY+'/?'+q:'';}
+function setCloudState(state,msg){
+  const el=document.getElementById('cloudStatus');
+  if(el){el.textContent=msg;el.dataset.state=state;}
+}
+function cloudStatusIdle(){
+  if(!cloudUrl('x'))return setCloudState('off','Paramètres enregistrés sur cet appareil uniquement.');
+  if(sessionStorage.getItem('crewbus_settings_pwd'))return setCloudState('ok','☁ Paramètres partagés : synchronisés avec le serveur.');
+  setCloudState('off','☁ Serveur non vérifié : paramètres lus du serveur, enregistrés sur cet appareil uniquement.');
+}
+function pushParams(){
+  const url=cloudUrl('params=1'),pwd=sessionStorage.getItem('crewbus_settings_pwd');
+  if(!url||!pwd)return;
+  clearTimeout(_pushTimer);
+  _pushTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json','X-Settings-Password':pwd},body:JSON.stringify(PARAMS)});
+      if(r.ok){_remoteEmpty=false;setCloudState('ok','☁ Enregistré sur le serveur.');}
+      else setCloudState('err','☁ Échec de l\u2019enregistrement sur le serveur ('+r.status+'). Enregistré sur cet appareil.');
+    }catch(e){setCloudState('err','☁ Serveur injoignable : enregistré sur cet appareil seulement.');}
+  },600);
+}
+async function pullParams(){
+  const url=cloudUrl('params=1');
+  if(!url)return;
+  try{
+    const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),2500);
+    const r=await fetch(url,{cache:'no-store',signal:ctl.signal});
+    clearTimeout(t);
+    if(!r.ok)return;
+    const remote=await r.json();
+    if(remote&&typeof remote==='object'){
+      PARAMS=Object.assign(JSON.parse(JSON.stringify(DEFAULT_PARAMS)),remote);
+      try{localStorage.setItem('crewbus_params',JSON.stringify(PARAMS));}catch(e){}
+      _remoteEmpty=false;
+    }else _remoteEmpty=true;   // serveur vide : on enverra les paramètres de cet appareil à l'ouverture des réglages
+  }catch(e){}
 }
 
 let PARAMS = loadParams();
