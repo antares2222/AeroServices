@@ -84,11 +84,23 @@ function flightMeta(f){
 
 // Nettoyage après impression : ne JAMAIS le faire sur un timer ni sur onafterprint (iOS les déclenche
 // avant la fin de l'aperçu → la feuille crew-bus réapparaît). On attend le prochain toucher/clic.
+let _printCleanup=null;
 function armPrintCleanup(fn){
+  if(_printCleanup)_printCleanup.cancel();
   let done=false;
-  const run=()=>{if(done)return;done=true;document.removeEventListener('pointerdown',h,true);fn();};
   const h=()=>setTimeout(run,300);
-  setTimeout(()=>document.addEventListener('pointerdown',h,true),1500);
+  const run=()=>{if(done)return;done=true;document.removeEventListener('pointerdown',h,true);_printCleanup=null;fn();};
+  const arm=setTimeout(()=>{if(!done)document.addEventListener('pointerdown',h,true);},1500);
+  _printCleanup={cancel(){done=true;clearTimeout(arm);document.removeEventListener('pointerdown',h,true);}};
+}
+// À appeler au début de CHAQUE impression : annule un nettoyage en attente (qui retirerait les classes
+// de la nouvelle impression → feuille crew-bus imprimée par erreur) et remet les feuilles à zéro.
+function resetPrint(){
+  if(_printCleanup){_printCleanup.cancel();_printCleanup=null;}
+  const g=id=>document.getElementById(id);
+  g('sheet').classList.remove('no-print');
+  g('sheetOps').classList.remove('do-print');
+  g('sheetWO').classList.remove('do-print');
 }
 
 

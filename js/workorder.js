@@ -248,6 +248,7 @@ function woBuildPage(item){
 }
 
 function printWorkOrders(kind){
+  resetPrint();
   const list=kind==='cat'?woListCatering():kind==='fedex'?woListFedex():woListOps();
   if(!list.length){alert('Aucun vol à imprimer pour ce Work Order.');return;}
   const box=document.getElementById('sheetWO');

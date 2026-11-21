@@ -298,6 +298,7 @@ function getTaskLabel(tasks){
 }
 
 function genPDFOps(){
+  resetPrint();
   // Sécurité : réinitialise l'état d'affichage avant de configurer la feuille OPS
   document.getElementById('sheet').classList.remove('no-print');
   document.getElementById('sheetOps').classList.remove('do-print');

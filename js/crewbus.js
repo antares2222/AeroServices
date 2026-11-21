@@ -177,6 +177,7 @@ function renderPreview(){
 
 // ── Generate PDF ──────────────────────────────────────────────────
 function genPDF(){
+  resetPrint();
   // Sécurité : s'assure que la feuille OPS n'est pas restée affichée (bug iOS Safari)
   document.getElementById('sheet').classList.remove('no-print');
   document.getElementById('sheetOps').classList.remove('do-print');
