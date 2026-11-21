@@ -364,6 +364,6 @@ function genPDFOps(){
     document.getElementById('sheet').classList.remove('no-print');
     document.getElementById('sheetOps').classList.remove('do-print');
   };
-  setTimeout(()=>{window.print();armPrintCleanup(cleanup);},300);
+  printWhenReady(document.getElementById('sheetOps'),cleanup);
 }
 

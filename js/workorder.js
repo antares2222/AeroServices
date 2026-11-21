@@ -261,5 +261,5 @@ function printWorkOrders(kind){
     if(cleaned)return;cleaned=true;
     sheet.classList.remove('no-print');box.classList.remove('do-print');
   };
-  setTimeout(()=>{window.print();armPrintCleanup(cleanup);},300);
+  printWhenReady(box,cleanup);
 }

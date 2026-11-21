@@ -91,3 +91,14 @@ function armPrintCleanup(fn){
   setTimeout(()=>document.addEventListener('pointerdown',h,true),1500);
 }
 
+
+// Lance l'impression seulement quand la feuille est vraiment prête (images décodées, polices, 2 frames peintes),
+// pour éviter un aperçu vide/incomplet quand tout charge « trop vite ».
+function printWhenReady(root,cleanup){
+  const imgs=[...(root?root.querySelectorAll('img'):[])].map(i=>i.decode?i.decode().catch(()=>{}):Promise.resolve());
+  const fonts=(document.fonts&&document.fonts.ready)?document.fonts.ready.catch(()=>{}):Promise.resolve();
+  const wait=new Promise(r=>setTimeout(r,400));
+  Promise.all([wait,fonts,...imgs]).then(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    window.print();armPrintCleanup(cleanup);
+  })));
+}
