@@ -158,14 +158,14 @@ function woPageHtml(v){
       <div class="wo-cell wo-svc wo-sv${sel('WET WHEELS')}" data-service="WET WHEELS">WET WHEELS</div>
       <div class="wo-cell wo-svc wo-sv${sel('BELLY WASH')}" data-service="BELLY WASH">BELLY WASH</div>
       <div class="wo-cell wo-svc wo-sv${sel('GEAR WASH TECH')}" data-service="GEAR WASH TECH">GEAR WASH TECH</div>
-      <div class="wo-cell wo-svc wo-sv${sel('GEAR WASH COMM')}" data-service="GEAR WASH COMM">GEAR WASH COMM</div>
+      <div class="wo-cell wo-svc wo-sv${sel('GEAR WASH COMM')}" data-service="GEAR WASH COMM">GEAR WASH COM</div>
     </div>
     <div class="wo-row wo-hs2">
       <div class="wo-cell wo-svc wo-sv wo-first${sel('FULL WET WASH')}" data-service="FULL WET WASH">FULL WET WASH</div>
-      <div class="wo-cell wo-svc wo-sv${sel('HORSE STALL')}" data-service="HORSE STALL">HORSE STALL</div>
-      <div class="wo-cell wo-svc wo-sv${sel('HORSE STALL BUILD')}" data-service="HORSE STALL BUILD">HORSE STALL BUILD</div>
-      <div class="wo-cell wo-svc wo-sv${sel('HORSE STALL')}" data-service="HORSE STALL">HORSE STALL</div>
-      <div class="wo-cell wo-svc wo-sv${sel('OFFICE CLEANING')}" data-service="OFFICE CLEANING">OFFICE CLEANING</div>
+      <div class="wo-cell wo-svc wo-sv${sel('HORSE STALL')}" data-service="HORSE STALL">STALL CLEAN</div>
+      <div class="wo-cell wo-svc wo-sv${sel('HORSE STALL BUILD')}" data-service="HORSE STALL BUILD">STALL BUILD</div>
+      <div class="wo-cell wo-svc wo-sv${sel('HORSE STALL')}" data-service="HORSE STALL">STALL COLAPSE</div>
+      <div class="wo-cell wo-svc wo-sv${sel('OFFICE CLEANING')}" data-service="OFFICE CLEANING">OFFICE CLEAN</div>
     </div>
     <div class="wo-row wo-hs3">
       <div class="wo-cell wo-svc wo-sv wo-first${sel('APU WASH')}" data-service="APU WASH">APU WASH</div>
@@ -176,10 +176,10 @@ function woPageHtml(v){
     </div>
     <div class="wo-row wo-hs4">
       <div class="wo-cell wo-svc wo-sv wo-first${sel('INTERIOR DEEP')}" data-service="INTERIOR DEEP">INTERIOR DEEP</div>
-      <div class="wo-cell wo-svc wo-sv${sel('FULL TRANSIT SERVICE')}" data-service="FULL TRANSIT SERVICE">FULL TRANSIT SERVICE</div>
+      <div class="wo-cell wo-svc wo-sv${sel('FULL TRANSIT SERVICE')}" data-service="FULL TRANSIT SERVICE">FULL TRANSIT S.</div>
       <div class="wo-cell wo-svc wo-sv${sel('TRANSIT SERVICE')}" data-service="TRANSIT SERVICE">TRANSIT SERVICE</div>
       <div class="wo-cell wo-svc wo-sv${sel('WATER SERVICE')}" data-service="WATER SERVICE">WATER SERVICE</div>
-      <div class="wo-cell wo-svc wo-sv${sel('LAVATORY SERVICE')}" data-service="LAVATORY SERVICE">LAVATORY SERVICE</div>
+      <div class="wo-cell wo-svc wo-sv${sel('LAVATORY SERVICE')}" data-service="LAVATORY SERVICE">LAVATORY S.</div>
     </div>
     <div class="wo-row wo-hs5">
       <div class="wo-cell wo-svc wo-sv wo-first${sel('DISINFECTION')}" data-service="DISINFECTION">DISINFECTION</div>
